@@ -1,59 +1,33 @@
-# FoxRunnerScaffold
+# FoxRunner Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Angular 21 + PrimeNG 21 client for the [FoxRunner backend](https://github.com/Foxugly/FoxRunner_server).
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+- Node.js 22+
+- npm 10+
+- A running FoxRunner backend on `http://127.0.0.1:8000`
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Setup
 
 ```bash
-ng generate component component-name
+npm install
+npm run gen:api       # requires backend to be up; writes src/app/core/api/schema.ts
+npm start             # http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Scripts
 
-```bash
-ng generate --help
-```
+- `npm start` — dev server on :4200.
+- `npm run build` — production build to `dist/fox-runner`.
+- `npm run lint` — Angular ESLint + Prettier compatibility.
+- `npm run format` — Prettier write on `src/`.
+- `npm run gen:api` — regenerate OpenAPI types from the live backend.
+- `npm run gen:api:file` — regenerate from `./openapi.local.json` (offline fallback).
+- `ng test --watch=false` — run unit tests (vitest + jsdom).
 
-## Building
+## Docs
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Architecture & conventions: [CLAUDE.md](./CLAUDE.md).
+- Implementation plan: [docs/superpowers/plans/2026-04-22-foxrunner-frontend-phase-1-2.md](./docs/superpowers/plans/2026-04-22-foxrunner-frontend-phase-1-2.md).
+- Backend API reference: see the `docs/` folder of the [FoxRunner_server](https://github.com/Foxugly/FoxRunner_server) repo (notably `API.md`, `FRONTEND.md`, `ADR_TIMEZONES.md`, `SECURITY.md`, `SCHEMA.md`).
