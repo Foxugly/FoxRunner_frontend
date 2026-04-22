@@ -32,7 +32,6 @@ import { AuthService } from '../../../core/auth/auth.service';
                 formControlName="email"
                 autocomplete="username"
                 required
-                autofocus
               />
             </div>
             <div class="flex flex-column gap-2">
