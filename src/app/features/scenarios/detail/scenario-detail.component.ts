@@ -20,6 +20,7 @@ import {
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { SharesDialogComponent } from '../shares/shares-dialog.component';
 
 @Component({
   selector: 'app-scenario-detail',
@@ -34,6 +35,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     ConfirmDialogModule,
     PageHeaderComponent,
     EmptyStateComponent,
+    SharesDialogComponent,
   ],
   template: `
     <app-page-header
@@ -70,8 +72,27 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           icon="pi pi-pencil"
           [routerLink]="['/scenarios', scenario()?.scenario_id, 'edit']"
         />
+        <p-button
+          label="Éditer les steps"
+          icon="pi pi-code"
+          severity="secondary"
+          [routerLink]="['/scenarios', scenario()?.scenario_id, 'steps']"
+        />
+        @if (isOwner()) {
+          <p-button
+            label="Partages"
+            icon="pi pi-share-alt"
+            severity="secondary"
+            (onClick)="sharesOpen = true"
+          />
+        }
       }
     </app-page-header>
+
+    <app-shares-dialog
+      [scenarioId]="scenario()?.scenario_id ?? ''"
+      [(visible)]="sharesOpen"
+    />
 
     @if (scenario(); as s) {
       <div class="grid">
@@ -198,6 +219,8 @@ export class ScenarioDetailComponent implements OnInit {
   readonly running = signal(false);
 
   readonly isWritable = computed(() => this.scenario()?.writable === true);
+  readonly isOwner = computed(() => this.scenario()?.role === 'owner');
+  sharesOpen = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
