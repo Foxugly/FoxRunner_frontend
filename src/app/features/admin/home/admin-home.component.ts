@@ -72,6 +72,14 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
+      <div class="col-12 md:col-6 lg:col-4">
+        <p-card header="Microsoft Graph" subheader="Abonnements & notifications">
+          <p>Créer et renouveler les webhooks Microsoft Graph.</p>
+          <ng-template pTemplate="footer">
+            <p-button label="Ouvrir" icon="pi pi-cloud" routerLink="/admin/graph" />
+          </ng-template>
+        </p-card>
+      </div>
     </div>
   `,
 })

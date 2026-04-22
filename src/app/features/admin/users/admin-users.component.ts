@@ -76,18 +76,21 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             <p-toggleswitch
               [(ngModel)]="u.is_active"
               (onChange)="updateFlag(u, 'is_active', u.is_active)"
+              [ariaLabel]="'Actif — ' + u.email"
             />
           </td>
           <td>
             <p-toggleswitch
               [(ngModel)]="u.is_superuser"
               (onChange)="updateFlag(u, 'is_superuser', u.is_superuser)"
+              [ariaLabel]="'Superuser — ' + u.email"
             />
           </td>
           <td>
             <p-toggleswitch
               [(ngModel)]="u.is_verified"
               (onChange)="updateFlag(u, 'is_verified', u.is_verified)"
+              [ariaLabel]="'Vérifié — ' + u.email"
             />
           </td>
         </tr>

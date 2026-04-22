@@ -43,6 +43,10 @@ export type ImportResult = S['AdminImportDryRunPayload'];
 export type RetentionResult = S['RetentionPayload'];
 export type Artifact = S['ArtifactPayload'];
 export type MonitoringSummaryData = S['MonitoringSummaryPayload'];
+export type GraphSubscriptionCreate = S['GraphSubscriptionPayload'];
+export type GraphSubscription = S['GraphSubscriptionResponsePayload'];
+export type GraphRenew = S['GraphRenewPayload'];
+export type GraphNotification = S['GraphNotificationPayload'];
 
 export type JobStatus = 'queued' | 'running' | 'success' | 'failed' | 'cancelled';
 

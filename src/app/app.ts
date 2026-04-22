@@ -6,6 +6,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenubarModule } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
 import { AuthService } from './core/auth/auth.service';
+import { NetworkHealthService } from './core/http/network-health.service';
 import { ThemeService } from './core/theme/theme.service';
 
 @Component({
@@ -25,6 +26,7 @@ import { ThemeService } from './core/theme/theme.service';
 export class App {
   readonly auth = inject(AuthService);
   readonly theme = inject(ThemeService);
+  readonly network = inject(NetworkHealthService);
 
   readonly topMenu = computed<MenuItem[]>(() => {
     const base: MenuItem[] = [

@@ -1,14 +1,16 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthPasswordService } from '../../../core/api/auth-password.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -24,12 +26,16 @@ import { AuthService } from '../../../core/auth/auth.service';
         <p-card>
           <ng-template pTemplate="header">
             <div class="flex align-items-center gap-2 p-4 pb-0">
-              <i class="pi pi-bolt" style="font-size: 2rem; color: var(--fox-primary)"></i>
-              <span class="text-2xl fox-brand">FoxRunner</span>
+              <i class="pi pi-user-plus" style="font-size: 1.75rem; color: var(--fox-primary)"></i>
+              <span class="text-xl fox-brand">Créer un compte</span>
             </div>
           </ng-template>
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
+          <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3">
+            <p class="text-color-secondary text-sm">
+              Le compte sera créé en état non vérifié. Un administrateur devra l'activer ou tu
+              devras confirmer l'email selon la configuration du backend.
+            </p>
             <div class="flex flex-column gap-2">
               <label for="email">Email</label>
               <input
@@ -47,51 +53,60 @@ import { AuthService } from '../../../core/auth/auth.service';
                 inputId="password"
                 formControlName="password"
                 [toggleMask]="true"
-                [feedback]="false"
-                autocomplete="current-password"
                 styleClass="w-full"
                 [inputStyle]="{ width: '100%' }"
                 required
               />
+              <small class="text-color-secondary">8 caractères minimum.</small>
             </div>
             <p-button
               type="submit"
-              label="Se connecter"
-              icon="pi pi-sign-in"
+              label="Créer le compte"
+              icon="pi pi-check"
               styleClass="w-full"
               [loading]="loading()"
-              [disabled]="loading() || form.invalid"
+              [disabled]="form.invalid || loading()"
             />
-            <div class="flex justify-content-between text-sm">
-              <a routerLink="/forgot-password">Mot de passe oublié ?</a>
-              <a routerLink="/register">Créer un compte</a>
-            </div>
+            <a routerLink="/login" class="text-sm text-center">Déjà un compte ? Se connecter</a>
           </form>
         </p-card>
       </div>
     </div>
   `,
 })
-export class LoginComponent {
+export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly passwordService = inject(AuthPasswordService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly messages = inject(MessageService);
 
   readonly loading = signal(false);
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
-  async onSubmit(): Promise<void> {
-    if (this.loading() || this.form.invalid) return;
+  async submit(): Promise<void> {
+    if (this.form.invalid) return;
     this.loading.set(true);
     try {
       const { email, password } = this.form.getRawValue();
-      await this.auth.login(email, password);
-      await this.router.navigate(['/']);
+      await this.passwordService.register(email, password);
+      this.messages.add({
+        severity: 'success',
+        summary: 'Compte créé',
+        detail: 'Tentative de connexion…',
+        life: 2500,
+      });
+      try {
+        await this.auth.login(email, password);
+        this.router.navigate(['/']);
+      } catch {
+        this.router.navigate(['/login']);
+      }
     } catch {
-      // Toast handled by error interceptor.
+      /* toast handled by interceptor */
     } finally {
       this.loading.set(false);
     }

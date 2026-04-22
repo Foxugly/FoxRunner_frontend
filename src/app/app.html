@@ -1,6 +1,19 @@
 <p-toast position="top-right" />
 <p-confirmDialog />
 
+@if (network.offline()) {
+  <div
+    class="fox-offline-banner"
+    role="alert"
+    aria-live="assertive"
+  >
+    <i class="pi pi-exclamation-triangle mr-2"></i>
+    Le backend semble injoignable ({{ network.consecutiveErrors() }} erreurs consécutives).
+    Vérifie que l'API tourne sur
+    <code>http://127.0.0.1:8000</code>.
+  </div>
+}
+
 @if (auth.isLoggedIn()) {
   <div class="fox-shell">
     <p-menubar [model]="topMenu()" styleClass="border-noround fox-menubar">

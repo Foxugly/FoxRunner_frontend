@@ -112,6 +112,7 @@ const DAYS: readonly DayOption[] = [
             <p-toggleswitch
               [(ngModel)]="s.enabled"
               (onChange)="toggleEnabled(s)"
+              [ariaLabel]="'Actif — slot ' + s.slot_id"
             />
           </td>
           <td>

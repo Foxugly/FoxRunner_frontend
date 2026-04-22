@@ -1,9 +1,10 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpEventType, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { catchError, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { NetworkHealthService } from './network-health.service';
 
 interface ApiErrorBody {
   code?: string;
@@ -15,9 +16,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const messages = inject(MessageService);
   const auth = inject(AuthService);
   const router = inject(Router);
+  const health = inject(NetworkHealthService);
 
   return next(req).pipe(
+    tap((event) => {
+      if (event.type === HttpEventType.Response) health.reportSuccess();
+    }),
     catchError((err: HttpErrorResponse) => {
+      health.reportFailure(err.status);
       const reqId = err.headers?.get('X-Request-ID') ?? req.headers.get('X-Request-ID') ?? null;
       const body =
         err.error && typeof err.error === 'object' ? (err.error as ApiErrorBody) : null;

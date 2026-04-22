@@ -15,6 +15,7 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { errorInterceptor } from './core/http/error.interceptor';
 import { ClientConfigService } from './core/config/client-config.service';
+import { primeNgFrenchTranslation } from './core/i18n/primeng-fr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,6 +33,7 @@ export const appConfig: ApplicationConfig = {
           cssLayer: false,
         },
       },
+      translation: primeNgFrenchTranslation,
     }),
     MessageService,
     ConfirmationService,

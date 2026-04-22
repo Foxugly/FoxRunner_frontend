@@ -23,6 +23,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'register',
+    loadComponent: () =>
+      import('./features/auth/register/register.component').then(
+        (m) => m.RegisterComponent,
+      ),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     children: [
@@ -158,6 +165,13 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/admin/artifacts/admin-artifacts.component').then(
                 (m) => m.AdminArtifactsComponent,
+              ),
+          },
+          {
+            path: 'graph',
+            loadComponent: () =>
+              import('./features/admin/graph/admin-graph.component').then(
+                (m) => m.AdminGraphComponent,
               ),
           },
         ],
