@@ -6,6 +6,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MenubarModule } from 'primeng/menubar';
 import { ToastModule } from 'primeng/toast';
 import { AuthService } from './core/auth/auth.service';
+import { ThemeService } from './core/theme/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ import { AuthService } from './core/auth/auth.service';
 })
 export class App {
   readonly auth = inject(AuthService);
+  readonly theme = inject(ThemeService);
 
   readonly topMenu = computed<MenuItem[]>(() => {
     const base: MenuItem[] = [

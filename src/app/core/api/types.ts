@@ -32,6 +32,17 @@ export type MonitoringSummary = S['MonitoringSummaryPayload'];
 export type TimezoneList = S['TimezoneListPayload'];
 export type Step = S['StepPayload'];
 export type StepMutation = S['StepMutationPayload'];
+export type AdminUserUpdate = S['AdminUserUpdatePayload'];
+export type AuditEntry = S['AuditPayload'];
+export type AppSetting = S['AppSettingResponsePayload'];
+export type AppSettingUpsert = S['AppSettingPayload'];
+export type ConfigChecks = S['AdminConfigChecksPayload'];
+export type DbStats = S['AdminDbStatsPayload'];
+export type ExportPayload = S['AdminExportPayload'];
+export type ImportResult = S['AdminImportDryRunPayload'];
+export type RetentionResult = S['RetentionPayload'];
+export type Artifact = S['ArtifactPayload'];
+export type MonitoringSummaryData = S['MonitoringSummaryPayload'];
 
 export type JobStatus = 'queued' | 'running' | 'success' | 'failed' | 'cancelled';
 

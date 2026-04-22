@@ -1,11 +1,26 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { superuserGuard } from './core/auth/superuser.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/password/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent,
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent,
+      ),
   },
   {
     path: '',
@@ -84,6 +99,68 @@ export const routes: Routes = [
         path: 'plan',
         loadComponent: () =>
           import('./features/plan/plan.component').then((m) => m.PlanComponent),
+      },
+      {
+        path: 'admin',
+        canActivate: [superuserGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/admin/home/admin-home.component').then(
+                (m) => m.AdminHomeComponent,
+              ),
+          },
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./features/admin/users/admin-users.component').then(
+                (m) => m.AdminUsersComponent,
+              ),
+          },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import('./features/admin/settings/admin-settings.component').then(
+                (m) => m.AdminSettingsComponent,
+              ),
+          },
+          {
+            path: 'audit',
+            loadComponent: () =>
+              import('./features/admin/audit/admin-audit.component').then(
+                (m) => m.AdminAuditComponent,
+              ),
+          },
+          {
+            path: 'health',
+            loadComponent: () =>
+              import('./features/admin/health/admin-health.component').then(
+                (m) => m.AdminHealthComponent,
+              ),
+          },
+          {
+            path: 'retention',
+            loadComponent: () =>
+              import('./features/admin/retention/admin-retention.component').then(
+                (m) => m.AdminRetentionComponent,
+              ),
+          },
+          {
+            path: 'catalog',
+            loadComponent: () =>
+              import('./features/admin/catalog/admin-catalog.component').then(
+                (m) => m.AdminCatalogComponent,
+              ),
+          },
+          {
+            path: 'artifacts',
+            loadComponent: () =>
+              import('./features/admin/artifacts/admin-artifacts.component').then(
+                (m) => m.AdminArtifactsComponent,
+              ),
+          },
+        ],
       },
     ],
   },

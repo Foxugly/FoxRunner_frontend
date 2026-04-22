@@ -16,6 +16,14 @@
             auth.currentUser()?.email
           }}</span>
           <p-button
+            [icon]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
+            [rounded]="true"
+            severity="secondary"
+            [text]="true"
+            (onClick)="theme.toggle()"
+            pTooltip="Basculer thème"
+          />
+          <p-button
             icon="pi pi-user"
             [rounded]="true"
             severity="secondary"

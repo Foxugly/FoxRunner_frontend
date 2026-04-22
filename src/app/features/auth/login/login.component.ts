@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -10,7 +10,14 @@ import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, CardModule, InputTextModule, PasswordModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+    CardModule,
+    InputTextModule,
+    PasswordModule,
+  ],
   template: `
     <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
       <div style="width: 100%; max-width: 420px;">
@@ -55,6 +62,9 @@ import { AuthService } from '../../../core/auth/auth.service';
               [loading]="loading()"
               [disabled]="loading() || form.invalid"
             />
+            <a routerLink="/forgot-password" class="text-sm text-center">
+              Mot de passe oublié ?
+            </a>
           </form>
         </p-card>
       </div>
