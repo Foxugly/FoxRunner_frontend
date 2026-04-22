@@ -11,7 +11,9 @@
     "gen:api:file": "openapi-typescript ./openapi.local.json -o src/app/core/api/schema.ts",
     "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\"",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium"
   },
   "private": true,
   "packageManager": "npm@10.9.0",
@@ -39,6 +41,7 @@
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^25.6.0",
     "@types/uuid": "^10.0.0",
     "angular-eslint": "21.3.1",

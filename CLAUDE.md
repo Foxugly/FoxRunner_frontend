@@ -21,20 +21,24 @@ npm run format           # Prettier write (src only)
 npm run gen:api          # regenerate src/app/core/api/schema.ts from the live backend
 npm run gen:api:file     # regenerate from ./openapi.local.json if backend is down
 ng test --watch=false    # run all vitest tests once (headless jsdom)
+npm run e2e              # run Playwright smoke (backend + dev server must be reachable)
+npm run e2e:install      # one-off: install Chromium for Playwright
 ```
 
-The backend must be running on port 8000 for `npm run gen:api` and for the app to be functional.
+The backend must be running on port 8000 for `npm run gen:api`, for the app to be functional, and for `npm run e2e`.
 
 ## Architecture
 
 ### Layering
-- `src/app/core/api/` — **generated** OpenAPI types (`schema.ts`, regenerated, never edited by hand) + hand-written Angular `*Service` classes wrapping `HttpClient`. Each service consumes one resource area (`scenarios`, `slots`, `jobs`, `history`, `plan`, `step-collections`, `users`, `timezones`). Shared helpers in `api-base.ts`, common domain aliases in `types.ts`.
+- `src/app/core/api/` — **generated** OpenAPI types (`schema.ts`, regenerated, never edited by hand) + hand-written Angular `*Service` classes wrapping `HttpClient`. One service per resource area (`scenarios`, `slots`, `jobs`, `history`, `plan`, `step-collections`, `users`, `timezones`, `admin`, `artifacts`, `graph`, `auth-password`). Shared helpers in `api-base.ts`, domain aliases in `types.ts`.
 - `src/app/core/auth/` — `AuthService` (memory-only JWT signal, **no localStorage**), `authGuard`, `superuserGuard`.
-- `src/app/core/http/` — HTTP interceptors: `authInterceptor` (adds `Authorization: Bearer …` and `X-Request-ID` UUID), `errorInterceptor` (routes errors to PrimeNG toasts, logs `X-Request-ID`, handles 401 → redirect to `/login`).
+- `src/app/core/http/` — interceptors: `authInterceptor` (adds `Authorization: Bearer …` + `X-Request-ID` UUID), `errorInterceptor` (toast + 401 redirect + `X-Request-ID` logging, reports success/failure to `NetworkHealthService`). `NetworkHealthService` tracks consecutive non-auth failures and exposes an `offline` signal used by the red banner in the shell.
 - `src/app/core/config/` — `ClientConfigService` bootstrapped via `provideAppInitializer` (fetches `/config/client`).
+- `src/app/core/i18n/` — `primeNgFrenchTranslation` dictionary passed to `providePrimeNG({ translation: … })` (calendar, table, aria labels).
+- `src/app/core/theme/` — `ThemeService` signal, persists light/dark in `localStorage`, toggles `.fox-dark` on `<html>`.
 - `src/app/core/utils/` — `newIdempotencyKey()` (UUIDv4 for `POST /scenarios`, `POST /slots`, `POST …/jobs`).
 - `src/app/shared/` — `ApiDatePipe` (UTC → `currentUser.timezone_name`), standalone components `PageHeader`, `EmptyState`, `StatusTag`, `JsonEditor`.
-- `src/app/features/` — one folder per feature area (auth, dashboard, profile, scenarios, slots, jobs, history, plan). All components are standalone. Lazy loading wired in `app.routes.ts`.
+- `src/app/features/` — one folder per feature area (auth, dashboard, profile, scenarios, slots, jobs, history, plan, admin/**). All components are standalone. Lazy loading wired in `app.routes.ts`.
 
 ### Non-negotiable contract with the backend
 - **Login** uses `application/x-www-form-urlencoded` with body `username=<email>&password=<pwd>`. Not JSON.
@@ -62,19 +66,24 @@ The backend must be running on port 8000 for `npm run gen:api` and for the app t
 
 ## Testing
 
-- Test runner: **vitest** (not Karma/Jasmine). Configured via `@angular/build:unit-test`. Globals (`describe`, `it`, `expect`) are available from `vitest/globals`.
-- Unit test targets that must keep passing: `AuthService`, `authInterceptor`, `ApiDatePipe`, `newIdempotencyKey`, `App` smoke.
-- Run with `ng test --watch=false`. Do not pass `--browsers=…` (vitest runs in jsdom; browser adapter packages are not installed).
+- **Unit**: vitest (not Karma/Jasmine). Configured via `@angular/build:unit-test`. Globals (`describe`, `it`, `expect`) available from `vitest/globals`. Run with `ng test --watch=false`. Do not pass `--browsers=…` — no browser adapter package is installed; jsdom is used.
+- **Unit coverage** (26 tests): `AuthService`, `authInterceptor`, `ApiDatePipe`, `newIdempotencyKey`, `ScenariosService`, `SlotsService`, `JobsService`, `NetworkHealthService`, `App` smoke.
+- **E2E**: Playwright in `e2e/`. `playwright.config.ts` auto-starts `ng serve` on 4200 unless `E2E_SKIP_WEBSERVER=1`. Tests require the backend to be reachable and the admin account to exist. Credentials default to `admin@local.test` / `adminadmin123456`; override with `E2E_EMAIL` and `E2E_PASSWORD` env vars. Run `npm run e2e:install` once to download Chromium.
 
 ## Feature coverage
 
-- **Phase 1 (MVP)**: login, dashboard, profile (timezone update), scenarios list+detail, slots CRUD, jobs list+detail with auto-refresh, history with filters, plan with countdown.
+- **Phase 1 (MVP)**: login (with forgot/create-account links), dashboard, profile (timezone + feature flags), scenarios list+detail, slots CRUD, jobs list+detail with auto-refresh, history with filters, plan with countdown.
 - **Phase 2**: scenario create/edit with JSON editor, step-collections CRUD (5 collections), scenario shares, duplicate/delete, idempotency keys.
-- **Phase 3 (admin, gated by `superuserGuard`)**: `/admin` landing, users (toggle is_active/is_superuser/is_verified), settings (JSON-valued key/value store), audit log (filter by actor/target), health (config checks + DB stats + monitoring summary), retention purge, catalog export/import, artifacts browser + prune.
-- **Phase 4 (polish)**: forgot/reset password flow, dark-mode toggle persisted in `localStorage` (applied via `.fox-dark` on `<html>`, matches `providePrimeNG({ options: { darkModeSelector: '.fox-dark' } })`).
+- **Phase 3 (admin, gated by `superuserGuard`)**: `/admin` landing, users (toggle is_active/is_superuser/is_verified), settings (JSON-valued key/value store), audit log, health (config checks + DB stats + monitoring summary), retention purge, catalog export/import, artifacts browser + prune, Microsoft Graph subscriptions + notifications.
+- **Phase 4 (polish)**: forgot/reset password flow, register flow, dark-mode toggle persisted in `localStorage`, PrimeNG `fr-BE` translations, offline banner (red strip when 3+ consecutive non-auth errors).
 
-**Still deferred**: i18n fr/en switcher, Graph subscriptions management UI (superuser), Monaco-backed JSON editor (the textarea + validation + format button editor covers current needs).
+**Still deferred**: i18n fr/en switcher for app UI strings (PrimeNG internals are translated; the FoxRunner UI itself is French-only), Monaco-backed JSON editor (the textarea + validation + format button editor covers current needs).
+
+## Deployment
+
+- `Dockerfile` is a multi-stage build: `node:22-alpine` for `npm ci` + `ng build --configuration production`, then `nginx:1.27-alpine` serving `dist/fox-runner/browser` on port 80 with `nginx.conf` (SPA fallback, long cache on hashed assets, security headers mirroring the backend's).
+- `.github/workflows/ci.yml` runs lint + vitest + prod build on every PR/push to `main`. On push to `main`, a second job builds the Docker image (no push) to validate the `Dockerfile` stays healthy.
 
 ## Plans
 
-Implementation plans live in `docs/superpowers/plans/`. The baseline plan is `2026-04-22-foxrunner-frontend-phase-1-2.md`; Phases 3–4 landed directly in follow-up commits without a written plan on disk.
+Implementation plans live in `docs/superpowers/plans/`. The baseline plan is `2026-04-22-foxrunner-frontend-phase-1-2.md`; Phases 3+4+round 3 landed directly in follow-up commits without a written plan on disk.
