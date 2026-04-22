@@ -66,6 +66,15 @@ The backend must be running on port 8000 for `npm run gen:api` and for the app t
 - Unit test targets that must keep passing: `AuthService`, `authInterceptor`, `ApiDatePipe`, `newIdempotencyKey`, `App` smoke.
 - Run with `ng test --watch=false`. Do not pass `--browsers=…` (vitest runs in jsdom; browser adapter packages are not installed).
 
+## Feature coverage
+
+- **Phase 1 (MVP)**: login, dashboard, profile (timezone update), scenarios list+detail, slots CRUD, jobs list+detail with auto-refresh, history with filters, plan with countdown.
+- **Phase 2**: scenario create/edit with JSON editor, step-collections CRUD (5 collections), scenario shares, duplicate/delete, idempotency keys.
+- **Phase 3 (admin, gated by `superuserGuard`)**: `/admin` landing, users (toggle is_active/is_superuser/is_verified), settings (JSON-valued key/value store), audit log (filter by actor/target), health (config checks + DB stats + monitoring summary), retention purge, catalog export/import, artifacts browser + prune.
+- **Phase 4 (polish)**: forgot/reset password flow, dark-mode toggle persisted in `localStorage` (applied via `.fox-dark` on `<html>`, matches `providePrimeNG({ options: { darkModeSelector: '.fox-dark' } })`).
+
+**Still deferred**: i18n fr/en switcher, Graph subscriptions management UI (superuser), Monaco-backed JSON editor (the textarea + validation + format button editor covers current needs).
+
 ## Plans
 
-Implementation plans live in `docs/superpowers/plans/`. The current baseline plan is `2026-04-22-foxrunner-frontend-phase-1-2.md` covering Phases 1 and 2 (MVP + scenario CRUD + step-collections + shares). Phases 3 (admin) and 4 (password reset, dark mode, i18n fr/en) are deferred.
+Implementation plans live in `docs/superpowers/plans/`. The baseline plan is `2026-04-22-foxrunner-frontend-phase-1-2.md`; Phases 3–4 landed directly in follow-up commits without a written plan on disk.
