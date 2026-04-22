@@ -6,7 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "gen:api": "openapi-typescript http://127.0.0.1:8000/openapi.json -o src/app/core/api/schema.ts",
+    "gen:api:file": "openapi-typescript ./openapi.local.json -o src/app/core/api/schema.ts",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\""
   },
   "private": true,
   "packageManager": "npm@10.9.0",

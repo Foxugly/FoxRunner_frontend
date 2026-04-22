@@ -1,1 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'primeicons/primeicons.css';
+@use 'primeflex/primeflex.css';
+
+:root {
+  --fox-primary: #d97706;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  background: var(--p-content-background, #ffffff);
+  color: var(--p-text-color, #1f2937);
+}
+
+.fox-brand {
+  color: var(--fox-primary);
+  font-weight: 700;
+}
