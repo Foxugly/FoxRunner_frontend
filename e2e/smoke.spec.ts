@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const ADMIN_EMAIL = process.env['E2E_EMAIL'] ?? 'admin@local.test';
-const ADMIN_PASSWORD = process.env['E2E_PASSWORD'] ?? 'adminadmin123456';
+const ADMIN_EMAIL = process.env['E2E_EMAIL'] ?? 'admin@local';
+const ADMIN_PASSWORD = process.env['E2E_PASSWORD'] ?? 'admin1234';
 
 function collectConsoleErrors(page: Page): string[] {
   const errors: string[] = [];
