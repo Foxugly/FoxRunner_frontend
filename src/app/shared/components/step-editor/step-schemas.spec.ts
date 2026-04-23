@@ -50,6 +50,18 @@ describe('step-schemas', () => {
     expect(findStepSchema('click')?.composite).toBeFalsy();
   });
 
+  it('composite steps declare their sub-step arrays', () => {
+    expect(findStepSchema('group')?.arrays?.map((a) => a.key)).toEqual(['steps']);
+    expect(findStepSchema('parallel')?.arrays?.map((a) => a.key)).toEqual(['steps']);
+    expect(findStepSchema('repeat')?.arrays?.map((a) => a.key)).toEqual(['steps']);
+    expect(findStepSchema('try')?.arrays?.map((a) => a.key)).toEqual([
+      'try_steps',
+      'catch_steps',
+      'finally_steps',
+    ]);
+    expect(findStepSchema('click')?.arrays).toBeUndefined();
+  });
+
   it('common fields expose the transverse DSL modifiers', () => {
     const names = COMMON_FIELDS.map((f) => f.name);
     expect(names).toEqual(

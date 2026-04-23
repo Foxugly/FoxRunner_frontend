@@ -6,11 +6,13 @@ import {
   Output,
   SimpleChanges,
   computed,
+  forwardRef,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
@@ -18,7 +20,9 @@ import { SelectModule } from 'primeng/select';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TextareaModule } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { TooltipModule } from 'primeng/tooltip';
 import { JsonEditorComponent } from '../json-editor/json-editor.component';
+import { StepDisplayComponent } from '../step-display/step-display.component';
 import {
   COMMON_FIELDS,
   type FieldSchema,
@@ -78,6 +82,7 @@ function isEmpty(v: unknown): boolean {
     FormsModule,
     ButtonModule,
     CheckboxModule,
+    DialogModule,
     InputNumberModule,
     InputTextModule,
     PanelModule,
@@ -85,7 +90,10 @@ function isEmpty(v: unknown): boolean {
     SelectButtonModule,
     TextareaModule,
     ToggleSwitchModule,
+    TooltipModule,
     JsonEditorComponent,
+    StepDisplayComponent,
+    forwardRef(() => StepEditorComponent),
   ],
   template: `
     <div class="flex flex-column gap-3">
@@ -138,7 +146,6 @@ function isEmpty(v: unknown): boolean {
           [(ngModel)]="modeValue"
           (onChange)="onModeChange($event.value)"
           [allowEmpty]="false"
-          [disabled]="schema()?.composite === true"
         />
       </div>
 
@@ -295,15 +302,77 @@ function isEmpty(v: unknown): boolean {
           </div>
         </p-panel>
 
-        @if (s.composite) {
-          <small class="text-color-secondary">
-            <i class="pi pi-info-circle mr-1"></i>
-            Les sous-étapes des types composites s'éditent en mode JSON pour
-            cette version.
-          </small>
+        <!-- Sub-step arrays for composite types (try_steps, catch_steps, …) -->
+        @for (arr of s.arrays ?? []; track arr.key) {
+          <p-panel [header]="arr.label + ' (' + subSteps(arr.key).length + ')'" [toggleable]="true">
+            <div class="flex flex-column gap-2">
+              @if (subSteps(arr.key).length === 0) {
+                <small class="text-color-secondary">Aucune sous-étape.</small>
+              }
+              @for (sub of subSteps(arr.key); track $index; let i = $index) {
+                <div class="flex align-items-start justify-content-between gap-2 p-2 border-1 surface-border border-round">
+                  <div class="flex align-items-start gap-2 flex-1 min-w-0">
+                    <span class="text-color-secondary text-sm" style="min-width: 2rem">
+                      #{{ i }}
+                    </span>
+                    <app-step-display [step]="sub" />
+                  </div>
+                  <div class="flex gap-1 flex-shrink-0">
+                    <p-button
+                      icon="pi pi-arrow-up"
+                      [rounded]="true"
+                      [text]="true"
+                      size="small"
+                      [disabled]="i === 0"
+                      (onClick)="moveSubStep(arr.key, i, -1)"
+                      ariaLabel="Monter"
+                      pTooltip="Monter"
+                    />
+                    <p-button
+                      icon="pi pi-arrow-down"
+                      [rounded]="true"
+                      [text]="true"
+                      size="small"
+                      [disabled]="i === subSteps(arr.key).length - 1"
+                      (onClick)="moveSubStep(arr.key, i, 1)"
+                      ariaLabel="Descendre"
+                      pTooltip="Descendre"
+                    />
+                    <p-button
+                      icon="pi pi-pencil"
+                      [rounded]="true"
+                      [text]="true"
+                      size="small"
+                      (onClick)="openEditSubStep(arr.key, i)"
+                      ariaLabel="Modifier"
+                      pTooltip="Modifier"
+                    />
+                    <p-button
+                      icon="pi pi-trash"
+                      [rounded]="true"
+                      [text]="true"
+                      size="small"
+                      severity="danger"
+                      (onClick)="deleteSubStep(arr.key, i)"
+                      ariaLabel="Supprimer"
+                      pTooltip="Supprimer"
+                    />
+                  </div>
+                </div>
+              }
+              <p-button
+                label="Ajouter une sous-étape"
+                icon="pi pi-plus"
+                severity="secondary"
+                [text]="true"
+                styleClass="align-self-start"
+                (onClick)="openAddSubStep(arr.key)"
+              />
+            </div>
+          </p-panel>
         }
       } @else {
-        <!-- JSON fallback: raw editor for power users or composite types -->
+        <!-- JSON fallback: raw editor for power users or unknown types -->
         <app-json-editor
           label="Étape (JSON brut)"
           [value]="rawJson()"
@@ -313,6 +382,37 @@ function isEmpty(v: unknown): boolean {
         />
       }
     </div>
+
+    <!-- Nested dialog: sub-step editor for composite arrays -->
+    <p-dialog
+      [modal]="true"
+      [(visible)]="subDialogOpenValue"
+      [header]="
+        (subDialogIndex() === null ? 'Ajouter à ' : 'Modifier #' + subDialogIndex() + ' de ') +
+        subDialogArrayKey()
+      "
+      [style]="{ width: '720px' }"
+    >
+      <app-step-editor
+        [step]="subDialogDraft()"
+        (valueChange)="onSubDialogDraftChange($event)"
+        (validChange)="subDialogValid.set($event)"
+      />
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Annuler"
+          severity="secondary"
+          [text]="true"
+          (onClick)="subDialogOpen.set(false)"
+        />
+        <p-button
+          label="Enregistrer"
+          icon="pi pi-save"
+          [disabled]="!subDialogValid()"
+          (onClick)="saveSubStepDraft()"
+        />
+      </ng-template>
+    </p-dialog>
   `,
 })
 export class StepEditorComponent implements OnChanges {
@@ -334,6 +434,7 @@ export class StepEditorComponent implements OnChanges {
   private readonly _type = signal<string>('');
   private readonly _typed = signal<Record<string, unknown>>({});
   private readonly _common = signal<Record<string, unknown>>({});
+  private readonly _nested = signal<Record<string, Record<string, unknown>[]>>({});
   private readonly _mode = signal<Mode>('form');
   private readonly _raw = signal<Record<string, unknown>>({});
   readonly advancedOpen = signal(false);
@@ -343,11 +444,27 @@ export class StepEditorComponent implements OnChanges {
   readonly mode = this._mode.asReadonly();
   readonly typed = this._typed.asReadonly();
   readonly common = this._common.asReadonly();
+  readonly nested = this._nested.asReadonly();
   readonly rawJson = this._raw.asReadonly();
 
-  // Two-way-bound UI mirrors used by p-select / p-selectbutton ngModel.
+  // Nested sub-step edit dialog state. When the user clicks + or ✏ on a
+  // sub-step we open a p-dialog containing another StepEditorComponent.
+  readonly subDialogOpen = signal(false);
+  readonly subDialogArrayKey = signal<string>('');
+  readonly subDialogIndex = signal<number | null>(null);
+  readonly subDialogDraft = signal<Record<string, unknown>>({});
+  readonly subDialogValid = signal(true);
+
+  // Two-way-bound UI mirrors used by p-select / p-selectbutton / p-dialog ngModel.
   typeValue = '';
   modeValue: Mode = 'form';
+
+  get subDialogOpenValue(): boolean {
+    return this.subDialogOpen();
+  }
+  set subDialogOpenValue(v: boolean) {
+    this.subDialogOpen.set(v);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('step' in changes) this.syncFromStep();
@@ -358,13 +475,19 @@ export class StepEditorComponent implements OnChanges {
     const type = typeof step['type'] === 'string' ? (step['type'] as string) : '';
     const schema = findStepSchema(type);
     const { typed, common } = splitStep(step, schema);
+    const nested: Record<string, Record<string, unknown>[]> = {};
+    for (const a of schema?.arrays ?? []) {
+      const raw = step[a.key];
+      nested[a.key] = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    }
     this._type.set(type);
     this._typed.set(typed);
     this._common.set(common);
+    this._nested.set(nested);
     this._raw.set(step);
-    // Default to form mode for atomic types and JSON for composites, so opening
-    // the dialog on a new step doesn't inherit the previous mode.
-    const nextMode: Mode = schema?.composite ? 'json' : 'form';
+    // Default to form mode for all known types (composites render their
+    // sub-step arrays as editable panels); JSON remains accessible via toggle.
+    const nextMode: Mode = schema ? 'form' : 'json';
     this._mode.set(nextMode);
     this.typeValue = type;
     this.modeValue = nextMode;
@@ -375,9 +498,13 @@ export class StepEditorComponent implements OnChanges {
     const schema = findStepSchema(type);
     this._type.set(type);
     this._typed.set(schema ? defaultsFor(schema) : {});
+    // Dropping the previous composite's sub-step arrays when switching to a
+    // different type is intentional — they belong to the old type and would be
+    // meaningless on the new one.
+    this._nested.set({});
     // Common fields persist across type changes — retry/timeout/when are
     // transverse and the user's intent is usually independent of the type.
-    const nextMode: Mode = schema?.composite ? 'json' : 'form';
+    const nextMode: Mode = schema ? 'form' : 'json';
     this._mode.set(nextMode);
     this.modeValue = nextMode;
     this.emit();
@@ -405,16 +532,84 @@ export class StepEditorComponent implements OnChanges {
   onJsonChange(value: unknown): void {
     const next = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
     this._raw.set(next);
-    // Re-derive typed/common so toggling back to form mode shows the values.
+    // Re-derive typed/common/nested so toggling back to form mode shows the values.
     const type = typeof next['type'] === 'string' ? (next['type'] as string) : '';
     const schema = findStepSchema(type);
     const { typed, common } = splitStep(next, schema);
+    const nested: Record<string, Record<string, unknown>[]> = {};
+    for (const a of schema?.arrays ?? []) {
+      const raw = next[a.key];
+      nested[a.key] = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    }
     this._type.set(type);
     this._typed.set(typed);
     this._common.set(common);
+    this._nested.set(nested);
     this.typeValue = type;
     this.valueChange.emit(next);
     this.validChange.emit(this.jsonValid());
+  }
+
+  // ---- Sub-step management for composite types -----------------------
+
+  subSteps(key: string): Record<string, unknown>[] {
+    return this._nested()[key] ?? [];
+  }
+
+  openAddSubStep(key: string): void {
+    this.subDialogArrayKey.set(key);
+    this.subDialogIndex.set(null);
+    this.subDialogDraft.set({ type: 'sleep', seconds: 1 });
+    this.subDialogValid.set(true);
+    this.subDialogOpen.set(true);
+  }
+
+  openEditSubStep(key: string, index: number): void {
+    const arr = this.subSteps(key);
+    const step = arr[index];
+    if (!step) return;
+    this.subDialogArrayKey.set(key);
+    this.subDialogIndex.set(index);
+    this.subDialogDraft.set(step);
+    this.subDialogValid.set(true);
+    this.subDialogOpen.set(true);
+  }
+
+  onSubDialogDraftChange(v: Record<string, unknown>): void {
+    this.subDialogDraft.set(v);
+  }
+
+  saveSubStepDraft(): void {
+    const key = this.subDialogArrayKey();
+    const index = this.subDialogIndex();
+    const draft = this.subDialogDraft();
+    const current = this._nested();
+    const arr = [...(current[key] ?? [])];
+    if (index === null) arr.push(draft);
+    else arr[index] = draft;
+    this._nested.set({ ...current, [key]: arr });
+    this.subDialogOpen.set(false);
+    this.emit();
+  }
+
+  moveSubStep(key: string, index: number, direction: -1 | 1): void {
+    const current = this._nested();
+    const arr = [...(current[key] ?? [])];
+    const target = index + direction;
+    if (target < 0 || target >= arr.length) return;
+    const tmp = arr[index];
+    arr[index] = arr[target];
+    arr[target] = tmp;
+    this._nested.set({ ...current, [key]: arr });
+    this.emit();
+  }
+
+  deleteSubStep(key: string, index: number): void {
+    const current = this._nested();
+    const arr = [...(current[key] ?? [])];
+    arr.splice(index, 1);
+    this._nested.set({ ...current, [key]: arr });
+    this.emit();
   }
 
   private compose(): Record<string, unknown> {
@@ -428,11 +623,20 @@ export class StepEditorComponent implements OnChanges {
         out[k] = v;
       }
     }
-    // Preserve sub-step arrays from the original step — the form never edits
-    // them but must not drop them on a simple field change either.
+    // Sub-step arrays: emit the edited in-memory version for known composite
+    // keys; preserve any other nested key carried by the original (defensive
+    // for types whose arrays are not declared in the schema yet).
+    const nested = this._nested();
+    const schema = this.schema();
+    const knownKeys = new Set(schema?.arrays?.map((a) => a.key) ?? []);
+    for (const [k, arr] of Object.entries(nested)) {
+      out[k] = arr;
+    }
     const original = this.step ?? {};
     for (const k of NESTED_KEYS) {
-      if (k in original) out[k] = original[k];
+      if (k in original && !knownKeys.has(k) && !(k in nested)) {
+        out[k] = original[k];
+      }
     }
     return out;
   }

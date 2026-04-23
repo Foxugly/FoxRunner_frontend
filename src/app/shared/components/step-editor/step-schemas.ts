@@ -30,16 +30,23 @@ export interface FieldSchema {
   multiline?: boolean;
 }
 
+export interface SubStepArraySchema {
+  key: string;
+  label: string;
+  placeholder?: string;
+}
+
 export interface StepSchema {
   type: string;
   label: string;
   icon: string;
   description?: string;
   fields: readonly FieldSchema[];
-  /** Composite step types have nested `steps` arrays; the form renders the
-   * top-level fields and delegates sub-step editing to the enclosing editor
-   * (or JSON mode for v1). */
   composite?: boolean;
+  /** Sub-step arrays owned by composite types (e.g. `steps` for group/repeat,
+   * `try_steps` + `catch_steps` + `finally_steps` for try). The editor renders
+   * each as a list with add/edit/delete/reorder controls. */
+  arrays?: readonly SubStepArraySchema[];
 }
 
 // ---- Shared field fragments --------------------------------------------
@@ -374,10 +381,11 @@ export const STEP_SCHEMAS: readonly StepSchema[] = [
   // -- Structures composites (éditées en mode JSON pour v1) -------------
   {
     type: 'group',
-    label: 'Groupe d\'étapes',
+    label: "Groupe d'étapes",
     icon: 'pi-folder',
     composite: true,
     fields: [],
+    arrays: [{ key: 'steps', label: 'Étapes du groupe' }],
   },
   {
     type: 'parallel',
@@ -385,6 +393,7 @@ export const STEP_SCHEMAS: readonly StepSchema[] = [
     icon: 'pi-sitemap',
     composite: true,
     fields: [],
+    arrays: [{ key: 'steps', label: 'Étapes (HTTP/notify/sleep uniquement)' }],
   },
   {
     type: 'repeat',
@@ -394,6 +403,7 @@ export const STEP_SCHEMAS: readonly StepSchema[] = [
     fields: [
       { name: 'times', label: 'Nombre de répétitions', kind: 'integer', required: true, default: 2 },
     ],
+    arrays: [{ key: 'steps', label: 'Étapes à répéter' }],
   },
   {
     type: 'try',
@@ -401,6 +411,11 @@ export const STEP_SCHEMAS: readonly StepSchema[] = [
     icon: 'pi-shield',
     composite: true,
     fields: [],
+    arrays: [
+      { key: 'try_steps', label: 'Tenter' },
+      { key: 'catch_steps', label: "En cas d'échec" },
+      { key: 'finally_steps', label: 'Finalement (toujours)' },
+    ],
   },
 ];
 
