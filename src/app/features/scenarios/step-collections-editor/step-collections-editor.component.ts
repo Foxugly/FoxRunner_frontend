@@ -15,9 +15,9 @@ import {
   type StepCollectionName,
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
+import { StepEditorComponent } from '../../../shared/components/step-editor/step-editor.component';
 
 type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
 
@@ -34,8 +34,8 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
     ConfirmDialogModule,
     PageHeaderComponent,
     EmptyStateComponent,
-    JsonEditorComponent,
     StepDisplayComponent,
+    StepEditorComponent,
   ],
   template: `
     <app-page-header
@@ -121,12 +121,10 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
       [style]="{ width: '700px' }"
       [closable]="!saving()"
     >
-      <app-json-editor
-        label="Étape (JSON)"
-        [value]="draftStep()"
+      <app-step-editor
+        [step]="draftStep()"
         (valueChange)="onDraftChange($event)"
         (validChange)="draftValid.set($event)"
-        [rows]="16"
       />
       <ng-template pTemplate="footer">
         <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="closeDialog()" />
