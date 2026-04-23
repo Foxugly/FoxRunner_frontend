@@ -17,6 +17,7 @@ import {
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
 
 type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
 
@@ -34,6 +35,7 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
     PageHeaderComponent,
     EmptyStateComponent,
     JsonEditorComponent,
+    StepDisplayComponent,
   ],
   template: `
     <app-page-header
@@ -78,19 +80,19 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
               <div class="flex flex-column gap-2">
                 @for (step of stepsByCollection()[col]; track $index; let idx = $index) {
                   <p-card>
-                    <div class="flex align-items-center justify-content-between gap-2">
-                      <div class="flex align-items-center gap-2">
-                        <p-tag severity="secondary" [value]="'#' + idx" />
-                        <strong>{{ stepType(step) }}</strong>
-                        <small class="text-color-secondary">{{ stepSummary(step) }}</small>
+                    <div class="flex align-items-start justify-content-between gap-2">
+                      <div class="flex align-items-start gap-2 flex-1 min-w-0">
+                        <p-tag severity="secondary" [value]="'#' + idx" styleClass="flex-shrink-0" />
+                        <app-step-display [step]="step" />
                       </div>
-                      <div class="flex gap-1">
+                      <div class="flex gap-1 flex-shrink-0">
                         <p-button
                           icon="pi pi-pencil"
                           [rounded]="true"
                           [text]="true"
                           size="small"
                           (onClick)="openEdit(col, idx, step)"
+                          ariaLabel="Modifier l'étape"
                         />
                         <p-button
                           icon="pi pi-trash"
@@ -98,6 +100,7 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
                           [text]="true"
                           size="small"
                           severity="danger"
+                          ariaLabel="Supprimer l'étape"
                           (onClick)="askDelete(col, idx)"
                         />
                       </div>
@@ -180,22 +183,6 @@ export class StepCollectionsEditorComponent implements OnInit {
 
   label(col: StepCollectionName): string {
     return STEP_COLLECTION_LABELS_FR[col];
-  }
-
-  stepType(step: Record<string, unknown>): string {
-    return (step['type'] as string | undefined) ?? 'step';
-  }
-
-  stepSummary(step: Record<string, unknown>): string {
-    const keys = Object.keys(step).filter((k) => k !== 'type');
-    return keys
-      .slice(0, 3)
-      .map((k) => {
-        const v = step[k];
-        const str = typeof v === 'object' ? JSON.stringify(v) : String(v);
-        return `${k}=${str.length > 30 ? str.slice(0, 30) + '…' : str}`;
-      })
-      .join(' · ');
   }
 
   private async reload(): Promise<void> {

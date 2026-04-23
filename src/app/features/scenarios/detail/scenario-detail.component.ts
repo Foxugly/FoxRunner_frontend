@@ -20,6 +20,7 @@ import {
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
 
 @Component({
@@ -36,6 +37,7 @@ import { SharesDialogComponent } from '../shares/shares-dialog.component';
     PageHeaderComponent,
     EmptyStateComponent,
     SharesDialogComponent,
+    StepDisplayComponent,
   ],
   template: `
     <app-page-header
@@ -169,12 +171,9 @@ import { SharesDialogComponent } from '../shares/shares-dialog.component';
                   <div class="flex flex-column gap-2">
                     @for (step of stepsByCollection()[col]; track $index) {
                       <div class="p-3 border-1 surface-border border-round">
-                        <div class="flex align-items-center justify-content-between gap-2">
-                          <div class="flex align-items-center gap-2">
-                            <p-tag severity="secondary" [value]="'#' + $index" />
-                            <strong>{{ stepType(step) }}</strong>
-                          </div>
-                          <small class="text-color-secondary">{{ stepSummary(step) }}</small>
+                        <div class="flex align-items-start justify-content-between gap-2">
+                          <app-step-display [step]="step" />
+                          <p-tag severity="secondary" [value]="'#' + $index" styleClass="flex-shrink-0" />
                         </div>
                       </div>
                     }
@@ -229,23 +228,6 @@ export class ScenarioDetailComponent implements OnInit {
 
   labelFor(col: StepCollectionName): string {
     return STEP_COLLECTION_LABELS_FR[col];
-  }
-
-  stepType(step: Record<string, unknown>): string {
-    return (step['type'] as string | undefined) ?? 'step';
-  }
-
-  stepSummary(step: Record<string, unknown>): string {
-    const keys = Object.keys(step).filter((k) => k !== 'type');
-    if (keys.length === 0) return '';
-    return keys
-      .slice(0, 3)
-      .map((k) => {
-        const v = step[k];
-        const str = typeof v === 'object' ? JSON.stringify(v) : String(v);
-        return `${k}=${str.length > 30 ? str.slice(0, 30) + '…' : str}`;
-      })
-      .join(' · ');
   }
 
   private async load(scenarioId: string): Promise<void> {
