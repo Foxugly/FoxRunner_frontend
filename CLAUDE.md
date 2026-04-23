@@ -66,7 +66,7 @@ The backend must be running on port 8000 for `npm run gen:api`, for the app to b
 
 - **Unit**: vitest (not Karma/Jasmine). Configured via `@angular/build:unit-test`. Globals (`describe`, `it`, `expect`) available from `vitest/globals`. Run with `ng test --watch=false`. Do not pass `--browsers=…` — no browser adapter package is installed; jsdom is used.
 - **Unit coverage** (26 tests): `AuthService`, `authInterceptor`, `ApiDatePipe`, `newIdempotencyKey`, `ScenariosService`, `SlotsService`, `JobsService`, `NetworkHealthService`, `App` smoke.
-- **E2E**: Playwright in `e2e/`. `playwright.config.ts` auto-starts `ng serve` on 4200 unless `E2E_SKIP_WEBSERVER=1`. Tests require the backend to be reachable and the admin account to exist. Credentials default to `admin@local.test` / `adminadmin123456`; override with `E2E_EMAIL` and `E2E_PASSWORD` env vars. Run `npm run e2e:install` once to download Chromium.
+- **E2E**: Playwright in `e2e/`. `playwright.config.ts` auto-starts `ng serve` on 4200 unless `E2E_SKIP_WEBSERVER=1`. Tests require the backend to be reachable and the admin account to exist. Credentials default to `admin@local` / `admin1234` (Django bootstrap default); override with `E2E_EMAIL` and `E2E_PASSWORD` env vars. Run `npm run e2e:install` once to download Chromium.
 
 ## Feature coverage
 
