@@ -35,6 +35,7 @@
             [text]="true"
             (onClick)="theme.toggle()"
             pTooltip="Basculer thème"
+            ariaLabel="Basculer thème"
           />
           <p-button
             icon="pi pi-user"
@@ -43,6 +44,7 @@
             [text]="true"
             routerLink="/profile"
             pTooltip="Profil"
+            ariaLabel="Profil"
           />
           <p-button
             icon="pi pi-sign-out"
@@ -51,6 +53,7 @@
             [text]="true"
             (onClick)="logout()"
             pTooltip="Déconnexion"
+            ariaLabel="Déconnexion"
           />
         </div>
       </ng-template>
