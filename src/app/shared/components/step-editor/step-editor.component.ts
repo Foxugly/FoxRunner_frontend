@@ -6,13 +6,11 @@ import {
   Output,
   SimpleChanges,
   computed,
-  forwardRef,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
-import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
@@ -32,6 +30,18 @@ import {
 } from './step-schemas';
 
 type Mode = 'form' | 'json';
+
+/**
+ * Breadcrumb stack entry remembered while the user drills into sub-steps.
+ * When they click "Retour", the current level is composed, merged back into
+ * `parentStep` at `arrayKey[index]`, and the editor restores the parent.
+ */
+interface ParentFrame {
+  parentStep: Record<string, unknown>;
+  arrayKey: string;
+  index: number | null; // null means "append on back"
+  label: string;
+}
 
 // Sub-step array keys that composite steps own and that the editor must not
 // drop when recomputing the step from form fields.
@@ -82,7 +92,6 @@ function isEmpty(v: unknown): boolean {
     FormsModule,
     ButtonModule,
     CheckboxModule,
-    DialogModule,
     InputNumberModule,
     InputTextModule,
     PanelModule,
@@ -93,10 +102,30 @@ function isEmpty(v: unknown): boolean {
     TooltipModule,
     JsonEditorComponent,
     StepDisplayComponent,
-    forwardRef(() => StepEditorComponent),
   ],
   template: `
     <div class="flex flex-column gap-3">
+      <!-- Breadcrumb when editing nested sub-steps -->
+      @if (parents().length > 0) {
+        <div class="flex align-items-center gap-2 p-2 surface-100 border-round text-sm">
+          <p-button
+            icon="pi pi-arrow-left"
+            label="Retour"
+            [text]="true"
+            severity="secondary"
+            size="small"
+            (onClick)="onBackToParent()"
+          />
+          <span class="text-color-secondary">
+            @for (crumb of parents(); track $index; let last = $last) {
+              <code>{{ crumb.label }}</code>
+              <span class="mx-1">›</span>
+            }
+            <strong>{{ currentBreadcrumb() }}</strong>
+          </span>
+        </div>
+      }
+
       <!-- Header: type picker + mode toggle -->
       <div class="flex flex-wrap align-items-end justify-content-between gap-3">
         <div class="flex flex-column gap-2 flex-1 min-w-0">
@@ -382,37 +411,6 @@ function isEmpty(v: unknown): boolean {
         />
       }
     </div>
-
-    <!-- Nested dialog: sub-step editor for composite arrays -->
-    <p-dialog
-      [modal]="true"
-      [(visible)]="subDialogOpenValue"
-      [header]="
-        (subDialogIndex() === null ? 'Ajouter à ' : 'Modifier #' + subDialogIndex() + ' de ') +
-        subDialogArrayKey()
-      "
-      [style]="{ width: '720px' }"
-    >
-      <app-step-editor
-        [step]="subDialogDraft()"
-        (valueChange)="onSubDialogDraftChange($event)"
-        (validChange)="subDialogValid.set($event)"
-      />
-      <ng-template pTemplate="footer">
-        <p-button
-          label="Annuler"
-          severity="secondary"
-          [text]="true"
-          (onClick)="subDialogOpen.set(false)"
-        />
-        <p-button
-          label="Enregistrer"
-          icon="pi pi-save"
-          [disabled]="!subDialogValid()"
-          (onClick)="saveSubStepDraft()"
-        />
-      </ng-template>
-    </p-dialog>
   `,
 })
 export class StepEditorComponent implements OnChanges {
@@ -437,6 +435,7 @@ export class StepEditorComponent implements OnChanges {
   private readonly _nested = signal<Record<string, Record<string, unknown>[]>>({});
   private readonly _mode = signal<Mode>('form');
   private readonly _raw = signal<Record<string, unknown>>({});
+  private readonly _currentOriginal = signal<Record<string, unknown>>({});
   readonly advancedOpen = signal(false);
   readonly jsonValid = signal(true);
 
@@ -447,31 +446,33 @@ export class StepEditorComponent implements OnChanges {
   readonly nested = this._nested.asReadonly();
   readonly rawJson = this._raw.asReadonly();
 
-  // Nested sub-step edit dialog state. When the user clicks + or ✏ on a
-  // sub-step we open a p-dialog containing another StepEditorComponent.
-  readonly subDialogOpen = signal(false);
-  readonly subDialogArrayKey = signal<string>('');
-  readonly subDialogIndex = signal<number | null>(null);
-  readonly subDialogDraft = signal<Record<string, unknown>>({});
-  readonly subDialogValid = signal(true);
+  // Breadcrumb stack for sub-step navigation. Each entry captures the parent
+  // step's form state (so we can return to it) plus where to write the current
+  // level's result when we pop.
+  private readonly _parents = signal<ParentFrame[]>([]);
+  readonly parents = this._parents.asReadonly();
 
-  // Two-way-bound UI mirrors used by p-select / p-selectbutton / p-dialog ngModel.
+  readonly currentBreadcrumb = computed(() => {
+    const type = this._type();
+    const schema = findStepSchema(type);
+    return schema?.label ?? type ?? 'étape';
+  });
+
+  // Two-way-bound UI mirrors used by p-select / p-selectbutton ngModel.
   typeValue = '';
   modeValue: Mode = 'form';
 
-  get subDialogOpenValue(): boolean {
-    return this.subDialogOpen();
-  }
-  set subDialogOpenValue(v: boolean) {
-    this.subDialogOpen.set(v);
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
-    if ('step' in changes) this.syncFromStep();
+    if ('step' in changes) {
+      // Outer parent assigned a new step — abandon any in-progress sub-step
+      // navigation and re-initialise from the new root.
+      this._parents.set([]);
+      this.syncFromStep(this.step);
+    }
   }
 
-  private syncFromStep(): void {
-    const step = this.step ?? {};
+  private syncFromStep(root: Record<string, unknown>): void {
+    const step = root ?? {};
     const type = typeof step['type'] === 'string' ? (step['type'] as string) : '';
     const schema = findStepSchema(type);
     const { typed, common } = splitStep(step, schema);
@@ -485,6 +486,7 @@ export class StepEditorComponent implements OnChanges {
     this._common.set(common);
     this._nested.set(nested);
     this._raw.set(step);
+    this._currentOriginal.set(step);
     // Default to form mode for all known types (composites render their
     // sub-step arrays as editable panels); JSON remains accessible via toggle.
     const nextMode: Mode = schema ? 'form' : 'json';
@@ -557,39 +559,57 @@ export class StepEditorComponent implements OnChanges {
   }
 
   openAddSubStep(key: string): void {
-    this.subDialogArrayKey.set(key);
-    this.subDialogIndex.set(null);
-    this.subDialogDraft.set({ type: 'sleep', seconds: 1 });
-    this.subDialogValid.set(true);
-    this.subDialogOpen.set(true);
+    this.pushParent(key, null);
+    this.syncFromStep({ type: 'sleep', seconds: 1 });
   }
 
   openEditSubStep(key: string, index: number): void {
     const arr = this.subSteps(key);
     const step = arr[index];
     if (!step) return;
-    this.subDialogArrayKey.set(key);
-    this.subDialogIndex.set(index);
-    this.subDialogDraft.set(step);
-    this.subDialogValid.set(true);
-    this.subDialogOpen.set(true);
+    this.pushParent(key, index);
+    this.syncFromStep(step);
   }
 
-  onSubDialogDraftChange(v: Record<string, unknown>): void {
-    this.subDialogDraft.set(v);
+  onBackToParent(): void {
+    const parents = this._parents();
+    if (parents.length === 0) return;
+    // Compose the current level, then restore the immediate parent with the
+    // edited child merged in at the declared write-back position.
+    const edited = this.compose();
+    const parent = parents[parents.length - 1];
+    const parentStep = this.mergeChildIntoParent(parent, edited);
+    this._parents.update((p) => p.slice(0, -1));
+    this.syncFromStep(parentStep);
   }
 
-  saveSubStepDraft(): void {
-    const key = this.subDialogArrayKey();
-    const index = this.subDialogIndex();
-    const draft = this.subDialogDraft();
-    const current = this._nested();
-    const arr = [...(current[key] ?? [])];
-    if (index === null) arr.push(draft);
-    else arr[index] = draft;
-    this._nested.set({ ...current, [key]: arr });
-    this.subDialogOpen.set(false);
-    this.emit();
+  private pushParent(key: string, index: number | null): void {
+    // Snapshot the current level before descending. We remember the parent's
+    // full step, the array/index we're editing, and a human-readable label
+    // for the breadcrumb.
+    const parentStep = this.compose();
+    const schema = findStepSchema(this._type());
+    this._parents.update((p) => [
+      ...p,
+      {
+        parentStep,
+        arrayKey: key,
+        index,
+        label: schema?.label ?? this._type() ?? 'composite',
+      },
+    ]);
+  }
+
+  private mergeChildIntoParent(
+    parent: ParentFrame,
+    child: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const arr = Array.isArray(parent.parentStep[parent.arrayKey])
+      ? [...(parent.parentStep[parent.arrayKey] as Record<string, unknown>[])]
+      : [];
+    if (parent.index === null) arr.push(child);
+    else arr[parent.index] = child;
+    return { ...parent.parentStep, [parent.arrayKey]: arr };
   }
 
   moveSubStep(key: string, index: number, direction: -1 | 1): void {
@@ -632,7 +652,7 @@ export class StepEditorComponent implements OnChanges {
     for (const [k, arr] of Object.entries(nested)) {
       out[k] = arr;
     }
-    const original = this.step ?? {};
+    const original = this._currentOriginal();
     for (const k of NESTED_KEYS) {
       if (k in original && !knownKeys.has(k) && !(k in nested)) {
         out[k] = original[k];
@@ -642,9 +662,16 @@ export class StepEditorComponent implements OnChanges {
   }
 
   private emit(): void {
-    const out = this.compose();
+    const current = this.compose();
+    // Merge up through any open parent frames so the outer dialog always sees
+    // the full top-level step, even while the user is editing deep sub-steps.
+    let out = current;
+    const parents = this._parents();
+    for (let i = parents.length - 1; i >= 0; i--) {
+      out = this.mergeChildIntoParent(parents[i], out);
+    }
     this.valueChange.emit(out);
-    this.validChange.emit(this.checkValid(out));
+    this.validChange.emit(this.checkValid(current));
   }
 
   private checkValid(step: Record<string, unknown>): boolean {
