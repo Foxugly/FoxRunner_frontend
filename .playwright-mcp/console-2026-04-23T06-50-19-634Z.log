@@ -1,0 +1,4 @@
+[     522ms] [LOG] Angular is running in development mode. @ http://localhost:4200/@fs/C:/Users/Renaud/WebstormProjects/FoxRunner_frontend/.angular/cache/21.2.7/fox-runner/vite/deps/chunk-LCXWEOF5.js?v=34127449:14405
+[   25841ms] [ERROR] Access to XMLHttpRequest at 'http://127.0.0.1:8000/api/v1/auth/jwt/login' from origin 'http://localhost:4200' has been blocked by CORS policy: Request header field x-request-id is not allowed by Access-Control-Allow-Headers in preflight response. @ http://localhost:4200/login:0
+[   25844ms] [ERROR] [API error] http_0 Http failure response for http://127.0.0.1:8000/api/v1/auth/jwt/login: 0 Unknown Error X-Request-ID: 6b1e25f8-0450-43ee-bbac-6b8fb1338706 @ http://localhost:4200/main.js:253
+[   25845ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://127.0.0.1:8000/api/v1/auth/jwt/login:0
