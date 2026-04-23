@@ -62,10 +62,9 @@ import { AuthService } from '../../../core/auth/auth.service';
               [loading]="loading()"
               [disabled]="loading() || form.invalid"
             />
-            <div class="flex justify-content-between text-sm">
-              <a routerLink="/forgot-password">Mot de passe oublié ?</a>
-              <a routerLink="/register">Créer un compte</a>
-            </div>
+            <a routerLink="/forgot-password" class="text-sm text-center">
+              Mot de passe oublié ?
+            </a>
           </form>
         </p-card>
       </div>

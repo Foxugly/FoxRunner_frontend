@@ -1,7 +1,5 @@
 import {
   ApplicationConfig,
-  inject,
-  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -14,7 +12,6 @@ import Aura from '@primeuix/themes/aura';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { errorInterceptor } from './core/http/error.interceptor';
-import { ClientConfigService } from './core/config/client-config.service';
 import { primeNgFrenchTranslation } from './core/i18n/primeng-fr';
 
 export const appConfig: ApplicationConfig = {
@@ -37,6 +34,5 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     ConfirmationService,
-    provideAppInitializer(() => inject(ClientConfigService).load()),
   ],
 };

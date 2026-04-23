@@ -105,7 +105,7 @@ import { SharesDialogComponent } from '../shares/shares-dialog.component';
                 @if (s.role === 'owner') {
                   <p-tag severity="success" value="Propriétaire" />
                 } @else {
-                  <p-tag severity="info" [value]="s.role ?? '—'" />
+                  <p-tag severity="info" [value]="s.role" />
                 }
               </div>
               <div>

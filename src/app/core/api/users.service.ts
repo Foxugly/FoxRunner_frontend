@@ -1,15 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import type { FeatureFlags } from './types';
+import { Injectable } from '@angular/core';
 
+/**
+ * Placeholder: the Django backend removed `/users/me/features`. This service
+ * is kept for dependency symmetry and will host future account-scoped endpoints
+ * the moment they come back.
+ */
 @Injectable({ providedIn: 'root' })
-export class UsersService {
-  private readonly http = inject(HttpClient);
-  private readonly base = environment.apiBaseUrl;
-
-  getMyFeatures(): Promise<FeatureFlags> {
-    return firstValueFrom(this.http.get<FeatureFlags>(`${this.base}/users/me/features`));
-  }
-}
+export class UsersService {}

@@ -38,6 +38,9 @@ yarn-error.log
 /test-results
 /blob-report
 /playwright/.cache
+
+# Scratch copy of the backend OpenAPI (used by `npm run gen:api:file`)
+/openapi.local.json
 /libpeerconnection.log
 testem.log
 /typings

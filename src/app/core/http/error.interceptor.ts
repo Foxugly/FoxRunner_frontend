@@ -10,6 +10,8 @@ interface ApiErrorBody {
   code?: string;
   message?: string;
   details?: unknown;
+  // Django Ninja default shape (used if exception_handler is missing): {detail: string}.
+  detail?: string;
 }
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -27,7 +29,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       const reqId = err.headers?.get('X-Request-ID') ?? req.headers.get('X-Request-ID') ?? null;
       const body =
         err.error && typeof err.error === 'object' ? (err.error as ApiErrorBody) : null;
-      const apiMessage = body?.message ?? err.message ?? 'Erreur inconnue.';
+      const apiMessage = body?.message ?? body?.detail ?? err.message ?? 'Erreur inconnue.';
       const apiCode = body?.code ?? `http_${err.status}`;
 
       if (err.status === 401 && !req.url.includes('/auth/jwt/login')) {
