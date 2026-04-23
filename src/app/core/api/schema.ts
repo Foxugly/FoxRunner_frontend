@@ -1717,6 +1717,28 @@ export interface components {
             /** Offset */
             offset: number;
         };
+        /**
+         * ErrorOut
+         * @description The {code, message, details} envelope returned by the global Ninja
+         *     exception handler in ``foxrunner.exception_handlers``.
+         *
+         *     Surfaced in OpenAPI by ``scripts/export_openapi.py``, which post-processes
+         *     the Ninja-generated spec to attach this schema as the default response on
+         *     every operation. Frontend consumers get strongly-typed errors out of the
+         *     box without us needing ``responses={400: ErrorOut, 401: ErrorOut, ...}``
+         *     on every single endpoint.
+         */
+        ErrorOut: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+            /**
+             * Details
+             * @default null
+             */
+            details: unknown | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -1742,6 +1764,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     accounts_api_jwt_logout: {
@@ -1759,6 +1790,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -1786,6 +1826,15 @@ export interface operations {
                     };
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     accounts_api_reset_password: {
@@ -1808,6 +1857,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     accounts_api_users_me: {
@@ -1826,6 +1884,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -1852,6 +1919,15 @@ export interface operations {
                     "application/json": components["schemas"]["UserOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_create_scenario_endpoint: {
@@ -1876,6 +1952,15 @@ export interface operations {
                     "application/json": components["schemas"]["ScenarioOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_delete_scenario_endpoint: {
@@ -1896,6 +1981,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeletedOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -1924,6 +2018,15 @@ export interface operations {
                     "application/json": components["schemas"]["ScenarioOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_duplicate_scenario_endpoint: {
@@ -1948,6 +2051,15 @@ export interface operations {
                     "application/json": components["schemas"]["ScenarioOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_list_scenario_shares_endpoint: {
@@ -1968,6 +2080,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ShareList"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -1996,6 +2117,15 @@ export interface operations {
                     "application/json": components["schemas"]["ShareOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_unshare_scenario_endpoint: {
@@ -2017,6 +2147,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeletedOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2043,6 +2182,15 @@ export interface operations {
                     "application/json": components["schemas"]["SlotPage"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_create_slot_endpoint: {
@@ -2067,6 +2215,15 @@ export interface operations {
                     "application/json": components["schemas"]["SlotOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_get_slot_endpoint: {
@@ -2089,6 +2246,15 @@ export interface operations {
                     "application/json": components["schemas"]["SlotOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_delete_slot_endpoint: {
@@ -2109,6 +2275,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeletedOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2137,6 +2312,15 @@ export interface operations {
                     "application/json": components["schemas"]["SlotOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_list_step_collections_endpoint: {
@@ -2157,6 +2341,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2179,6 +2372,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2210,6 +2412,15 @@ export interface operations {
                     "application/json": components["schemas"]["StepMutationOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_get_step_endpoint: {
@@ -2232,6 +2443,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2262,6 +2482,15 @@ export interface operations {
                     "application/json": components["schemas"]["StepMutationOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_delete_step_endpoint: {
@@ -2285,6 +2514,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StepDeleteOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2312,6 +2550,15 @@ export interface operations {
                     "application/json": components["schemas"]["ScenarioListPage"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_get_user_scenario_endpoint: {
@@ -2333,6 +2580,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ScenarioDetailOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2357,6 +2613,15 @@ export interface operations {
                     "application/json": components["schemas"]["ScenarioDataOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_user_plan_endpoint: {
@@ -2376,6 +2641,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2400,6 +2674,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SlotPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2427,6 +2710,15 @@ export interface operations {
                     "application/json": components["schemas"]["RunOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     catalog_api_run_user_next_endpoint: {
@@ -2449,6 +2741,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2480,6 +2781,15 @@ export interface operations {
                     "application/json": components["schemas"]["HistoryPage"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_api_health: {
@@ -2497,6 +2807,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2521,6 +2840,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2549,6 +2877,15 @@ export interface operations {
                     "application/json": components["schemas"]["JobPage"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_api_get_job_endpoint: {
@@ -2571,6 +2908,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2597,6 +2943,15 @@ export interface operations {
                     "application/json": components["schemas"]["JobEventOut"][];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_api_cancel_job_endpoint: {
@@ -2619,6 +2974,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2645,6 +3009,15 @@ export interface operations {
                     "application/json": components["schemas"]["JobOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_admin_list_users_endpoint: {
@@ -2665,6 +3038,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2690,6 +3072,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_admin_config_checks_endpoint: {
@@ -2708,6 +3099,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ConfigChecksOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2730,6 +3130,15 @@ export interface operations {
                     "application/json": components["schemas"]["DbStatsOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_admin_export_endpoint: {
@@ -2748,6 +3157,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ExportOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2778,6 +3196,15 @@ export interface operations {
                     "application/json": components["schemas"]["ImportDryRun"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_admin_retention_endpoint: {
@@ -2802,6 +3229,15 @@ export interface operations {
                     "application/json": components["schemas"]["RetentionResult"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_admin_list_settings_endpoint: {
@@ -2823,6 +3259,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AppSettingPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -2851,6 +3296,15 @@ export interface operations {
                     "application/json": components["schemas"]["AppSettingOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_admin_delete_setting_endpoint: {
@@ -2870,6 +3324,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2897,6 +3360,15 @@ export interface operations {
                     "application/json": components["schemas"]["AuditPage"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_artifacts_list_endpoint: {
@@ -2920,6 +3392,15 @@ export interface operations {
                     "application/json": components["schemas"]["ArtifactPage"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_artifacts_prune_endpoint: {
@@ -2939,6 +3420,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2960,6 +3450,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -2984,6 +3483,15 @@ export interface operations {
                     "application/json": components["schemas"]["MonitoringSummary"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_admin_api_metrics_endpoint: {
@@ -3001,6 +3509,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };
@@ -3023,6 +3540,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GraphSubscriptionPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -3049,6 +3575,15 @@ export interface operations {
                     "application/json": components["schemas"]["GraphSubscriptionOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_graph_api_delete_subscription_endpoint: {
@@ -3069,6 +3604,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DeletedOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -3097,6 +3641,15 @@ export interface operations {
                     "application/json": components["schemas"]["GraphSubscriptionOut"];
                 };
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_graph_api_list_notifications_endpoint: {
@@ -3119,6 +3672,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GraphNotificationPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
                 };
             };
         };
@@ -3147,6 +3709,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
         };
     };
     ops_graph_api_graph_lifecycle_endpoint: {
@@ -3172,6 +3743,15 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
             };
         };
     };

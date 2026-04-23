@@ -91,6 +91,12 @@ export type GraphSubscription = S['GraphSubscriptionOut'];
 export type GraphRenew = S['GraphRenewIn'];
 export type GraphNotification = S['GraphNotificationOut'];
 
+// --- Errors --------------------------------------------------------------
+// The Django backend's global Ninja exception handler emits this shape on
+// every non-2xx response. Post-processed into the OpenAPI spec as the
+// `default` response on all 62 endpoints by scripts/export_openapi.py.
+export type ApiError = S['ErrorOut'];
+
 // --- Job statuses --------------------------------------------------------
 export type JobStatus = 'queued' | 'running' | 'success' | 'failed' | 'cancelled';
 

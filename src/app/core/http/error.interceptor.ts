@@ -3,15 +3,17 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { catchError, tap, throwError } from 'rxjs';
+import type { ApiError } from '../api/types';
 import { AuthService } from '../auth/auth.service';
 import { NetworkHealthService } from './network-health.service';
 
-interface ApiErrorBody {
-  code?: string;
-  message?: string;
-  details?: unknown;
-  // Django Ninja default shape (used if exception_handler is missing): {detail: string}.
-  detail?: string;
+function isApiError(body: unknown): body is ApiError {
+  return (
+    typeof body === 'object' &&
+    body !== null &&
+    typeof (body as { code?: unknown }).code === 'string' &&
+    typeof (body as { message?: unknown }).message === 'string'
+  );
 }
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
@@ -27,10 +29,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err: HttpErrorResponse) => {
       health.reportFailure(err.status);
       const reqId = err.headers?.get('X-Request-ID') ?? req.headers.get('X-Request-ID') ?? null;
-      const body =
-        err.error && typeof err.error === 'object' ? (err.error as ApiErrorBody) : null;
-      const apiMessage = body?.message ?? body?.detail ?? err.message ?? 'Erreur inconnue.';
-      const apiCode = body?.code ?? `http_${err.status}`;
+      const apiError = isApiError(err.error) ? err.error : null;
+      const apiMessage = apiError?.message ?? err.message ?? 'Erreur inconnue.';
+      const apiCode = apiError?.code ?? `http_${err.status}`;
 
       if (err.status === 401 && !req.url.includes('/auth/jwt/login')) {
         auth.clear();
