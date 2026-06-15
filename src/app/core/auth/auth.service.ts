@@ -44,6 +44,11 @@ export class AuthService {
     await this.refreshCurrentUser();
   }
 
+  async loginWithToken(accessToken: string): Promise<void> {
+    this._token.set(accessToken);
+    await this.refreshCurrentUser();
+  }
+
   async refreshCurrentUser(): Promise<void> {
     const user = await firstValueFrom(
       this.http.get<CurrentUser>(`${environment.apiBaseUrl}/users/me`),
