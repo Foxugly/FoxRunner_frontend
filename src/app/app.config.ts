@@ -11,6 +11,9 @@ import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { routes } from './app.routes';
+import { authInterceptor } from './core/http/auth.interceptor';
+import { errorInterceptor } from './core/http/error.interceptor';
+import { primeNgFrenchTranslation } from './core/i18n/primeng-fr';
 
 const FoxAura = definePreset(Aura, {
   semantic: {
@@ -29,9 +32,6 @@ const FoxAura = definePreset(Aura, {
     },
   },
 });
-import { authInterceptor } from './core/http/auth.interceptor';
-import { errorInterceptor } from './core/http/error.interceptor';
-import { primeNgFrenchTranslation } from './core/i18n/primeng-fr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
