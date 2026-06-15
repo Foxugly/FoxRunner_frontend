@@ -6,6 +6,7 @@
         pInputText
         type="text"
         [placeholder]="searchPlaceholder"
+        [attr.aria-label]="searchPlaceholder"
         (input)="dt.filterGlobal($any($event.target).value, 'contains')"
       />
     </p-iconfield>

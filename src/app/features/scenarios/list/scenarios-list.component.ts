@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -156,7 +156,6 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
 
@@ -260,9 +259,5 @@ export class ScenariosListComponent implements OnInit {
         }
       },
     });
-  }
-
-  goToNew(): void {
-    this.router.navigate(['/scenarios', 'new']);
   }
 }
