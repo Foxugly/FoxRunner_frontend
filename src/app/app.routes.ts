@@ -23,6 +23,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'auth/magic/:token',
+    loadComponent: () =>
+      import('./features/auth/magic-link-exchange/magic-link-exchange.component').then(
+        (m) => m.MagicLinkExchangeComponent,
+      ),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     children: [
