@@ -16,51 +16,11 @@
 
 @if (auth.isLoggedIn()) {
   <div class="fox-shell">
-    <p-menubar [model]="topMenu()" styleClass="border-noround fox-menubar">
-      <ng-template pTemplate="start">
-        <a routerLink="/" class="flex align-items-center gap-2 no-underline mr-4">
-          <i class="pi pi-bolt" style="font-size: 1.4rem; color: var(--fox-primary)"></i>
-          <span class="fox-brand text-xl">FoxRunner</span>
-        </a>
-      </ng-template>
-      <ng-template pTemplate="end">
-        <div class="flex align-items-center gap-2">
-          <span class="hidden md:inline text-color-secondary mr-2">{{
-            auth.currentUser()?.email
-          }}</span>
-          <p-button
-            [icon]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
-            [rounded]="true"
-            severity="secondary"
-            [text]="true"
-            (onClick)="theme.toggle()"
-            pTooltip="Basculer thème"
-            ariaLabel="Basculer thème"
-          />
-          <p-button
-            icon="pi pi-user"
-            [rounded]="true"
-            severity="secondary"
-            [text]="true"
-            routerLink="/profile"
-            pTooltip="Profil"
-            ariaLabel="Profil"
-          />
-          <p-button
-            icon="pi pi-sign-out"
-            [rounded]="true"
-            severity="secondary"
-            [text]="true"
-            (onClick)="logout()"
-            pTooltip="Déconnexion"
-            ariaLabel="Déconnexion"
-          />
-        </div>
-      </ng-template>
-    </p-menubar>
+    <app-topmenu />
     <main class="fox-main">
       <router-outlet />
     </main>
+    <app-footer />
   </div>
 } @else {
   <router-outlet />
