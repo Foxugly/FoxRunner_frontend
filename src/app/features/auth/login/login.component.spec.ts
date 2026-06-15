@@ -40,4 +40,14 @@ describe('LoginComponent magic mode', () => {
     expect(request).toHaveBeenCalledWith('a@b.co');
     expect(c.magicSent()).toBe(true);
   });
+
+  it('does not show the confirmation when the request fails (anti-enumeration)', async () => {
+    const request = vi.fn().mockRejectedValue(new Error('network'));
+    const fixture = setup(request);
+    const c = fixture.componentInstance;
+    c.enterMagicMode();
+    c.magicForm.setValue({ email: 'a@b.co' });
+    await c.onSendMagic();
+    expect(c.magicSent()).toBe(false);
+  });
 });
