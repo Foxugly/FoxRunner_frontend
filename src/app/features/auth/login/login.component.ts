@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthMagicService } from '../../../core/api/auth-magic.service';
 
 @Component({
   selector: 'app-login',
@@ -29,43 +30,88 @@ import { AuthService } from '../../../core/auth/auth.service';
             </div>
           </ng-template>
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
-            <div class="flex flex-column gap-2">
-              <label for="email">Email</label>
-              <input
-                id="email"
-                pInputText
-                type="email"
-                formControlName="email"
-                autocomplete="username"
-                required
-              />
-            </div>
-            <div class="flex flex-column gap-2">
-              <label for="password">Mot de passe</label>
-              <p-password
-                inputId="password"
-                formControlName="password"
-                [toggleMask]="true"
-                [feedback]="false"
-                autocomplete="current-password"
+          @if (!magicMode()) {
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
+              <div class="flex flex-column gap-2">
+                <label for="email">Email</label>
+                <input
+                  id="email"
+                  pInputText
+                  type="email"
+                  formControlName="email"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+              <div class="flex flex-column gap-2">
+                <label for="password">Mot de passe</label>
+                <p-password
+                  inputId="password"
+                  formControlName="password"
+                  [toggleMask]="true"
+                  [feedback]="false"
+                  autocomplete="current-password"
+                  styleClass="w-full"
+                  [inputStyle]="{ width: '100%' }"
+                  required
+                />
+              </div>
+              <p-button
+                type="submit"
+                label="Se connecter"
+                icon="pi pi-sign-in"
                 styleClass="w-full"
-                [inputStyle]="{ width: '100%' }"
-                required
+                [loading]="loading()"
+                [disabled]="loading() || form.invalid"
               />
-            </div>
-            <p-button
-              type="submit"
-              label="Se connecter"
-              icon="pi pi-sign-in"
-              styleClass="w-full"
-              [loading]="loading()"
-              [disabled]="loading() || form.invalid"
-            />
-            <a routerLink="/forgot-password" class="text-sm text-center">
-              Mot de passe oublié ?
-            </a>
-          </form>
+              <a routerLink="/forgot-password" class="text-sm text-center">
+                Mot de passe oublié ?
+              </a>
+              <p-button
+                label="Recevoir un lien magique"
+                icon="pi pi-envelope"
+                severity="secondary"
+                [text]="true"
+                styleClass="w-full"
+                (onClick)="enterMagicMode()"
+              />
+            </form>
+          } @else {
+            <form [formGroup]="magicForm" (ngSubmit)="onSendMagic()" class="flex flex-column gap-3">
+              <div class="flex flex-column gap-2">
+                <label for="magicEmail">Email</label>
+                <input
+                  id="magicEmail"
+                  pInputText
+                  type="email"
+                  formControlName="email"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+              @if (magicSent()) {
+                <p class="text-sm text-center text-color-secondary m-0">
+                  Si un compte existe, un lien de connexion vient d'être envoyé. Vérifie ta boîte mail.
+                </p>
+              }
+              <p-button
+                type="submit"
+                label="Envoyer le lien"
+                icon="pi pi-send"
+                styleClass="w-full"
+                [loading]="magicLoading()"
+                [disabled]="magicLoading() || magicForm.invalid"
+              />
+              <p-button
+                label="Retour au mot de passe"
+                icon="pi pi-arrow-left"
+                severity="secondary"
+                [text]="true"
+                styleClass="w-full"
+                (onClick)="exitMagicMode()"
+              />
+            </form>
+          }
         </p-card>
       </div>
     </div>
@@ -74,12 +120,20 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly authMagic = inject(AuthMagicService);
   private readonly router = inject(Router);
 
   readonly loading = signal(false);
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
+  });
+
+  readonly magicMode = signal(false);
+  readonly magicLoading = signal(false);
+  readonly magicSent = signal(false);
+  readonly magicForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
   });
 
   async onSubmit(): Promise<void> {
@@ -93,6 +147,29 @@ export class LoginComponent {
       // Toast handled by error interceptor.
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  enterMagicMode(): void {
+    this.magicForm.reset({ email: this.form.getRawValue().email });
+    this.magicSent.set(false);
+    this.magicMode.set(true);
+  }
+
+  exitMagicMode(): void {
+    this.magicMode.set(false);
+  }
+
+  async onSendMagic(): Promise<void> {
+    if (this.magicLoading() || this.magicForm.invalid) return;
+    this.magicLoading.set(true);
+    try {
+      await this.authMagic.request(this.magicForm.getRawValue().email);
+      this.magicSent.set(true);
+    } catch {
+      // Toast handled by error interceptor.
+    } finally {
+      this.magicLoading.set(false);
     }
   }
 }
