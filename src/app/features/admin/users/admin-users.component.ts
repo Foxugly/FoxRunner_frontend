@@ -3,14 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { AdminService } from '../../../core/api/admin.service';
 import type { UserSummary } from '../../../core/api/types';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
+import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
+import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
 
 @Component({
   selector: 'app-admin-users',
@@ -18,13 +18,12 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     RouterLink,
-    TableModule,
     ButtonModule,
-    TagModule,
     TooltipModule,
     ToggleSwitchModule,
     PageHeaderComponent,
-    EmptyStateComponent,
+    DataTableComponent,
+    CellTemplateDirective,
   ],
   template: `
     <app-page-header icon="pi-users" title="Utilisateurs">
@@ -44,65 +43,37 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       />
     </app-page-header>
 
-    <p-table
+    <app-data-table
       [value]="items()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="rows()"
-      [first]="first()"
-      [totalRecords]="total()"
+      [columns]="columns"
       [loading]="loading()"
-      (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 25, 50]"
       dataKey="id"
-      styleClass="p-datatable-sm"
+      emptyIcon="pi-users"
+      emptyTitle="Aucun utilisateur"
     >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Email</th>
-          <th style="width: 18rem">UUID</th>
-          <th>Fuseau</th>
-          <th style="width: 6rem">Actif</th>
-          <th style="width: 8rem">Superuser</th>
-          <th style="width: 7rem">Vérifié</th>
-        </tr>
+      <ng-template appCell="id" let-u><code class="text-xs">{{ u.id }}</code></ng-template>
+      <ng-template appCell="is_active" let-u>
+        <p-toggleswitch
+          [(ngModel)]="u.is_active"
+          (onChange)="updateFlag(u, 'is_active', u.is_active)"
+          [ariaLabel]="'Actif — ' + u.email"
+        />
       </ng-template>
-      <ng-template pTemplate="body" let-u>
-        <tr>
-          <td>{{ u.email }}</td>
-          <td><code class="text-xs">{{ u.id }}</code></td>
-          <td>{{ u.timezone_name }}</td>
-          <td>
-            <p-toggleswitch
-              [(ngModel)]="u.is_active"
-              (onChange)="updateFlag(u, 'is_active', u.is_active)"
-              [ariaLabel]="'Actif — ' + u.email"
-            />
-          </td>
-          <td>
-            <p-toggleswitch
-              [(ngModel)]="u.is_superuser"
-              (onChange)="updateFlag(u, 'is_superuser', u.is_superuser)"
-              [ariaLabel]="'Superuser — ' + u.email"
-            />
-          </td>
-          <td>
-            <p-toggleswitch
-              [(ngModel)]="u.is_verified"
-              (onChange)="updateFlag(u, 'is_verified', u.is_verified)"
-              [ariaLabel]="'Vérifié — ' + u.email"
-            />
-          </td>
-        </tr>
+      <ng-template appCell="is_superuser" let-u>
+        <p-toggleswitch
+          [(ngModel)]="u.is_superuser"
+          (onChange)="updateFlag(u, 'is_superuser', u.is_superuser)"
+          [ariaLabel]="'Superuser — ' + u.email"
+        />
       </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="6">
-            <app-empty-state icon="pi-users" title="Aucun utilisateur" />
-          </td>
-        </tr>
+      <ng-template appCell="is_verified" let-u>
+        <p-toggleswitch
+          [(ngModel)]="u.is_verified"
+          (onChange)="updateFlag(u, 'is_verified', u.is_verified)"
+          [ariaLabel]="'Vérifié — ' + u.email"
+        />
       </ng-template>
-    </p-table>
+    </app-data-table>
   `,
 })
 export class AdminUsersComponent implements OnInit {
@@ -110,33 +81,34 @@ export class AdminUsersComponent implements OnInit {
   private readonly messages = inject(MessageService);
 
   readonly items = signal<UserSummary[]>([]);
-  readonly total = signal(0);
-  readonly rows = signal(25);
-  readonly first = signal(0);
   readonly loading = signal(false);
 
-  ngOnInit(): void {
-    void this.load(0, this.rows());
-  }
+  readonly columns: DataTableColumn[] = [
+    { field: 'email', header: 'Email', sortable: true },
+    { field: 'id', header: 'UUID', width: '18rem', searchable: false },
+    { field: 'timezone_name', header: 'Fuseau', sortable: true },
+    { field: 'is_active', header: 'Actif', width: '6rem', searchable: false },
+    { field: 'is_superuser', header: 'Superuser', width: '8rem', searchable: false },
+    { field: 'is_verified', header: 'Vérifié', width: '7rem', searchable: false },
+  ];
 
-  onLazyLoad(ev: TableLazyLoadEvent): void {
-    const first = ev.first ?? 0;
-    const rows = ev.rows ?? this.rows();
-    this.first.set(first);
-    this.rows.set(rows);
-    void this.load(first, rows);
+  ngOnInit(): void {
+    void this.load();
   }
 
   reload(): void {
-    void this.load(this.first(), this.rows());
+    void this.load();
   }
 
-  private async load(offset: number, limit: number): Promise<void> {
+  private async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const page = await this.service.listUsers(limit, offset);
+      // Bounded table: load all rows for client-side search/sort (500 is a guard rail).
+      const page = await this.service.listUsers(500, 0);
       this.items.set(page.items);
-      this.total.set(page.total);
+      if (page.total > 500) {
+        console.warn(`users: ${page.total} rows exceed the 500 client cap; showing first 500.`);
+      }
     } catch {
       /* toast */
     } finally {

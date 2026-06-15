@@ -9,7 +9,9 @@ import { DialogModule } from 'primeng/dialog';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
+import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
+import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
@@ -18,7 +20,6 @@ import { ScenariosService } from '../../../core/api/scenarios.service';
 import { SlotsService } from '../../../core/api/slots.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import type { Slot, SlotSummary, ScenarioSummary } from '../../../core/api/types';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 interface DayOption {
@@ -42,7 +43,6 @@ const DAYS: readonly DayOption[] = [
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    TableModule,
     TagModule,
     ButtonModule,
     TooltipModule,
@@ -55,7 +55,8 @@ const DAYS: readonly DayOption[] = [
     AutoCompleteModule,
     ConfirmDialogModule,
     PageHeaderComponent,
-    EmptyStateComponent,
+    DataTableComponent,
+    CellTemplateDirective,
   ],
   template: `
     <app-page-header icon="pi-calendar" title="Slots">
@@ -70,89 +71,57 @@ const DAYS: readonly DayOption[] = [
       <p-button label="Nouveau" icon="pi pi-plus" (onClick)="openCreate()" />
     </app-page-header>
 
-    <p-table
+    <app-data-table
       [value]="items()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="rows()"
-      [first]="first()"
-      [totalRecords]="total()"
+      [columns]="columns"
       [loading]="loading()"
-      (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 25, 50]"
       dataKey="slot_id"
-      styleClass="p-datatable-sm"
+      emptyIcon="pi-calendar"
+      emptyTitle="Aucun slot"
+      emptyMessage="Crée un premier slot pour planifier une exécution."
     >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Slot</th>
-          <th>Scénario</th>
-          <th>Jours</th>
-          <th>Horaire</th>
-          <th style="width: 6rem">Actif</th>
-          <th style="width: 9rem">Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-s>
-        <tr>
-          <td>{{ s.slot_id }}</td>
-          <td>{{ s.scenario_id }}</td>
-          <td>
-            <div class="flex gap-1">
-              @for (d of days; track d.value) {
-                <p-tag
-                  [severity]="s.days?.includes(d.value) ? 'success' : 'secondary'"
-                  [value]="d.label"
-                />
-              }
-            </div>
-          </td>
-          <td>{{ s.start }} — {{ s.end }}</td>
-          <td>
-            <p-toggleswitch
-              [(ngModel)]="s.enabled"
-              (onChange)="toggleEnabled(s)"
-              [ariaLabel]="'Actif — slot ' + s.slot_id"
+      <ng-template appCell="days" let-s>
+        <div class="flex gap-1">
+          @for (d of days; track d.value) {
+            <p-tag
+              [severity]="s.days?.includes(d.value) ? 'success' : 'secondary'"
+              [value]="d.label"
             />
-          </td>
-          <td>
-            <div class="flex gap-1">
-              <p-button
-                icon="pi pi-pencil"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                severity="secondary"
-                (onClick)="openEdit(s)"
-                pTooltip="Modifier"
-              />
-              <p-button
-                icon="pi pi-trash"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                severity="danger"
-                (onClick)="askDelete(s)"
-                pTooltip="Supprimer"
-              />
-            </div>
-          </td>
-        </tr>
+          }
+        </div>
       </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="6">
-            <app-empty-state
-              icon="pi-calendar"
-              title="Aucun slot"
-              message="Crée un premier slot pour planifier une exécution."
-            >
-              <p-button label="Créer un slot" icon="pi pi-plus" (onClick)="openCreate()" />
-            </app-empty-state>
-          </td>
-        </tr>
+      <ng-template appCell="schedule" let-s>{{ s.start }} — {{ s.end }}</ng-template>
+      <ng-template appCell="enabled" let-s>
+        <p-toggleswitch
+          [(ngModel)]="s.enabled"
+          (onChange)="toggleEnabled(s)"
+          [ariaLabel]="'Actif — slot ' + s.slot_id"
+        />
       </ng-template>
-    </p-table>
+      <ng-template appCell="actions" let-s>
+        <div class="flex gap-1">
+          <p-button
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [text]="true"
+            size="small"
+            severity="secondary"
+            (onClick)="openEdit(s)"
+            pTooltip="Modifier"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            size="small"
+            severity="danger"
+            (onClick)="askDelete(s)"
+            pTooltip="Supprimer"
+          />
+        </div>
+      </ng-template>
+      <p-button emptyActions label="Créer un slot" icon="pi pi-plus" (onClick)="openCreate()" />
+    </app-data-table>
 
     <p-dialog
       [modal]="true"
@@ -248,11 +217,17 @@ export class SlotsListComponent implements OnInit {
   private readonly messages = inject(MessageService);
 
   readonly items = signal<SlotSummary[]>([]);
-  readonly total = signal(0);
-  readonly rows = signal(25);
-  readonly first = signal(0);
   readonly loading = signal(false);
   readonly saving = signal(false);
+
+  readonly columns: DataTableColumn[] = [
+    { field: 'slot_id', header: 'Slot', sortable: true },
+    { field: 'scenario_id', header: 'Scénario', sortable: true },
+    { field: 'days', header: 'Jours', searchable: false },
+    { field: 'schedule', header: 'Horaire', searchable: false },
+    { field: 'enabled', header: 'Actif', width: '6rem', searchable: false },
+    { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
+  ];
 
   readonly days = DAYS;
   readonly daysOptions = [...DAYS];
@@ -278,27 +253,22 @@ export class SlotsListComponent implements OnInit {
   readonly slotIdEditable = computed(() => this.editingId() === null);
 
   ngOnInit(): void {
-    void this.load(0, this.rows());
-  }
-
-  onLazyLoad(ev: TableLazyLoadEvent): void {
-    const first = ev.first ?? 0;
-    const rows = ev.rows ?? this.rows();
-    this.first.set(first);
-    this.rows.set(rows);
-    void this.load(first, rows);
+    void this.load();
   }
 
   reload(): void {
-    void this.load(this.first(), this.rows());
+    void this.load();
   }
 
-  private async load(offset: number, limit: number): Promise<void> {
+  private async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const page = await this.slotsService.list({ limit, offset });
+      // Bounded table: load all rows for client-side search/sort (500 is a guard rail).
+      const page = await this.slotsService.list({ limit: 500, offset: 0 });
       this.items.set(page.items);
-      this.total.set(page.total);
+      if (page.total > 500) {
+        console.warn(`slots: ${page.total} rows exceed the 500 client cap; showing first 500.`);
+      }
     } catch {
       /* toast */
     } finally {

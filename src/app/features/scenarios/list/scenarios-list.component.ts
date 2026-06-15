@@ -1,19 +1,20 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import type { ScenarioSummary } from '../../../core/api/types';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
+import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
+import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
 
 @Component({
   selector: 'app-scenarios-list',
@@ -21,7 +22,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     RouterLink,
-    TableModule,
     ButtonModule,
     TagModule,
     TooltipModule,
@@ -29,7 +29,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     InputTextModule,
     ConfirmDialogModule,
     PageHeaderComponent,
-    EmptyStateComponent,
+    DataTableComponent,
+    CellTemplateDirective,
   ],
   template: `
     <app-page-header
@@ -51,97 +52,75 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       />
     </app-page-header>
 
-    <p-table
+    <app-data-table
       [value]="items()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="rows()"
-      [first]="first()"
-      [totalRecords]="total()"
+      [columns]="columns"
       [loading]="loading()"
-      (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 25, 50]"
       dataKey="scenario_id"
-      styleClass="p-datatable-sm"
+      emptyIcon="pi-sitemap"
+      emptyTitle="Aucun scénario"
+      emptyMessage="Crée un premier scénario pour démarrer."
     >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Scenario ID</th>
-          <th>Description</th>
-          <th style="width: 8rem">Rôle</th>
-          <th style="width: 10rem">Réseau</th>
-          <th style="width: 9rem">Actions</th>
-        </tr>
+      <ng-template appCell="scenario_id" let-s>
+        <a [routerLink]="['/scenarios', s.scenario_id]">{{ s.scenario_id }}</a>
       </ng-template>
-      <ng-template pTemplate="body" let-s>
-        <tr>
-          <td><a [routerLink]="['/scenarios', s.scenario_id]">{{ s.scenario_id }}</a></td>
-          <td>{{ s.description || '—' }}</td>
-          <td>
-            @if (s.role === 'owner') {
-              <p-tag severity="success" value="Propriétaire" />
-            } @else {
-              <p-tag severity="info" value="Partagé" />
-            }
-          </td>
-          <td>
-            @if (s.requires_enterprise_network) {
-              <span pTooltip="Requiert le réseau entreprise/VPN">
-                <i class="pi pi-lock mr-1"></i>Entreprise
-              </span>
-            } @else {
-              <span class="text-color-secondary">Public</span>
-            }
-          </td>
-          <td>
-            <div class="flex gap-1">
-              <p-button
-                icon="pi pi-eye"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                severity="secondary"
-                [routerLink]="['/scenarios', s.scenario_id]"
-                pTooltip="Détail"
-              />
-              @if (s.writable) {
-                <p-button
-                  icon="pi pi-copy"
-                  [rounded]="true"
-                  [text]="true"
-                  size="small"
-                  severity="secondary"
-                  (onClick)="askDuplicate(s)"
-                  pTooltip="Dupliquer"
-                />
-                <p-button
-                  icon="pi pi-trash"
-                  [rounded]="true"
-                  [text]="true"
-                  size="small"
-                  severity="danger"
-                  (onClick)="askDelete(s)"
-                  pTooltip="Supprimer"
-                />
-              }
-            </div>
-          </td>
-        </tr>
+      <ng-template appCell="description" let-s>{{ s.description || '—' }}</ng-template>
+      <ng-template appCell="role" let-s>
+        @if (s.role === 'owner') {
+          <p-tag severity="success" value="Propriétaire" />
+        } @else {
+          <p-tag severity="info" value="Partagé" />
+        }
       </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="5">
-            <app-empty-state
-              icon="pi-sitemap"
-              title="Aucun scénario"
-              message="Crée un premier scénario pour démarrer."
-            >
-              <p-button label="Créer un scénario" icon="pi pi-plus" routerLink="/scenarios/new" />
-            </app-empty-state>
-          </td>
-        </tr>
+      <ng-template appCell="network" let-s>
+        @if (s.requires_enterprise_network) {
+          <span pTooltip="Requiert le réseau entreprise/VPN">
+            <i class="pi pi-lock mr-1"></i>Entreprise
+          </span>
+        } @else {
+          <span class="text-color-secondary">Public</span>
+        }
       </ng-template>
-    </p-table>
+      <ng-template appCell="actions" let-s>
+        <div class="flex gap-1">
+          <p-button
+            icon="pi pi-eye"
+            [rounded]="true"
+            [text]="true"
+            size="small"
+            severity="secondary"
+            [routerLink]="['/scenarios', s.scenario_id]"
+            pTooltip="Détail"
+          />
+          @if (s.writable) {
+            <p-button
+              icon="pi pi-copy"
+              [rounded]="true"
+              [text]="true"
+              size="small"
+              severity="secondary"
+              (onClick)="askDuplicate(s)"
+              pTooltip="Dupliquer"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              size="small"
+              severity="danger"
+              (onClick)="askDelete(s)"
+              pTooltip="Supprimer"
+            />
+          }
+        </div>
+      </ng-template>
+      <p-button
+        emptyActions
+        label="Créer un scénario"
+        icon="pi pi-plus"
+        routerLink="/scenarios/new"
+      />
+    </app-data-table>
 
     <p-dialog
       header="Dupliquer le scénario"
@@ -176,15 +155,19 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
 
   readonly items = signal<ScenarioSummary[]>([]);
-  readonly total = signal(0);
-  readonly rows = signal(25);
-  readonly first = signal(0);
   readonly loading = signal(false);
+
+  readonly columns: DataTableColumn[] = [
+    { field: 'scenario_id', header: 'Scenario ID', sortable: true },
+    { field: 'description', header: 'Description', sortable: true },
+    { field: 'role', header: 'Rôle', width: '8rem', searchable: false },
+    { field: 'network', header: 'Réseau', width: '10rem', searchable: false },
+    { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
+  ];
 
   duplicateOpen = false;
   duplicating = signal(false);
@@ -192,29 +175,24 @@ export class ScenariosListComponent implements OnInit {
   private duplicateSource: ScenarioSummary | null = null;
 
   ngOnInit(): void {
-    void this.load(0, this.rows());
-  }
-
-  onLazyLoad(ev: TableLazyLoadEvent): void {
-    const first = ev.first ?? 0;
-    const rows = ev.rows ?? this.rows();
-    this.first.set(first);
-    this.rows.set(rows);
-    void this.load(first, rows);
+    void this.load();
   }
 
   reload(): void {
-    void this.load(this.first(), this.rows());
+    void this.load();
   }
 
-  private async load(offset: number, limit: number): Promise<void> {
+  private async load(): Promise<void> {
     const me = this.auth.currentUser();
     if (!me) return;
     this.loading.set(true);
     try {
-      const page = await this.service.list(me.id, limit, offset);
+      // Bounded table: load all rows for client-side search/sort (500 is a guard rail).
+      const page = await this.service.list(me.id, 500, 0);
       this.items.set(page.items);
-      this.total.set(page.total);
+      if (page.total > 500) {
+        console.warn(`scenarios: ${page.total} rows exceed the 500 client cap; showing first 500.`);
+      }
     } catch {
       /* interceptor toasts */
     } finally {
@@ -280,9 +258,5 @@ export class ScenariosListComponent implements OnInit {
         }
       },
     });
-  }
-
-  goToNew(): void {
-    this.router.navigate(['/scenarios', 'new']);
   }
 }
