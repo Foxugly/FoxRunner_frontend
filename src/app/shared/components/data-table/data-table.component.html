@@ -1,0 +1,69 @@
+<div class="data-table">
+  <div class="data-table__toolbar">
+    <p-iconfield iconPosition="left">
+      <p-inputicon styleClass="pi pi-search" />
+      <input
+        pInputText
+        type="text"
+        [placeholder]="searchPlaceholder"
+        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+      />
+    </p-iconfield>
+  </div>
+
+  <p-table
+    #dt
+    [value]="value"
+    [paginator]="true"
+    [rows]="pageSize"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [globalFilterFields]="globalFilterFields"
+    [dataKey]="dataKey"
+    [loading]="loading"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        @for (col of columns; track col.field) {
+          @if (col.sortable) {
+            <th [pSortableColumn]="col.field" [style.width]="col.width">
+              {{ col.header }}
+              <p-sortIcon [field]="col.field" />
+            </th>
+          } @else {
+            <th [style.width]="col.width">{{ col.header }}</th>
+          }
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr>
+        @for (col of columns; track col.field) {
+          <td>
+            @if (cellTemplate(col.field); as tpl) {
+              <ng-container
+                [ngTemplateOutlet]="tpl"
+                [ngTemplateOutletContext]="{ $implicit: row }"
+              />
+            } @else {
+              {{ $any(row)[col.field] }}
+            }
+          </td>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="columns.length">
+          <app-empty-state
+            [icon]="emptyIcon"
+            [title]="emptyTitle"
+            [message]="emptyMessage"
+          >
+            <ng-content select="[emptyActions]" />
+          </app-empty-state>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
