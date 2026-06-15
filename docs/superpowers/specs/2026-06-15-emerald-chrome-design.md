@@ -1,8 +1,13 @@
-# FoxRunner frontend — chrome emerald + topbar sombre + footer
+# FoxRunner frontend — chrome emerald + topbar sombre + footer + retrait des sous-titres
 
 **Date:** 2026-06-15
 **Statut:** design approuvé, prêt pour le plan d'implémentation
 **Scope:** FoxRunner_frontend uniquement (le fork `FoxRunner_frontend_node20` sera traité séparément, après accord + `git pull`)
+
+**Décomposition (fleet visual coherence) :** ce spec couvre **(a)** le chrome emerald/sombre + footer
+et **(b)** le retrait des sous-titres `PageHeader`. Un **composant de table triable/filtrable**
+(recherche globale + colonnes triables, client-side, appliqué aux 10 tables) est un sous-système
+distinct traité dans un **spec séparé** (`2026-06-15-sortable-table-design.md`, à venir).
 
 ## Problème
 
@@ -133,16 +138,35 @@ librement ; pas de dépendance backend.
 - `footer.component.spec.ts` : se monte ; affiche `appVersion` et l'année courante.
 - `app.spec.ts` : mis à jour — imports `Topmenu`/`Footer` au lieu de `MenubarModule` ; le smoke
   « should create the app » reste vert.
+- `PageHeader` : après retrait du `subtitle`, vérifier qu'aucun spec ne référence l'Input ; le
+  composant se monte toujours avec `title`/`icon`.
 - `npm run build`, `ng lint`, `vitest run` doivent rester verts.
 
-## 6. Documentation (livrable demandé)
+## 6. Retrait des sous-titres `PageHeader`
+
+Périmètre confirmé : **uniquement** le `subtitle` du `PageHeaderComponent` (le `<p>` muted sous le
+titre). Le `message` d'`EmptyState` et les autres textes secondaires **restent**.
+
+- `src/app/shared/components/page-header/page-header.component.ts` : retirer l'`@Input() subtitle?`
+  et le bloc `@if (subtitle) { <p …>{{ subtitle }}</p> }`. Le `<div>` wrapper du titre peut être
+  simplifié (le `<h1>` devient l'unique enfant).
+- Retirer les **19 usages** `[subtitle]="…"` / `subtitle="…"` dans les templates/composants de
+  features (admin/**, scenarios, slots, jobs, history, plan, profile, dashboard…). Les localiser
+  via `grep -rn "\[subtitle\]\|subtitle=" src/app`.
+- Aucun autre comportement touché ; pur nettoyage visuel. Lint/build/tests doivent rester verts
+  (un `@Input` retiré qui n'est plus lié ne casse rien ; vérifier qu'aucun test ne lit
+  `subtitle`).
+
+## 7. Documentation (livrable demandé)
 
 `docs/design/2026-06-15-emerald-chrome.md` dans FoxRunner_frontend :
-- liste exacte des fichiers créés/modifiés + tokens emerald + structure topbar/footer ;
+- liste exacte des fichiers créés/modifiés + tokens emerald + structure topbar/footer + retrait du
+  `subtitle` `PageHeader` (et ses 19 usages) ;
 - **procédure de réplication sur `FoxRunner_frontend_node20`** : `git pull` du fork, rejouer les
-  mêmes fichiers (gabarits/SCSS/standalone components + `definePreset`), à n'exécuter qu'**après
-  accord explicite** de l'utilisateur. Différences Angular 19 attendues : **aucune** (standalone
-  components, `@if/@for`, signals, `@primeuix/themes definePreset` existent déjà en v19).
+  mêmes fichiers (gabarits/SCSS/standalone components + `definePreset` + retrait des sous-titres),
+  à n'exécuter qu'**après accord explicite** de l'utilisateur. Différences Angular 19 attendues :
+  **aucune** (standalone components, `@if/@for`, signals, `@primeuix/themes definePreset` existent
+  déjà en v19).
 
 ## Risques / points de vigilance
 
@@ -155,5 +179,7 @@ librement ; pas de dépendance backend.
 
 ## Hors périmètre
 
-meta-grid forms, patterns de listes/cartes, empty-state tones, i18n multi-langue, message/
-notification bells, language switcher, et toute modification fonctionnelle de l'app.
+- **Composant de table triable/filtrable** : sous-système distinct, traité dans son **propre spec**
+  (`2026-06-15-sortable-table-design.md`) — pas dans ce plan.
+- meta-grid forms, patterns de listes/cartes, empty-state tones/`message`, i18n multi-langue,
+  message/notification bells, language switcher, et toute modification fonctionnelle de l'app.
