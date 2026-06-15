@@ -1,0 +1,79 @@
+<header class="topbar">
+  <div class="topbar__inner">
+    <a routerLink="/" class="topbar__brand" (click)="closeMenu()">
+      <i class="pi pi-bolt topbar__brand-icon"></i>
+      <span class="topbar__brand-name">FoxRunner</span>
+    </a>
+
+    <nav class="topbar__nav" aria-label="Navigation principale">
+      @for (item of links(); track item.link) {
+        <a
+          [routerLink]="item.link"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+          class="topbar__link"
+        >
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="topbar__actions">
+      <span class="topbar__email">{{ auth.currentUser()?.email }}</span>
+      <p-button
+        [icon]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
+        [rounded]="true"
+        severity="secondary"
+        [text]="true"
+        (onClick)="theme.toggle()"
+        pTooltip="Basculer thème"
+        ariaLabel="Basculer thème"
+      />
+      <p-button
+        icon="pi pi-user"
+        [rounded]="true"
+        severity="secondary"
+        [text]="true"
+        routerLink="/profile"
+        pTooltip="Profil"
+        ariaLabel="Profil"
+      />
+      <p-button
+        icon="pi pi-sign-out"
+        [rounded]="true"
+        severity="secondary"
+        [text]="true"
+        (onClick)="logout()"
+        pTooltip="Déconnexion"
+        ariaLabel="Déconnexion"
+      />
+      <button
+        type="button"
+        class="topbar__toggle"
+        [attr.aria-expanded]="menuOpen()"
+        [attr.aria-label]="menuOpen() ? 'Fermer le menu' : 'Ouvrir le menu'"
+        (click)="toggleMenu()"
+      >
+        <i class="pi" [class.pi-bars]="!menuOpen()" [class.pi-times]="menuOpen()"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (menuOpen()) {
+    <nav class="topbar__drawer" aria-label="Navigation mobile">
+      @for (item of links(); track item.link) {
+        <a
+          [routerLink]="item.link"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+          class="topbar__drawer-link"
+          (click)="closeMenu()"
+        >
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  }
+</header>

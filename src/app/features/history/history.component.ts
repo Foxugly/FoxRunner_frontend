@@ -45,7 +45,6 @@ const STATUS_OPTIONS: StatusOption[] = [
     <app-page-header
       icon="pi-history"
       title="Historique"
-      subtitle="Exécutions passées, paginées depuis la base"
     >
       <p-button
         icon="pi pi-refresh"

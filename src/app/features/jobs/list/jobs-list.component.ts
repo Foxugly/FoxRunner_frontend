@@ -26,7 +26,7 @@ import { StatusTagComponent } from '../../../shared/components/status-tag/status
     StatusTagComponent,
   ],
   template: `
-    <app-page-header icon="pi-play" title="Jobs" subtitle="Exécutions asynchrones des scénarios">
+    <app-page-header icon="pi-play" title="Jobs">
       <p-button
         icon="pi pi-refresh"
         severity="secondary"

@@ -58,7 +58,7 @@ const DAYS: readonly DayOption[] = [
     EmptyStateComponent,
   ],
   template: `
-    <app-page-header icon="pi-calendar" title="Slots" subtitle="Créneaux de planification hebdomadaires">
+    <app-page-header icon="pi-calendar" title="Slots">
       <p-button
         icon="pi pi-refresh"
         severity="secondary"

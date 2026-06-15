@@ -26,7 +26,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-file-export"
       title="Catalogue"
-      subtitle="Export/import des scénarios et slots"
     >
       <p-button
         label="Retour admin"

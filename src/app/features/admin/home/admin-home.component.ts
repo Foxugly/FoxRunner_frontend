@@ -12,7 +12,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-cog"
       title="Administration"
-      subtitle="Outils superuser réservés aux opérateurs FoxRunner"
     />
 
     <div class="grid">

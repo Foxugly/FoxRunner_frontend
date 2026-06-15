@@ -35,7 +35,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-sitemap"
       title="Scénarios"
-      subtitle="Scénarios dont tu es propriétaire ou qui te sont partagés"
     >
       <p-button
         icon="pi pi-refresh"

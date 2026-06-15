@@ -31,7 +31,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-list"
       title="Audit"
-      subtitle="Journal immuable des actions persistées"
     >
       <p-button
         label="Retour admin"

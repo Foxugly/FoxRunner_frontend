@@ -31,7 +31,6 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
     <app-page-header
       icon="pi-heart"
       title="Santé du système"
-      subtitle="Validation configuration, statistiques DB et monitoring Celery"
     >
       <p-button
         label="Retour admin"

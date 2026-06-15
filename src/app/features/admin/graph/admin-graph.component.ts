@@ -43,7 +43,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-cloud"
       title="Microsoft Graph"
-      subtitle="Abonnements et notifications webhook"
     >
       <p-button
         label="Retour admin"

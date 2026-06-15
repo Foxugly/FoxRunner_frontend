@@ -41,7 +41,6 @@ import { SharesDialogComponent } from '../shares/shares-dialog.component';
     <app-page-header
       [icon]="'pi-sitemap'"
       [title]="scenario()?.scenario_id ?? 'Scénario'"
-      [subtitle]="scenario()?.description || 'Aucune description'"
     >
       <p-button
         label="Retour"

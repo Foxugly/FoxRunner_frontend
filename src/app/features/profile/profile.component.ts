@@ -26,7 +26,6 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
     <app-page-header
       icon="pi-user"
       title="Profil"
-      subtitle="Tes informations et ton fuseau horaire"
     />
 
     <p-card styleClass="max-w-30rem">

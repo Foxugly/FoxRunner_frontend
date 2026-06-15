@@ -27,7 +27,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     EmptyStateComponent,
   ],
   template: `
-    <app-page-header icon="pi-users" title="Utilisateurs" subtitle="Gestion des comptes">
+    <app-page-header icon="pi-users" title="Utilisateurs">
       <p-button
         label="Retour admin"
         icon="pi pi-arrow-left"

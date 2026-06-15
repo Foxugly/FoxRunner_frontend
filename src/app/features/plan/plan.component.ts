@@ -26,7 +26,6 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
     <app-page-header
       icon="pi-clock"
       title="Plan"
-      subtitle="Prochaine exécution planifiée"
     >
       <p-button
         icon="pi pi-refresh"

@@ -43,7 +43,6 @@ const KIND_OPTIONS: KindOption[] = [
     <app-page-header
       icon="pi-image"
       title="Artefacts"
-      subtitle="Captures Selenium conservées en local"
     >
       <p-button
         label="Retour admin"
