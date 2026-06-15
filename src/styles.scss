@@ -2,7 +2,7 @@
 @use 'primeflex/primeflex.css';
 
 :root {
-  --fox-primary: #d97706;
+  --fox-primary: #10b981;
 }
 
 html,
@@ -22,4 +22,13 @@ body {
 .fox-brand {
   color: var(--fox-primary);
   font-weight: 700;
+}
+
+/* Topbar (dark): make PrimeNG secondary text-buttons legible on the dark bar. */
+.topbar .p-button.p-button-secondary.p-button-text {
+  color: #e2e8f0;
+}
+.topbar .p-button.p-button-secondary.p-button-text:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
