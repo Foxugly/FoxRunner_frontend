@@ -7,12 +7,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { AdminService } from '../../../core/api/admin.service';
 import type { AppSetting } from '../../../core/api/types';
 import { ApiDatePipe } from '../../../shared/pipes/api-date.pipe';
-import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
+import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
+import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
@@ -22,7 +23,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     RouterLink,
-    TableModule,
     ButtonModule,
     DialogModule,
     InputTextModule,
@@ -30,7 +30,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     TooltipModule,
     ConfirmDialogModule,
     ApiDatePipe,
-    EmptyStateComponent,
+    DataTableComponent,
+    CellTemplateDirective,
     JsonEditorComponent,
     PageHeaderComponent,
   ],
@@ -53,65 +54,40 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       <p-button label="Nouveau" icon="pi pi-plus" (onClick)="openCreate()" />
     </app-page-header>
 
-    <p-table
+    <app-data-table
       [value]="items()"
-      [lazy]="true"
-      [paginator]="true"
-      [rows]="rows()"
-      [first]="first()"
-      [totalRecords]="total()"
+      [columns]="columns"
       [loading]="loading()"
-      (onLazyLoad)="onLazyLoad($event)"
-      [rowsPerPageOptions]="[10, 25, 50]"
       dataKey="key"
-      styleClass="p-datatable-sm"
+      emptyIcon="pi-sliders-h"
+      emptyTitle="Aucun paramètre"
+      emptyMessage="Crée un paramètre pour le voir ici."
     >
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Clé</th>
-          <th>Description</th>
-          <th style="width: 12rem">Modifié le</th>
-          <th style="width: 9rem">Actions</th>
-        </tr>
+      <ng-template appCell="key" let-s><code>{{ s.key }}</code></ng-template>
+      <ng-template appCell="description" let-s>
+        <span class="text-color-secondary">{{ s.description || '—' }}</span>
       </ng-template>
-      <ng-template pTemplate="body" let-s>
-        <tr>
-          <td><code>{{ s.key }}</code></td>
-          <td class="text-color-secondary">{{ s.description || '—' }}</td>
-          <td>{{ s.updated_at | apiDate: 'medium' }}</td>
-          <td>
-            <div class="flex gap-1">
-              <p-button
-                icon="pi pi-pencil"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                (onClick)="openEdit(s)"
-              />
-              <p-button
-                icon="pi pi-trash"
-                [rounded]="true"
-                [text]="true"
-                size="small"
-                severity="danger"
-                (onClick)="askDelete(s)"
-              />
-            </div>
-          </td>
-        </tr>
+      <ng-template appCell="updated_at" let-s>{{ s.updated_at | apiDate: 'medium' }}</ng-template>
+      <ng-template appCell="actions" let-s>
+        <div class="flex gap-1">
+          <p-button
+            icon="pi pi-pencil"
+            [rounded]="true"
+            [text]="true"
+            size="small"
+            (onClick)="openEdit(s)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            size="small"
+            severity="danger"
+            (onClick)="askDelete(s)"
+          />
+        </div>
       </ng-template>
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="4">
-            <app-empty-state
-              icon="pi-sliders-h"
-              title="Aucun paramètre"
-              message="Crée un paramètre pour le voir ici."
-            />
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+    </app-data-table>
 
     <p-dialog
       [modal]="true"
@@ -164,11 +140,15 @@ export class AdminSettingsComponent implements OnInit {
   private readonly messages = inject(MessageService);
 
   readonly items = signal<AppSetting[]>([]);
-  readonly total = signal(0);
-  readonly rows = signal(25);
-  readonly first = signal(0);
   readonly loading = signal(false);
   readonly saving = signal(false);
+
+  readonly columns: DataTableColumn[] = [
+    { field: 'key', header: 'Clé', sortable: true },
+    { field: 'description', header: 'Description', sortable: true },
+    { field: 'updated_at', header: 'Modifié le', sortable: true, width: '12rem' },
+    { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
+  ];
 
   dialogOpen = false;
   readonly editing = signal(false);
@@ -182,27 +162,22 @@ export class AdminSettingsComponent implements OnInit {
   private latestValue: Record<string, unknown> = {};
 
   ngOnInit(): void {
-    void this.load(0, this.rows());
-  }
-
-  onLazyLoad(ev: TableLazyLoadEvent): void {
-    const first = ev.first ?? 0;
-    const rows = ev.rows ?? this.rows();
-    this.first.set(first);
-    this.rows.set(rows);
-    void this.load(first, rows);
+    void this.load();
   }
 
   reload(): void {
-    void this.load(this.first(), this.rows());
+    void this.load();
   }
 
-  private async load(offset: number, limit: number): Promise<void> {
+  private async load(): Promise<void> {
     this.loading.set(true);
     try {
-      const page = await this.service.listSettings(limit, offset);
+      // Bounded table: load all rows for client-side search/sort (500 is a guard rail).
+      const page = await this.service.listSettings(500, 0);
       this.items.set(page.items);
-      this.total.set(page.total);
+      if (page.total > 500) {
+        console.warn(`settings: ${page.total} rows exceed the 500 client cap; showing first 500.`);
+      }
     } catch {
       /* toast */
     } finally {
