@@ -9,12 +9,7 @@ import { Component, Input } from '@angular/core';
         @if (icon) {
           <i [class]="'pi ' + icon" style="font-size: 1.75rem; color: var(--fox-primary)"></i>
         }
-        <div>
-          <h1 class="m-0 text-2xl font-semibold">{{ title }}</h1>
-          @if (subtitle) {
-            <p class="m-0 mt-1 text-color-secondary text-sm">{{ subtitle }}</p>
-          }
-        </div>
+        <h1 class="m-0 text-2xl font-semibold">{{ title }}</h1>
       </div>
       <div class="flex gap-2 flex-wrap">
         <ng-content />
@@ -24,6 +19,5 @@ import { Component, Input } from '@angular/core';
 })
 export class PageHeaderComponent {
   @Input({ required: true }) title = '';
-  @Input() subtitle?: string;
   @Input() icon?: string;
 }

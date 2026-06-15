@@ -26,7 +26,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-trash"
       title="Rétention"
-      subtitle="Purge des tables jobs, audit et notifications Graph"
     >
       <p-button
         label="Retour admin"

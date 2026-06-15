@@ -38,7 +38,6 @@ const EMPTY_DEFINITION = {
     <app-page-header
       [icon]="isEdit() ? 'pi-pencil' : 'pi-plus'"
       [title]="isEdit() ? 'Modifier le scénario' : 'Nouveau scénario'"
-      [subtitle]="isEdit() ? scenarioId() : 'Définis un identifiant stable et une définition JSON'"
     >
       <p-button
         label="Annuler"

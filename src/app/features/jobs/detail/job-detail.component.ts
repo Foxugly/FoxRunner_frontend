@@ -31,7 +31,6 @@ import { StatusTagComponent } from '../../../shared/components/status-tag/status
     <app-page-header
       icon="pi-play"
       [title]="'Job ' + (jobIdShort() || '…')"
-      [subtitle]="job()?.target_id ?? ''"
     >
       <p-button
         label="Retour"

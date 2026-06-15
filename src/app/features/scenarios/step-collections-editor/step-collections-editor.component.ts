@@ -39,7 +39,6 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
     <app-page-header
       icon="pi-code"
       [title]="'Étapes — ' + scenarioId()"
-      subtitle="CRUD des 5 collections de steps du DSL"
     >
       <p-button
         label="Retour au scénario"
