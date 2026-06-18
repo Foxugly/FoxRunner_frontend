@@ -30,7 +30,7 @@ test.describe('FoxRunner smoke', () => {
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
 
-    for (const label of ['Scénarios', 'Slots', 'Jobs', 'Plan', 'Historique']) {
+    for (const label of ['Scénarios', 'Jobs', 'Plan', 'Historique']) {
       await expect(page.getByRole('menuitem', { name: label })).toBeVisible();
     }
 
