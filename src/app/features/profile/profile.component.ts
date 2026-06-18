@@ -9,6 +9,7 @@ import { SelectModule } from 'primeng/select';
 import { AuthService } from '../../core/auth/auth.service';
 import { TimezonesService } from '../../core/api/timezones.service';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { PushItTargetsComponent } from './pushit-targets.component';
 
 @Component({
   selector: 'app-profile',
@@ -21,6 +22,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
     SelectModule,
     AutoCompleteModule,
     PageHeaderComponent,
+    PushItTargetsComponent,
   ],
   template: `
     <app-page-header
@@ -79,6 +81,8 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
         </div>
       </div>
     </p-card>
+
+    <app-pushit-targets class="block mt-4" />
   `,
 })
 export class ProfileComponent implements OnInit {

@@ -91,6 +91,12 @@ export type GraphSubscription = S['GraphSubscriptionOut'];
 export type GraphRenew = S['GraphRenewIn'];
 export type GraphNotification = S['GraphNotificationOut'];
 
+// --- PushIT targets (per-user notification apps) -------------------------
+export type PushItTarget = S['PushItTargetOut'];
+export type PushItTargetCreate = S['PushItTargetIn'];
+export type PushItTargetUpdate = S['PushItTargetPatchIn'];
+export type PushItTestResult = S['PushItTestOut'];
+
 // --- Errors --------------------------------------------------------------
 // The Django backend's global Ninja exception handler emits this shape on
 // every non-2xx response. Post-processed into the OpenAPI spec as the

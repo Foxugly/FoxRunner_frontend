@@ -4,6 +4,260 @@
  */
 
 export interface paths {
+    "/api/v1/admin/config-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Config Checks Endpoint */
+        get: operations["ops_admin_api_admin_config_checks_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/db-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Db Stats Endpoint */
+        get: operations["ops_admin_api_admin_db_stats_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Export Endpoint */
+        get: operations["ops_admin_api_admin_export_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin Import Endpoint
+         * @description POST /admin/import?dry_run=true.
+         *
+         *     Body is the loose ``{"scenarios": ..., "slots": ...}`` payload returned
+         *     by ``/admin/export``. ``dry_run=False`` REPLACES the catalog rows.
+         *
+         *     Skips scenarios whose ``owner_user_id`` no longer maps to a real User
+         *     (post-Phase-5 the column is FK-promoted) and reports the count.
+         */
+        post: operations["ops_admin_api_admin_import_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/retention": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Admin Retention Endpoint */
+        delete: operations["ops_admin_api_admin_retention_endpoint"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin List Settings Endpoint */
+        get: operations["ops_admin_api_admin_list_settings_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settings/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Admin Upsert Setting Endpoint */
+        put: operations["ops_admin_api_admin_upsert_setting_endpoint"];
+        post?: never;
+        /** Admin Delete Setting Endpoint */
+        delete: operations["ops_admin_api_admin_delete_setting_endpoint"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin List Users Endpoint
+         * @description Paginated list of all users. Superuser only.
+         */
+        get: operations["ops_admin_api_admin_list_users_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{target_user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Admin Update User Endpoint
+         * @description PATCH /admin/users/{target_user_id}.
+         *
+         *     ``target_user_id`` accepts either a UUID or an email (consistent with
+         *     the user-scoped routes elsewhere in the API).
+         */
+        patch: operations["ops_admin_api_admin_update_user_endpoint"];
+        trace?: never;
+    };
+    "/api/v1/artifacts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Artifacts List Endpoint */
+        get: operations["ops_admin_api_artifacts_list_endpoint"];
+        put?: never;
+        post?: never;
+        /** Artifacts Prune Endpoint */
+        delete: operations["ops_admin_api_artifacts_prune_endpoint"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/artifacts/{kind}/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Artifact Download Endpoint
+         * @description GET /artifacts/{kind}/{name}.
+         *
+         *     Streams the file via Django's :class:`FileResponse`. Path traversal
+         *     protection lives inside :func:`ops.services.artifact_path` (rejects
+         *     names containing ``/`` or ``\\``).
+         */
+        get: operations["ops_admin_api_artifact_download_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Audit Log Endpoint
+         * @description GET /audit -- newest first, all filters optional. Superuser only.
+         */
+        get: operations["ops_admin_api_audit_log_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/forgot-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Forgot Password
+         * @description Silent for unknown emails (no enumeration).
+         */
+        post: operations["accounts_api_forgot_password"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/jwt/login": {
         parameters: {
             query?: never;
@@ -47,7 +301,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/forgot-password": {
+    "/api/v1/auth/magic-link/exchange": {
         parameters: {
             query?: never;
             header?: never;
@@ -57,10 +311,30 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Forgot Password
-         * @description Silent for unknown emails (no enumeration).
+         * Magic Link Exchange
+         * @description Exchange a magic-link token for a JWT. 410 expired, 400 invalid.
          */
-        post: operations["accounts_api_forgot_password"];
+        post: operations["accounts_api_magic_link_exchange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/magic-link/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Magic Link Request
+         * @description Silent for unknown / ineligible emails (no enumeration).
+         */
+        post: operations["accounts_api_magic_link_request"];
         delete?: never;
         options?: never;
         head?: never;
@@ -91,22 +365,322 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/me": {
+    "/api/v1/graph/lifecycle": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Users Me */
-        get: operations["accounts_api_users_me"];
+        get?: never;
+        put?: never;
+        /**
+         * Graph Lifecycle Endpoint
+         * @description POST /graph/lifecycle -- same as ``/graph/webhook`` but ``lifecycle=True``.
+         *
+         *     Lifecycle deliveries carry a ``lifecycleEvent`` field (``reauthorizationRequired``,
+         *     ``subscriptionRemoved``, ``missed``) that surfaces on the persisted
+         *     :class:`ops.models.GraphNotification` row via the ``lifecycle_event``
+         *     column.
+         */
+        post: operations["ops_graph_api_graph_lifecycle_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/graph/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Notifications Endpoint
+         * @description GET /graph/notifications -- paginated, optional ``subscription_id`` filter.
+         */
+        get: operations["ops_graph_api_list_notifications_endpoint"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        /** Users Me Patch */
-        patch: operations["accounts_api_users_me_patch"];
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/graph/subscriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Subscriptions Endpoint
+         * @description GET /graph/subscriptions -- paginated, superuser only.
+         */
+        get: operations["ops_graph_api_list_subscriptions_endpoint"];
+        put?: never;
+        /**
+         * Create Subscription Endpoint
+         * @description POST /graph/subscriptions -- create on Graph + persist locally + audit.
+         */
+        post: operations["ops_graph_api_create_subscription_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/graph/subscriptions/{subscription_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Subscription Endpoint
+         * @description DELETE /graph/subscriptions/{subscription_id} -- delete on Graph + audit.
+         */
+        delete: operations["ops_graph_api_delete_subscription_endpoint"];
+        options?: never;
+        head?: never;
+        /**
+         * Renew Subscription Endpoint
+         * @description PATCH /graph/subscriptions/{subscription_id} -- renew on Graph + audit.
+         */
+        patch: operations["ops_graph_api_renew_subscription_endpoint"];
+        trace?: never;
+    };
+    "/api/v1/graph/webhook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Graph Webhook Endpoint
+         * @description POST /graph/webhook -- Microsoft validation echo OR notification persist.
+         *
+         *     When ``?validationToken=X`` is present we return ``X`` as ``text/plain``
+         *     with status 200 (Microsoft's required handshake). Otherwise we persist
+         *     the notification body and return ``{"accepted": <count>}``. The
+         *     ``clientState`` validation lives inside
+         *     :func:`ops.graph.save_graph_notifications`.
+         */
+        post: operations["ops_graph_api_graph_webhook_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Readiness probe */
+        get: operations["ops_api_health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Jobs Endpoint */
+        get: operations["ops_api_list_jobs_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Job Endpoint */
+        get: operations["ops_api_get_job_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel Job Endpoint */
+        post: operations["ops_api_cancel_job_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Job Events Endpoint */
+        get: operations["ops_api_get_job_events_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/{job_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Job Endpoint */
+        post: operations["ops_api_retry_job_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Metrics Endpoint
+         * @description GET /metrics -- Prometheus text exposition (text/plain; v=0.0.4).
+         */
+        get: operations["ops_admin_api_metrics_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/monitoring/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Monitoring Summary Endpoint */
+        get: operations["ops_admin_api_monitoring_summary_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pushit-targets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Pushit Targets */
+        get: operations["accounts_pushit_api_list_pushit_targets"];
+        put?: never;
+        /** Create Pushit Target */
+        post: operations["accounts_pushit_api_create_pushit_target"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pushit-targets/{target_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Pushit Target */
+        delete: operations["accounts_pushit_api_delete_pushit_target"];
+        options?: never;
+        head?: never;
+        /** Update Pushit Target */
+        patch: operations["accounts_pushit_api_update_pushit_target"];
+        trace?: never;
+    };
+    "/api/v1/pushit-targets/{target_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Pushit Target
+         * @description Send a one-off test notification through this target.
+         *
+         *     Lets the user confirm the token/base_url from the UI without waiting
+         *     for a real scheduler alert. Returns ``{sent: bool}`` -- a False means
+         *     PushIT rejected the call (bad token, network) so the UI can flag it.
+         */
+        post: operations["accounts_pushit_api_test_pushit_target"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/scenarios": {
@@ -248,6 +822,190 @@ export interface paths {
         patch: operations["catalog_api_update_slot_endpoint"];
         trace?: never;
     };
+    "/api/v1/system/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * System status (scheduler / celery / redis / db)
+         * @description Aggregate liveness of the scheduler, Celery worker/beat, Redis and DB.
+         *
+         *     Authenticated (any logged-in user) — operational health, not data. Polled
+         *     by the frontend's global alarm banner.
+         */
+        get: operations["ops_api_system_status_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Users Me */
+        get: operations["accounts_api_users_me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Users Me Patch */
+        patch: operations["accounts_api_users_me_patch"];
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** User History Endpoint */
+        get: operations["catalog_api_user_history_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** User Plan Endpoint */
+        get: operations["catalog_api_user_plan_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/run-next": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run User Next Endpoint */
+        post: operations["catalog_api_run_user_next_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/scenario-data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get User Scenario Data Endpoint */
+        get: operations["catalog_api_get_user_scenario_data_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List User Scenarios Endpoint */
+        get: operations["catalog_api_list_user_scenarios_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/scenarios/{scenario_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get User Scenario Endpoint */
+        get: operations["catalog_api_get_user_scenario_endpoint"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/scenarios/{scenario_id}/jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enqueue User Scenario Endpoint
+         * @description Enqueue a scenario run as a Celery job.
+         *
+         *     The ``Idempotency-Key`` header is honored: a replay with the same
+         *     payload returns the stored response, a replay with a different
+         *     payload returns 409 (raised inside ``get_idempotent_response``).
+         */
+        post: operations["ops_api_enqueue_user_scenario_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/scenarios/{scenario_id}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run User Scenario Endpoint */
+        post: operations["catalog_api_run_user_scenario_endpoint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/{user_id}/scenarios/{scenario_id}/step-collections": {
         parameters: {
             query?: never;
@@ -302,74 +1060,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/{user_id}/scenarios": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List User Scenarios Endpoint */
-        get: operations["catalog_api_list_user_scenarios_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/scenarios/{scenario_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get User Scenario Endpoint */
-        get: operations["catalog_api_get_user_scenario_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/scenario-data": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get User Scenario Data Endpoint */
-        get: operations["catalog_api_get_user_scenario_data_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/plan": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** User Plan Endpoint */
-        get: operations["catalog_api_user_plan_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/users/{user_id}/slots": {
         parameters: {
             query?: never;
@@ -387,1001 +1077,10 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/users/{user_id}/scenarios/{scenario_id}/run": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Run User Scenario Endpoint */
-        post: operations["catalog_api_run_user_scenario_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/run-next": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Run User Next Endpoint */
-        post: operations["catalog_api_run_user_next_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/history": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** User History Endpoint */
-        get: operations["catalog_api_user_history_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Readiness probe */
-        get: operations["ops_api_health"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/users/{user_id}/scenarios/{scenario_id}/jobs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Enqueue User Scenario Endpoint
-         * @description Enqueue a scenario run as a Celery job.
-         *
-         *     The ``Idempotency-Key`` header is honored: a replay with the same
-         *     payload returns the stored response, a replay with a different
-         *     payload returns 409 (raised inside ``get_idempotent_response``).
-         */
-        post: operations["ops_api_enqueue_user_scenario_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/jobs": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Jobs Endpoint */
-        get: operations["ops_api_list_jobs_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/jobs/{job_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Job Endpoint */
-        get: operations["ops_api_get_job_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/jobs/{job_id}/events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Job Events Endpoint */
-        get: operations["ops_api_get_job_events_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/jobs/{job_id}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Cancel Job Endpoint */
-        post: operations["ops_api_cancel_job_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/jobs/{job_id}/retry": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Retry Job Endpoint */
-        post: operations["ops_api_retry_job_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/users": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Admin List Users Endpoint
-         * @description Paginated list of all users. Superuser only.
-         */
-        get: operations["ops_admin_api_admin_list_users_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/users/{target_user_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Admin Update User Endpoint
-         * @description PATCH /admin/users/{target_user_id}.
-         *
-         *     ``target_user_id`` accepts either a UUID or an email (consistent with
-         *     the user-scoped routes elsewhere in the API).
-         */
-        patch: operations["ops_admin_api_admin_update_user_endpoint"];
-        trace?: never;
-    };
-    "/api/v1/admin/config-checks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Admin Config Checks Endpoint */
-        get: operations["ops_admin_api_admin_config_checks_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/db-stats": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Admin Db Stats Endpoint */
-        get: operations["ops_admin_api_admin_db_stats_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/export": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Admin Export Endpoint */
-        get: operations["ops_admin_api_admin_export_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/import": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Admin Import Endpoint
-         * @description POST /admin/import?dry_run=true.
-         *
-         *     Body is the loose ``{"scenarios": ..., "slots": ...}`` payload returned
-         *     by ``/admin/export``. ``dry_run=False`` REPLACES the catalog rows.
-         *
-         *     Skips scenarios whose ``owner_user_id`` no longer maps to a real User
-         *     (post-Phase-5 the column is FK-promoted) and reports the count.
-         */
-        post: operations["ops_admin_api_admin_import_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/retention": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Admin Retention Endpoint */
-        delete: operations["ops_admin_api_admin_retention_endpoint"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Admin List Settings Endpoint */
-        get: operations["ops_admin_api_admin_list_settings_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/settings/{key}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Admin Upsert Setting Endpoint */
-        put: operations["ops_admin_api_admin_upsert_setting_endpoint"];
-        post?: never;
-        /** Admin Delete Setting Endpoint */
-        delete: operations["ops_admin_api_admin_delete_setting_endpoint"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/audit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Audit Log Endpoint
-         * @description GET /audit -- newest first, all filters optional. Superuser only.
-         */
-        get: operations["ops_admin_api_audit_log_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/artifacts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Artifacts List Endpoint */
-        get: operations["ops_admin_api_artifacts_list_endpoint"];
-        put?: never;
-        post?: never;
-        /** Artifacts Prune Endpoint */
-        delete: operations["ops_admin_api_artifacts_prune_endpoint"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/artifacts/{kind}/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Artifact Download Endpoint
-         * @description GET /artifacts/{kind}/{name}.
-         *
-         *     Streams the file via Django's :class:`FileResponse`. Path traversal
-         *     protection lives inside :func:`ops.services.artifact_path` (rejects
-         *     names containing ``/`` or ``\\``).
-         */
-        get: operations["ops_admin_api_artifact_download_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/monitoring/summary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Monitoring Summary Endpoint */
-        get: operations["ops_admin_api_monitoring_summary_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/metrics": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Metrics Endpoint
-         * @description GET /metrics -- Prometheus text exposition (text/plain; v=0.0.4).
-         */
-        get: operations["ops_admin_api_metrics_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/graph/subscriptions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Subscriptions Endpoint
-         * @description GET /graph/subscriptions -- paginated, superuser only.
-         */
-        get: operations["ops_graph_api_list_subscriptions_endpoint"];
-        put?: never;
-        /**
-         * Create Subscription Endpoint
-         * @description POST /graph/subscriptions -- create on Graph + persist locally + audit.
-         */
-        post: operations["ops_graph_api_create_subscription_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/graph/subscriptions/{subscription_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete Subscription Endpoint
-         * @description DELETE /graph/subscriptions/{subscription_id} -- delete on Graph + audit.
-         */
-        delete: operations["ops_graph_api_delete_subscription_endpoint"];
-        options?: never;
-        head?: never;
-        /**
-         * Renew Subscription Endpoint
-         * @description PATCH /graph/subscriptions/{subscription_id} -- renew on Graph + audit.
-         */
-        patch: operations["ops_graph_api_renew_subscription_endpoint"];
-        trace?: never;
-    };
-    "/api/v1/graph/notifications": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Notifications Endpoint
-         * @description GET /graph/notifications -- paginated, optional ``subscription_id`` filter.
-         */
-        get: operations["ops_graph_api_list_notifications_endpoint"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/graph/webhook": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Graph Webhook Endpoint
-         * @description POST /graph/webhook -- Microsoft validation echo OR notification persist.
-         *
-         *     When ``?validationToken=X`` is present we return ``X`` as ``text/plain``
-         *     with status 200 (Microsoft's required handshake). Otherwise we persist
-         *     the notification body and return ``{"accepted": <count>}``. The
-         *     ``clientState`` validation lives inside
-         *     :func:`ops.graph.save_graph_notifications`.
-         */
-        post: operations["ops_graph_api_graph_webhook_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/graph/lifecycle": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Graph Lifecycle Endpoint
-         * @description POST /graph/lifecycle -- same as ``/graph/webhook`` but ``lifecycle=True``.
-         *
-         *     Lifecycle deliveries carry a ``lifecycleEvent`` field (``reauthorizationRequired``,
-         *     ``subscriptionRemoved``, ``missed``) that surfaces on the persisted
-         *     :class:`ops.models.GraphNotification` row via the ``lifecycle_event``
-         *     column.
-         */
-        post: operations["ops_graph_api_graph_lifecycle_endpoint"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** ForgotPasswordIn */
-        ForgotPasswordIn: {
-            /** Email */
-            email: string;
-        };
-        /** ResetPasswordIn */
-        ResetPasswordIn: {
-            /** Token */
-            token: string;
-            /** Password */
-            password: string;
-        };
-        /** UserOut */
-        UserOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Email */
-            email: string;
-            /** Is Active */
-            is_active: boolean;
-            /** Is Superuser */
-            is_superuser: boolean;
-            /** Is Verified */
-            is_verified: boolean;
-            /** Timezone Name */
-            timezone_name: string;
-            /**
-             * Date Joined
-             * Format: date-time
-             */
-            date_joined: string;
-        };
-        /** UserPatchIn */
-        UserPatchIn: {
-            /** Timezone Name */
-            timezone_name?: string | null;
-            /** Email */
-            email?: string | null;
-            /** Password */
-            password?: string | null;
-        };
-        /** ScenarioOut */
-        ScenarioOut: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** Owner User Id */
-            owner_user_id: string;
-            /** Description */
-            description: string;
-            /** Requires Enterprise Network */
-            requires_enterprise_network: boolean;
-            /** Before Steps */
-            before_steps: number;
-            /** Steps */
-            steps: number;
-            /** On Success */
-            on_success: number;
-            /** On Failure */
-            on_failure: number;
-            /** Finally Steps */
-            finally_steps: number;
-            /** Role */
-            role?: string | null;
-            /** Writable */
-            writable?: boolean | null;
-        };
-        /** ScenarioIn */
-        ScenarioIn: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** Owner User Id */
-            owner_user_id: string;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /** Definition */
-            definition?: {
-                [key: string]: unknown;
-            } | null;
-        };
-        /** ScenarioPatchIn */
-        ScenarioPatchIn: {
-            /** Scenario Id */
-            scenario_id?: string | null;
-            /** Owner User Id */
-            owner_user_id?: string | null;
-            /** Description */
-            description?: string | null;
-            /** Definition */
-            definition?: {
-                [key: string]: unknown;
-            } | null;
-        };
-        /**
-         * DeletedOut
-         * @description Mirrors ``api/schemas.py::DeletedPayload``. Used by DELETE /graph/subscriptions/{id}.
-         */
-        DeletedOut: {
-            /** Deleted */
-            deleted: string;
-        };
-        /** ShareList */
-        ShareList: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** User Ids */
-            user_ids: string[];
-        };
-        /** ShareOut */
-        ShareOut: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** User Id */
-            user_id: string;
-        };
-        /** ShareIn */
-        ShareIn: {
-            /** User Id */
-            user_id: string;
-        };
-        /** SlotOut */
-        SlotOut: {
-            /** Slot Id */
-            slot_id: string;
-            /** Days */
-            days: number[];
-            /** Start */
-            start: string;
-            /** End */
-            end: string;
-            /** Scenario Id */
-            scenario_id: string;
-            /** Enabled */
-            enabled: boolean;
-        };
-        /** SlotPage */
-        SlotPage: {
-            /** Items */
-            items: components["schemas"]["SlotOut"][];
-            /** Total */
-            total: number;
-            /** Limit */
-            limit: number;
-            /** Offset */
-            offset: number;
-        };
-        /** SlotIn */
-        SlotIn: {
-            /** Slot Id */
-            slot_id: string;
-            /** Scenario Id */
-            scenario_id: string;
-            /** Days */
-            days: number[];
-            /** Start */
-            start: string;
-            /** End */
-            end: string;
-            /**
-             * Enabled
-             * @default true
-             */
-            enabled: boolean;
-        };
-        /** SlotPatchIn */
-        SlotPatchIn: {
-            /** Scenario Id */
-            scenario_id?: string | null;
-            /** Days */
-            days?: number[] | null;
-            /** Start */
-            start?: string | null;
-            /** End */
-            end?: string | null;
-            /** Enabled */
-            enabled?: boolean | null;
-        };
-        /** StepMutationOut */
-        StepMutationOut: {
-            /** Index */
-            index: number;
-            /** Step */
-            step: {
-                [key: string]: unknown;
-            };
-        };
-        /** StepIn */
-        StepIn: {
-            /** Step */
-            step: {
-                [key: string]: unknown;
-            };
-        };
-        /** StepDeleteOut */
-        StepDeleteOut: {
-            /** Index */
-            index: number;
-            /** Deleted */
-            deleted: {
-                [key: string]: unknown;
-            };
-        };
-        /**
-         * ScenarioListItem
-         * @description Page item: ``ScenarioOut`` + role + writable, both required.
-         */
-        ScenarioListItem: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** Owner User Id */
-            owner_user_id: string;
-            /** Description */
-            description: string;
-            /** Requires Enterprise Network */
-            requires_enterprise_network: boolean;
-            /** Before Steps */
-            before_steps: number;
-            /** Steps */
-            steps: number;
-            /** On Success */
-            on_success: number;
-            /** On Failure */
-            on_failure: number;
-            /** Finally Steps */
-            finally_steps: number;
-            /** Role */
-            role: string;
-            /** Writable */
-            writable: boolean;
-        };
-        /** ScenarioListPage */
-        ScenarioListPage: {
-            /** Items */
-            items: components["schemas"]["ScenarioListItem"][];
-            /** Total */
-            total: number;
-            /** Limit */
-            limit: number;
-            /** Offset */
-            offset: number;
-        };
-        /**
-         * ScenarioDetailOut
-         * @description Single scenario detail: list-item shape + the full DSL definition JSON.
-         */
-        ScenarioDetailOut: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** Owner User Id */
-            owner_user_id: string;
-            /** Description */
-            description: string;
-            /** Requires Enterprise Network */
-            requires_enterprise_network: boolean;
-            /** Before Steps */
-            before_steps: number;
-            /** Steps */
-            steps: number;
-            /** On Success */
-            on_success: number;
-            /** On Failure */
-            on_failure: number;
-            /** Finally Steps */
-            finally_steps: number;
-            /** Role */
-            role: string;
-            /** Writable */
-            writable: boolean;
-            /** Definition */
-            definition: {
-                [key: string]: unknown;
-            };
-        };
-        /**
-         * ScenarioDataOut
-         * @description Aggregated pushover/network keys read from ``config/scenarios.json``.
-         */
-        ScenarioDataOut: {
-            /** Default Pushover Key */
-            default_pushover_key?: string | null;
-            /** Default Network Key */
-            default_network_key?: string | null;
-            /** Pushovers */
-            pushovers: string[];
-            /** Networks */
-            networks: string[];
-        };
-        /** RunOut */
-        RunOut: {
-            /** Scenario Id */
-            scenario_id?: string | null;
-            /** Dry Run */
-            dry_run: boolean;
-            /** Exit Code */
-            exit_code: number;
-            /** Success */
-            success: boolean;
-        };
-        /** HistoryItem */
-        HistoryItem: {
-            /** Id */
-            id: number;
-            /** Slot Key */
-            slot_key: string;
-            /** Slot Id */
-            slot_id: string;
-            /** Scenario Id */
-            scenario_id: string;
-            /** Execution Id */
-            execution_id?: string | null;
-            /** Executed At */
-            executed_at: string;
-            /** Status */
-            status: string;
-            /** Step */
-            step: string;
-            /** Message */
-            message: string;
-            /** Updated At */
-            updated_at?: string | null;
-        };
-        /** HistoryPage */
-        HistoryPage: {
-            /** Items */
-            items: components["schemas"]["HistoryItem"][];
-            /** Total */
-            total: number;
-            /** Limit */
-            limit: number;
-            /** Offset */
-            offset: number;
-        };
-        /**
-         * JobOut
-         * @description Serialised :class:`ops.models.Job` row.
-         *
-         *     Mirrors ``api/serializers.py::serialize_job``. ``user_id`` is the UUID
-         *     primary key of the FK target rendered as ``str`` (the frontend
-         *     contract still expects a string-shaped user identifier).
-         */
-        JobOut: {
-            /** Job Id */
-            job_id: string;
-            /** Celery Task Id */
-            celery_task_id?: string | null;
-            /** User Id */
-            user_id: string;
-            /** Kind */
-            kind: string;
-            /** Target Id */
-            target_id: string;
-            /** Status */
-            status: string;
-            /** Dry Run */
-            dry_run: boolean;
-            /** Exit Code */
-            exit_code?: number | null;
-            /** Error */
-            error?: string | null;
-            /** Payload */
-            payload: {
-                [key: string]: unknown;
-            };
-            /** Result */
-            result: {
-                [key: string]: unknown;
-            };
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /**
-             * Updated At
-             * Format: date-time
-             */
-            updated_at: string;
-            /** Started At */
-            started_at?: string | null;
-            /** Finished At */
-            finished_at?: string | null;
-        };
-        /**
-         * JobPage
-         * @description Paginated envelope for :class:`JobOut` items.
-         */
-        JobPage: {
-            /** Items */
-            items: components["schemas"]["JobOut"][];
-            /** Total */
-            total: number;
-            /** Limit */
-            limit: number;
-            /** Offset */
-            offset: number;
-        };
-        /**
-         * JobEventOut
-         * @description Serialised :class:`ops.models.JobEvent` row.
-         */
-        JobEventOut: {
-            /** Event Type */
-            event_type: string;
-            /** Level */
-            level: string;
-            /** Message */
-            message: string;
-            /** Step */
-            step?: string | null;
-            /** Payload */
-            payload: {
-                [key: string]: unknown;
-            };
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-        };
         /**
          * AdminUserPatchIn
          * @description PATCH body for ``/admin/users/{target_user_id}``.
@@ -1399,67 +1098,21 @@ export interface components {
             /** Timezone Name */
             timezone_name?: string | null;
         };
-        /** ConfigChecksOut */
-        ConfigChecksOut: {
-            /** Status */
-            status: string;
-            /** Checks */
-            checks: {
-                [key: string]: unknown;
-            };
-        };
-        /** DbStatsOut */
-        DbStatsOut: {
-            /** Tables */
-            tables: {
-                [key: string]: number;
-            };
-            /** Last Execution At */
-            last_execution_at?: string | null;
-            /** Failed Jobs */
-            failed_jobs: number;
-            /** Graph Subscriptions Expiring */
-            graph_subscriptions_expiring: number;
-        };
         /**
-         * ExportOut
-         * @description Full catalog export envelope.
-         */
-        ExportOut: {
-            /** Scenarios */
-            scenarios: {
-                [key: string]: unknown;
-            };
-            /** Slots */
-            slots: {
-                [key: string]: unknown;
-            };
-        };
-        /**
-         * ImportDryRun
-         * @description Response envelope for ``/admin/import``.
+         * AppSettingIn
+         * @description PUT body for ``/admin/settings/{key}``.
          *
-         *     Both dry-run and apply paths return the same shape. Skipped scenarios
-         *     (orphan owner_user_id post-Phase-5 FK promotion) are reported when
-         *     non-zero so operators can investigate.
+         *     Mirrors ``api/schemas.py::AppSettingPayload``.
          */
-        ImportDryRun: {
-            /** Dry Run */
-            dry_run: boolean;
-            /** Scenarios */
-            scenarios?: number | null;
-            /** Slots */
-            slots?: number | null;
-            /** Imported */
-            imported?: boolean | null;
-            /** Skipped Scenarios */
-            skipped_scenarios?: number | null;
-        };
-        /** RetentionResult */
-        RetentionResult: {
-            /** Removed */
-            removed: {
-                [key: string]: number;
+        AppSettingIn: {
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /** Value */
+            value: {
+                [key: string]: unknown;
             };
         };
         /**
@@ -1470,85 +1123,31 @@ export interface components {
          *     ``api/serializers.py::serialize_setting``.
          */
         AppSettingOut: {
+            /** Created At */
+            created_at?: string | null;
+            /** Description */
+            description: string;
             /** Key */
             key: string;
+            /** Updated At */
+            updated_at?: string | null;
+            /** Updated By */
+            updated_by?: string | null;
             /** Value */
             value: {
                 [key: string]: unknown;
             };
-            /** Description */
-            description: string;
-            /** Updated By */
-            updated_by?: string | null;
-            /** Created At */
-            created_at?: string | null;
-            /** Updated At */
-            updated_at?: string | null;
         };
         /** AppSettingPage */
         AppSettingPage: {
             /** Items */
             items: components["schemas"]["AppSettingOut"][];
-            /** Total */
-            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-        };
-        /**
-         * AppSettingIn
-         * @description PUT body for ``/admin/settings/{key}``.
-         *
-         *     Mirrors ``api/schemas.py::AppSettingPayload``.
-         */
-        AppSettingIn: {
-            /** Value */
-            value: {
-                [key: string]: unknown;
-            };
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-        };
-        /**
-         * AuditOut
-         * @description Serialised :class:`ops.models.AuditEntry` row.
-         */
-        AuditOut: {
-            /** Id */
-            id: number;
-            /** Actor User Id */
-            actor_user_id?: string | null;
-            /** Action */
-            action: string;
-            /** Target Type */
-            target_type: string;
-            /** Target Id */
-            target_id: string;
-            /** Before */
-            before: {
-                [key: string]: unknown;
-            };
-            /** After */
-            after: {
-                [key: string]: unknown;
-            };
-            /** Created At */
-            created_at?: string | null;
-        };
-        /** AuditPage */
-        AuditPage: {
-            /** Items */
-            items: components["schemas"]["AuditOut"][];
             /** Total */
             total: number;
-            /** Limit */
-            limit: number;
-            /** Offset */
-            offset: number;
         };
         /**
          * ArtifactItem
@@ -1568,154 +1167,79 @@ export interface components {
         ArtifactPage: {
             /** Items */
             items: components["schemas"]["ArtifactItem"][];
-            /** Total */
-            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-        };
-        /** MonitoringGraph */
-        MonitoringGraph: {
-            /** Subscriptions Expiring */
-            subscriptions_expiring: number;
-            /** Expiring Within Hours */
-            expiring_within_hours: number;
-        };
-        /** MonitoringJobs */
-        MonitoringJobs: {
             /** Total */
             total: number;
-            /** Failed */
-            failed: number;
-            /** Queued */
-            queued: number;
-            /** Running */
-            running: number;
-            /** Stuck */
-            stuck: number;
-            /**
-             * By Status
-             * @default {}
-             */
-            by_status: {
-                [key: string]: number;
+        };
+        /**
+         * AuditOut
+         * @description Serialised :class:`ops.models.AuditEntry` row.
+         */
+        AuditOut: {
+            /** Action */
+            action: string;
+            /** Actor User Id */
+            actor_user_id?: string | null;
+            /** After */
+            after: {
+                [key: string]: unknown;
             };
-            /** Average Duration Seconds */
-            average_duration_seconds?: number | null;
-        };
-        /** MonitoringSummary */
-        MonitoringSummary: {
-            jobs: components["schemas"]["MonitoringJobs"];
-            graph: components["schemas"]["MonitoringGraph"];
-        };
-        /**
-         * GraphSubscriptionOut
-         * @description Serialised :class:`ops.models.GraphSubscription` row.
-         */
-        GraphSubscriptionOut: {
-            /** Subscription Id */
-            subscription_id: string;
-            /** Resource */
-            resource: string;
-            /** Change Type */
-            change_type: string;
-            /** Notification Url */
-            notification_url: string;
-            /** Lifecycle Notification Url */
-            lifecycle_notification_url?: string | null;
-            /** Expiration Datetime */
-            expiration_datetime?: string | null;
-            /** Created At */
-            created_at?: string | null;
-            /** Updated At */
-            updated_at?: string | null;
-        };
-        /**
-         * GraphSubscriptionIn
-         * @description POST /graph/subscriptions body. Mirrors ``api/schemas.py::GraphSubscriptionPayload``.
-         *
-         *     ``expiration_datetime`` MUST be timezone-aware -- the FastAPI version
-         *     enforces UTC via a Pydantic validator; Ninja accepts any ``datetime``
-         *     so the orchestrator normalises with ``_utc_iso`` before forwarding to
-         *     Graph.
-         */
-        GraphSubscriptionIn: {
-            /** Resource */
-            resource: string;
-            /**
-             * Change Type
-             * @default created,updated
-             */
-            change_type: string;
-            /** Notification Url */
-            notification_url: string;
-            /**
-             * Expiration Datetime
-             * Format: date-time
-             */
-            expiration_datetime: string;
-            /** Lifecycle Notification Url */
-            lifecycle_notification_url?: string | null;
-        };
-        /** GraphSubscriptionPage */
-        GraphSubscriptionPage: {
-            /** Items */
-            items: components["schemas"]["GraphSubscriptionOut"][];
-            /** Total */
-            total: number;
-            /** Limit */
-            limit: number;
-            /** Offset */
-            offset: number;
-        };
-        /**
-         * GraphRenewIn
-         * @description PATCH /graph/subscriptions/{subscription_id} body.
-         */
-        GraphRenewIn: {
-            /**
-             * Expiration Datetime
-             * Format: date-time
-             */
-            expiration_datetime: string;
-        };
-        /**
-         * GraphNotificationOut
-         * @description Serialised :class:`ops.models.GraphNotification` row.
-         */
-        GraphNotificationOut: {
-            /** Id */
-            id: number;
-            /** Subscription Id */
-            subscription_id: string;
-            /** Change Type */
-            change_type: string;
-            /** Resource */
-            resource: string;
-            /** Tenant Id */
-            tenant_id?: string | null;
-            /** Client State */
-            client_state?: string | null;
-            /** Lifecycle Event */
-            lifecycle_event?: string | null;
-            /** Raw Payload */
-            raw_payload: {
+            /** Before */
+            before: {
                 [key: string]: unknown;
             };
             /** Created At */
             created_at?: string | null;
+            /** Id */
+            id: number;
+            /** Target Id */
+            target_id: string;
+            /** Target Type */
+            target_type: string;
         };
-        /** GraphNotificationPage */
-        GraphNotificationPage: {
+        /** AuditPage */
+        AuditPage: {
             /** Items */
-            items: components["schemas"]["GraphNotificationOut"][];
-            /** Total */
-            total: number;
+            items: components["schemas"]["AuditOut"][];
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
+            /** Total */
+            total: number;
+        };
+        /** ConfigChecksOut */
+        ConfigChecksOut: {
+            /** Checks */
+            checks: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+        };
+        /** DbStatsOut */
+        DbStatsOut: {
+            /** Failed Jobs */
+            failed_jobs: number;
+            /** Graph Subscriptions Expiring */
+            graph_subscriptions_expiring: number;
+            /** Last Execution At */
+            last_execution_at?: string | null;
+            /** Tables */
+            tables: {
+                [key: string]: number;
+            };
+        };
+        /**
+         * DeletedOut
+         * @description Mirrors ``api/schemas.py::DeletedPayload``. Used by DELETE /graph/subscriptions/{id}.
+         */
+        DeletedOut: {
+            /** Deleted */
+            deleted: string;
         };
         /**
          * ErrorOut
@@ -1731,13 +1255,697 @@ export interface components {
         ErrorOut: {
             /** Code */
             code: string;
-            /** Message */
-            message: string;
             /**
              * Details
              * @default null
              */
             details: unknown | null;
+            /** Message */
+            message: string;
+        };
+        /**
+         * ExportOut
+         * @description Full catalog export envelope.
+         */
+        ExportOut: {
+            /** Scenarios */
+            scenarios: {
+                [key: string]: unknown;
+            };
+            /** Slots */
+            slots: {
+                [key: string]: unknown;
+            };
+        };
+        /** ForgotPasswordIn */
+        ForgotPasswordIn: {
+            /** Email */
+            email: string;
+        };
+        /**
+         * GraphNotificationOut
+         * @description Serialised :class:`ops.models.GraphNotification` row.
+         */
+        GraphNotificationOut: {
+            /** Change Type */
+            change_type: string;
+            /** Client State */
+            client_state?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Id */
+            id: number;
+            /** Lifecycle Event */
+            lifecycle_event?: string | null;
+            /** Raw Payload */
+            raw_payload: {
+                [key: string]: unknown;
+            };
+            /** Resource */
+            resource: string;
+            /** Subscription Id */
+            subscription_id: string;
+            /** Tenant Id */
+            tenant_id?: string | null;
+        };
+        /** GraphNotificationPage */
+        GraphNotificationPage: {
+            /** Items */
+            items: components["schemas"]["GraphNotificationOut"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /**
+         * GraphRenewIn
+         * @description PATCH /graph/subscriptions/{subscription_id} body.
+         */
+        GraphRenewIn: {
+            /**
+             * Expiration Datetime
+             * Format: date-time
+             */
+            expiration_datetime: string;
+        };
+        /**
+         * GraphSubscriptionIn
+         * @description POST /graph/subscriptions body. Mirrors ``api/schemas.py::GraphSubscriptionPayload``.
+         *
+         *     ``expiration_datetime`` MUST be timezone-aware -- the FastAPI version
+         *     enforces UTC via a Pydantic validator; Ninja accepts any ``datetime``
+         *     so the orchestrator normalises with ``_utc_iso`` before forwarding to
+         *     Graph.
+         */
+        GraphSubscriptionIn: {
+            /**
+             * Change Type
+             * @default created,updated
+             */
+            change_type: string;
+            /**
+             * Expiration Datetime
+             * Format: date-time
+             */
+            expiration_datetime: string;
+            /** Lifecycle Notification Url */
+            lifecycle_notification_url?: string | null;
+            /** Notification Url */
+            notification_url: string;
+            /** Resource */
+            resource: string;
+        };
+        /**
+         * GraphSubscriptionOut
+         * @description Serialised :class:`ops.models.GraphSubscription` row.
+         */
+        GraphSubscriptionOut: {
+            /** Change Type */
+            change_type: string;
+            /** Created At */
+            created_at?: string | null;
+            /** Expiration Datetime */
+            expiration_datetime?: string | null;
+            /** Lifecycle Notification Url */
+            lifecycle_notification_url?: string | null;
+            /** Notification Url */
+            notification_url: string;
+            /** Resource */
+            resource: string;
+            /** Subscription Id */
+            subscription_id: string;
+            /** Updated At */
+            updated_at?: string | null;
+        };
+        /** GraphSubscriptionPage */
+        GraphSubscriptionPage: {
+            /** Items */
+            items: components["schemas"]["GraphSubscriptionOut"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /** HistoryItem */
+        HistoryItem: {
+            /** Executed At */
+            executed_at: string;
+            /** Execution Id */
+            execution_id?: string | null;
+            /** Id */
+            id: number;
+            /** Message */
+            message: string;
+            /** Scenario Id */
+            scenario_id: string;
+            /** Slot Id */
+            slot_id: string;
+            /** Slot Key */
+            slot_key: string;
+            /** Status */
+            status: string;
+            /** Step */
+            step: string;
+            /** Updated At */
+            updated_at?: string | null;
+        };
+        /** HistoryPage */
+        HistoryPage: {
+            /** Items */
+            items: components["schemas"]["HistoryItem"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /**
+         * ImportDryRun
+         * @description Response envelope for ``/admin/import``.
+         *
+         *     Both dry-run and apply paths return the same shape. Skipped scenarios
+         *     (orphan owner_user_id post-Phase-5 FK promotion) are reported when
+         *     non-zero so operators can investigate.
+         */
+        ImportDryRun: {
+            /** Dry Run */
+            dry_run: boolean;
+            /** Imported */
+            imported?: boolean | null;
+            /** Scenarios */
+            scenarios?: number | null;
+            /** Skipped Scenarios */
+            skipped_scenarios?: number | null;
+            /** Slots */
+            slots?: number | null;
+        };
+        /**
+         * JobEventOut
+         * @description Serialised :class:`ops.models.JobEvent` row.
+         */
+        JobEventOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Event Type */
+            event_type: string;
+            /** Level */
+            level: string;
+            /** Message */
+            message: string;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Step */
+            step?: string | null;
+        };
+        /**
+         * JobOut
+         * @description Serialised :class:`ops.models.Job` row.
+         *
+         *     Mirrors ``api/serializers.py::serialize_job``. ``user_id`` is the UUID
+         *     primary key of the FK target rendered as ``str`` (the frontend
+         *     contract still expects a string-shaped user identifier).
+         */
+        JobOut: {
+            /** Celery Task Id */
+            celery_task_id?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Dry Run */
+            dry_run: boolean;
+            /** Error */
+            error?: string | null;
+            /** Exit Code */
+            exit_code?: number | null;
+            /** Finished At */
+            finished_at?: string | null;
+            /** Job Id */
+            job_id: string;
+            /** Kind */
+            kind: string;
+            /** Payload */
+            payload: {
+                [key: string]: unknown;
+            };
+            /** Result */
+            result: {
+                [key: string]: unknown;
+            };
+            /** Started At */
+            started_at?: string | null;
+            /** Status */
+            status: string;
+            /** Target Id */
+            target_id: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** User Id */
+            user_id: string;
+        };
+        /**
+         * JobPage
+         * @description Paginated envelope for :class:`JobOut` items.
+         */
+        JobPage: {
+            /** Items */
+            items: components["schemas"]["JobOut"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /** MagicLinkExchangeIn */
+        MagicLinkExchangeIn: {
+            /** Token */
+            token: string;
+        };
+        /** MagicLinkRequestIn */
+        MagicLinkRequestIn: {
+            /** Email */
+            email: string;
+        };
+        /** MonitoringGraph */
+        MonitoringGraph: {
+            /** Expiring Within Hours */
+            expiring_within_hours: number;
+            /** Subscriptions Expiring */
+            subscriptions_expiring: number;
+        };
+        /** MonitoringJobs */
+        MonitoringJobs: {
+            /** Average Duration Seconds */
+            average_duration_seconds?: number | null;
+            /**
+             * By Status
+             * @default {}
+             */
+            by_status: {
+                [key: string]: number;
+            };
+            /** Failed */
+            failed: number;
+            /** Queued */
+            queued: number;
+            /** Running */
+            running: number;
+            /** Stuck */
+            stuck: number;
+            /** Total */
+            total: number;
+        };
+        /** MonitoringSummary */
+        MonitoringSummary: {
+            graph: components["schemas"]["MonitoringGraph"];
+            jobs: components["schemas"]["MonitoringJobs"];
+        };
+        /** PushItTargetIn */
+        PushItTargetIn: {
+            /** App Token */
+            app_token: string;
+            /**
+             * Base Url
+             * @default https://pushit-api.foxugly.com/api/v1
+             */
+            base_url: string;
+            /**
+             * Is Default
+             * @default false
+             */
+            is_default: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Title
+             * @default FoxRunner
+             */
+            title: string;
+        };
+        /** PushItTargetOut */
+        PushItTargetOut: {
+            /** App Token */
+            app_token: string;
+            /** Base Url */
+            base_url: string;
+            /** Id */
+            id: number;
+            /** Is Default */
+            is_default: boolean;
+            /** Name */
+            name: string;
+            /** Title */
+            title: string;
+        };
+        /** PushItTargetPatchIn */
+        PushItTargetPatchIn: {
+            /** App Token */
+            app_token?: string | null;
+            /** Base Url */
+            base_url?: string | null;
+            /** Is Default */
+            is_default?: boolean | null;
+            /** Name */
+            name?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** PushItTestOut */
+        PushItTestOut: {
+            /** Sent */
+            sent: boolean;
+        };
+        /** ResetPasswordIn */
+        ResetPasswordIn: {
+            /** Password */
+            password: string;
+            /** Token */
+            token: string;
+        };
+        /** RetentionResult */
+        RetentionResult: {
+            /** Removed */
+            removed: {
+                [key: string]: number;
+            };
+        };
+        /** RunOut */
+        RunOut: {
+            /** Dry Run */
+            dry_run: boolean;
+            /** Exit Code */
+            exit_code: number;
+            /** Scenario Id */
+            scenario_id?: string | null;
+            /** Success */
+            success: boolean;
+        };
+        /**
+         * ScenarioDataOut
+         * @description Aggregated pushover/network keys read from ``config/scenarios.json``.
+         */
+        ScenarioDataOut: {
+            /** Default Network Key */
+            default_network_key?: string | null;
+            /** Default Pushover Key */
+            default_pushover_key?: string | null;
+            /** Networks */
+            networks: string[];
+            /** Pushovers */
+            pushovers: string[];
+        };
+        /**
+         * ScenarioDetailOut
+         * @description Single scenario detail: list-item shape + the full DSL definition JSON.
+         */
+        ScenarioDetailOut: {
+            /** Before Steps */
+            before_steps: number;
+            /** Definition */
+            definition: {
+                [key: string]: unknown;
+            };
+            /** Description */
+            description: string;
+            /** Finally Steps */
+            finally_steps: number;
+            /** On Failure */
+            on_failure: number;
+            /** On Success */
+            on_success: number;
+            /** Owner User Id */
+            owner_user_id: string;
+            /** Requires Enterprise Network */
+            requires_enterprise_network: boolean;
+            /** Role */
+            role: string;
+            /** Scenario Id */
+            scenario_id: string;
+            /** Steps */
+            steps: number;
+            /** Writable */
+            writable: boolean;
+        };
+        /** ScenarioIn */
+        ScenarioIn: {
+            /** Definition */
+            definition?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /** Owner User Id */
+            owner_user_id: string;
+            /** Scenario Id */
+            scenario_id: string;
+        };
+        /**
+         * ScenarioListItem
+         * @description Page item: ``ScenarioOut`` + role + writable, both required.
+         */
+        ScenarioListItem: {
+            /** Before Steps */
+            before_steps: number;
+            /** Description */
+            description: string;
+            /** Finally Steps */
+            finally_steps: number;
+            /** On Failure */
+            on_failure: number;
+            /** On Success */
+            on_success: number;
+            /** Owner User Id */
+            owner_user_id: string;
+            /** Requires Enterprise Network */
+            requires_enterprise_network: boolean;
+            /** Role */
+            role: string;
+            /** Scenario Id */
+            scenario_id: string;
+            /** Steps */
+            steps: number;
+            /** Writable */
+            writable: boolean;
+        };
+        /** ScenarioListPage */
+        ScenarioListPage: {
+            /** Items */
+            items: components["schemas"]["ScenarioListItem"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /** ScenarioOut */
+        ScenarioOut: {
+            /** Before Steps */
+            before_steps: number;
+            /** Description */
+            description: string;
+            /** Finally Steps */
+            finally_steps: number;
+            /** On Failure */
+            on_failure: number;
+            /** On Success */
+            on_success: number;
+            /** Owner User Id */
+            owner_user_id: string;
+            /** Requires Enterprise Network */
+            requires_enterprise_network: boolean;
+            /** Role */
+            role?: string | null;
+            /** Scenario Id */
+            scenario_id: string;
+            /** Steps */
+            steps: number;
+            /** Writable */
+            writable?: boolean | null;
+        };
+        /** ScenarioPatchIn */
+        ScenarioPatchIn: {
+            /** Definition */
+            definition?: {
+                [key: string]: unknown;
+            } | null;
+            /** Description */
+            description?: string | null;
+            /** Owner User Id */
+            owner_user_id?: string | null;
+            /** Scenario Id */
+            scenario_id?: string | null;
+        };
+        /** ShareIn */
+        ShareIn: {
+            /** User Id */
+            user_id: string;
+        };
+        /** ShareList */
+        ShareList: {
+            /** Scenario Id */
+            scenario_id: string;
+            /** User Ids */
+            user_ids: string[];
+        };
+        /** ShareOut */
+        ShareOut: {
+            /** Scenario Id */
+            scenario_id: string;
+            /** User Id */
+            user_id: string;
+        };
+        /** SlotIn */
+        SlotIn: {
+            /** Days */
+            days: number[];
+            /**
+             * Enabled
+             * @default true
+             */
+            enabled: boolean;
+            /** End */
+            end: string;
+            /** Scenario Id */
+            scenario_id: string;
+            /** Slot Id */
+            slot_id: string;
+            /** Start */
+            start: string;
+        };
+        /** SlotOut */
+        SlotOut: {
+            /** Days */
+            days: number[];
+            /** Enabled */
+            enabled: boolean;
+            /** End */
+            end: string;
+            /** Scenario Id */
+            scenario_id: string;
+            /** Slot Id */
+            slot_id: string;
+            /** Start */
+            start: string;
+        };
+        /** SlotPage */
+        SlotPage: {
+            /** Items */
+            items: components["schemas"]["SlotOut"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /** SlotPatchIn */
+        SlotPatchIn: {
+            /** Days */
+            days?: number[] | null;
+            /** Enabled */
+            enabled?: boolean | null;
+            /** End */
+            end?: string | null;
+            /** Scenario Id */
+            scenario_id?: string | null;
+            /** Start */
+            start?: string | null;
+        };
+        /** StepDeleteOut */
+        StepDeleteOut: {
+            /** Deleted */
+            deleted: {
+                [key: string]: unknown;
+            };
+            /** Index */
+            index: number;
+        };
+        /** StepIn */
+        StepIn: {
+            /** Step */
+            step: {
+                [key: string]: unknown;
+            };
+        };
+        /** StepMutationOut */
+        StepMutationOut: {
+            /** Index */
+            index: number;
+            /** Step */
+            step: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * SystemStatusOut
+         * @description GET /system/status — aggregate health for the frontend alarm banner.
+         *
+         *     ``status`` is ``ok`` | ``degraded`` | ``down``; ``down`` lists the failing
+         *     check names; ``checks`` maps each dependency (database, redis,
+         *     celery_worker, celery_beat, scheduler) to its own ``{status, detail, ...}``.
+         */
+        SystemStatusOut: {
+            /** Checks */
+            checks: {
+                [key: string]: unknown;
+            };
+            /** Down */
+            down: string[];
+            /** Generated At */
+            generated_at: string;
+            /** Status */
+            status: string;
+        };
+        /** UserOut */
+        UserOut: {
+            /**
+             * Date Joined
+             * Format: date-time
+             */
+            date_joined: string;
+            /** Email */
+            email: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            /** Is Superuser */
+            is_superuser: boolean;
+            /** Is Verified */
+            is_verified: boolean;
+            /** Timezone Name */
+            timezone_name: string;
+        };
+        /** UserPatchIn */
+        UserPatchIn: {
+            /** Email */
+            email?: string | null;
+            /** Password */
+            password?: string | null;
+            /** Timezone Name */
+            timezone_name?: string | null;
         };
     };
     responses: never;
@@ -1748,6 +1956,483 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    ops_admin_api_admin_config_checks_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfigChecksOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_db_stats_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DbStatsOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_export_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExportOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_import_endpoint: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportDryRun"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_retention_endpoint: {
+        parameters: {
+            query?: {
+                jobs_days?: number | null;
+                audit_days?: number | null;
+                graph_notifications_days?: number | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RetentionResult"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_list_settings_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppSettingPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_upsert_setting_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppSettingIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppSettingOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_delete_setting_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_list_users_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_admin_update_user_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUserPatchIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_artifacts_list_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtifactPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_artifacts_prune_endpoint: {
+        parameters: {
+            query?: {
+                older_than_days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_artifact_download_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                kind: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_audit_log_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                actor_user_id?: string | null;
+                target_type?: string | null;
+                target_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_api_forgot_password: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForgotPasswordIn"];
+            };
+        };
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
     accounts_api_jwt_login: {
         parameters: {
             query?: never;
@@ -1802,7 +2487,7 @@ export interface operations {
             };
         };
     };
-    accounts_api_forgot_password: {
+    accounts_api_magic_link_exchange: {
         parameters: {
             query?: never;
             header?: never;
@@ -1811,7 +2496,38 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ForgotPasswordIn"];
+                "application/json": components["schemas"]["MagicLinkExchangeIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_api_magic_link_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MagicLinkRequestIn"];
             };
         };
         responses: {
@@ -1868,7 +2584,494 @@ export interface operations {
             };
         };
     };
-    accounts_api_users_me: {
+    ops_graph_api_graph_lifecycle_endpoint: {
+        parameters: {
+            query?: {
+                validationToken?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                } | null;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_graph_api_list_notifications_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                subscription_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GraphNotificationPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_graph_api_list_subscriptions_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GraphSubscriptionPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_graph_api_create_subscription_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GraphSubscriptionIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GraphSubscriptionOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_graph_api_delete_subscription_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                subscription_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeletedOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_graph_api_renew_subscription_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                subscription_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GraphRenewIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GraphSubscriptionOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_graph_api_graph_webhook_endpoint: {
+        parameters: {
+            query?: {
+                validationToken?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                } | null;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_health: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_list_jobs_endpoint: {
+        parameters: {
+            query?: {
+                user_id?: string | null;
+                status?: string | null;
+                scenario_id?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_get_job_endpoint: {
+        parameters: {
+            query: {
+                user_id: string;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_cancel_job_endpoint: {
+        parameters: {
+            query: {
+                user_id: string;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_get_job_events_endpoint: {
+        parameters: {
+            query: {
+                user_id: string;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobEventOut"][];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_retry_job_endpoint: {
+        parameters: {
+            query: {
+                user_id: string;
+            };
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_metrics_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_admin_api_monitoring_summary_endpoint: {
+        parameters: {
+            query?: {
+                stuck_after_minutes?: number;
+                graph_expiring_hours?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MonitoringSummary"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_list_pushit_targets: {
         parameters: {
             query?: never;
             header?: never;
@@ -1883,7 +3086,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserOut"];
+                    "application/json": components["schemas"]["PushItTargetOut"][];
                 };
             };
             /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
@@ -1897,7 +3100,7 @@ export interface operations {
             };
         };
     };
-    accounts_api_users_me_patch: {
+    accounts_pushit_api_create_pushit_target: {
         parameters: {
             query?: never;
             header?: never;
@@ -1906,7 +3109,71 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserPatchIn"];
+                "application/json": components["schemas"]["PushItTargetIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushItTargetOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_delete_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_update_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushItTargetPatchIn"];
             };
         };
         responses: {
@@ -1916,7 +3183,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserOut"];
+                    "application/json": components["schemas"]["PushItTargetOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_test_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushItTestOut"];
                 };
             };
             /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
@@ -2323,6 +3621,362 @@ export interface operations {
             };
         };
     };
+    ops_api_system_status_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemStatusOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_api_users_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_api_users_me_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserPatchIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_user_history_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+                status?: string | null;
+                slot_id?: string | null;
+                scenario_id?: string | null;
+                execution_id?: string | null;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoryPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_user_plan_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_run_user_next_endpoint: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_get_user_scenario_data_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioDataOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_list_user_scenarios_endpoint: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioListPage"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_get_user_scenario_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioDetailOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    ops_api_enqueue_user_scenario_endpoint: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_run_user_scenario_endpoint: {
+        parameters: {
+            query?: {
+                dry_run?: boolean;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
     catalog_api_list_step_collections_endpoint: {
         parameters: {
             query?: never;
@@ -2527,132 +4181,6 @@ export interface operations {
             };
         };
     };
-    catalog_api_list_user_scenarios_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ScenarioListPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    catalog_api_get_user_scenario_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-                scenario_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ScenarioDetailOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    catalog_api_get_user_scenario_data_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ScenarioDataOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    catalog_api_user_plan_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
     catalog_api_user_slots_endpoint: {
         parameters: {
             query?: {
@@ -2675,1074 +4203,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SlotPage"];
                 };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    catalog_api_run_user_scenario_endpoint: {
-        parameters: {
-            query?: {
-                dry_run?: boolean;
-            };
-            header?: never;
-            path: {
-                user_id: string;
-                scenario_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RunOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    catalog_api_run_user_next_endpoint: {
-        parameters: {
-            query?: {
-                dry_run?: boolean;
-            };
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RunOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    catalog_api_user_history_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-                status?: string | null;
-                slot_id?: string | null;
-                scenario_id?: string | null;
-                execution_id?: string | null;
-            };
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HistoryPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_health: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_enqueue_user_scenario_endpoint: {
-        parameters: {
-            query?: {
-                dry_run?: boolean;
-            };
-            header?: never;
-            path: {
-                user_id: string;
-                scenario_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Accepted */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["JobOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_list_jobs_endpoint: {
-        parameters: {
-            query?: {
-                user_id?: string | null;
-                status?: string | null;
-                scenario_id?: string | null;
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["JobPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_get_job_endpoint: {
-        parameters: {
-            query: {
-                user_id: string;
-            };
-            header?: never;
-            path: {
-                job_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["JobOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_get_job_events_endpoint: {
-        parameters: {
-            query: {
-                user_id: string;
-            };
-            header?: never;
-            path: {
-                job_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["JobEventOut"][];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_cancel_job_endpoint: {
-        parameters: {
-            query: {
-                user_id: string;
-            };
-            header?: never;
-            path: {
-                job_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["JobOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_api_retry_job_endpoint: {
-        parameters: {
-            query: {
-                user_id: string;
-            };
-            header?: never;
-            path: {
-                job_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Accepted */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["JobOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_list_users_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_update_user_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                target_user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AdminUserPatchIn"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_config_checks_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ConfigChecksOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_db_stats_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DbStatsOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_export_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ExportOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_import_endpoint: {
-        parameters: {
-            query?: {
-                dry_run?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    [key: string]: unknown;
-                };
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ImportDryRun"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_retention_endpoint: {
-        parameters: {
-            query?: {
-                jobs_days?: number | null;
-                audit_days?: number | null;
-                graph_notifications_days?: number | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RetentionResult"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_list_settings_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppSettingPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_upsert_setting_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                key: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AppSettingIn"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppSettingOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_admin_delete_setting_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                key: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_audit_log_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-                actor_user_id?: string | null;
-                target_type?: string | null;
-                target_id?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuditPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_artifacts_list_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArtifactPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_artifacts_prune_endpoint: {
-        parameters: {
-            query?: {
-                older_than_days?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_artifact_download_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                kind: string;
-                name: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_monitoring_summary_endpoint: {
-        parameters: {
-            query?: {
-                stuck_after_minutes?: number;
-                graph_expiring_hours?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MonitoringSummary"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_admin_api_metrics_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_list_subscriptions_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GraphSubscriptionPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_create_subscription_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GraphSubscriptionIn"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GraphSubscriptionOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_delete_subscription_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                subscription_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeletedOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_renew_subscription_endpoint: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                subscription_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GraphRenewIn"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GraphSubscriptionOut"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_list_notifications_endpoint: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-                subscription_id?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GraphNotificationPage"];
-                };
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_graph_webhook_endpoint: {
-        parameters: {
-            query?: {
-                validationToken?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    [key: string]: unknown;
-                } | null;
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorOut"];
-                };
-            };
-        };
-    };
-    ops_graph_api_graph_lifecycle_endpoint: {
-        parameters: {
-            query?: {
-                validationToken?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    [key: string]: unknown;
-                } | null;
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
             /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
             default: {
