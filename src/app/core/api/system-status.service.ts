@@ -6,11 +6,15 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth/auth.service';
 
 export interface SystemCheck {
-  status: string; // 'ok' | 'down'
+  status: string; // 'ok' | 'down' | 'disabled'
   detail?: string;
   state?: string | null;
   age_seconds?: number;
   last_beat_at?: string;
+  /** Whether the deployment treats this dependency as required. */
+  required?: boolean;
+  /** OS-appropriate relaunch command (provided by the backend, when down). */
+  command?: string;
 }
 
 export interface SystemStatus {
@@ -85,18 +89,10 @@ const LABELS: Record<string, string> = {
   scheduler: 'Scheduleur hors-ligne',
 };
 
-// Manual relaunch command per runnable dependency. The scheduler one is the
-// supervised launcher (auto-restarts on crash); shown in the banner so the
-// operator can fix it directly when no OS supervisor restarts it (e.g. Windows
-// without a Scheduled Task). Redis/DB are infra (no in-app command).
-const COMMANDS: Record<string, string> = {
-  scheduler: 'make run-scheduler',
-  celery_worker: 'make run-worker',
-  celery_beat: 'make run-beat',
-};
-
 function buildItems(status: SystemStatus | null): AlarmItem[] {
   if (!status || status.status === 'ok') return [];
+  // `down` already excludes dependencies the deployment doesn't use (the backend
+  // marks those "disabled"), so we only ever list things that genuinely matter.
   return status.down.map((name) => {
     const check = status.checks?.[name];
     const base = LABELS[name] ?? name;
@@ -107,7 +103,9 @@ function buildItems(status: SystemStatus | null): AlarmItem[] {
     } else {
       label = check?.detail ? `${base} — ${check.detail}` : base;
     }
-    return { label, command: COMMANDS[name] };
+    // The relaunch command is OS-aware and comes from the backend (it knows
+    // whether it runs on Windows → venv binaries, or elsewhere → make targets).
+    return { label, command: check?.command };
   });
 }
 

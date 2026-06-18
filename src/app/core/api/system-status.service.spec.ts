@@ -33,7 +33,14 @@ describe('SystemStatusService', () => {
       status: 'down',
       generated_at: '',
       down: ['scheduler'],
-      checks: { scheduler: { status: 'down', age_seconds: 720, state: 'planning' } },
+      checks: {
+        scheduler: {
+          status: 'down',
+          age_seconds: 720,
+          state: 'planning',
+          command: '.\\.venv\\Scripts\\python.exe scripts\\run_scheduler_supervised.py',
+        },
+      },
     };
     service.status.set(status);
     expect(service.alarm()).toBe(true);
@@ -41,15 +48,18 @@ describe('SystemStatusService', () => {
     const item = service.items()[0];
     expect(item.label).toContain('Scheduleur hors-ligne');
     expect(item.label).toContain('12 min');
-    expect(item.command).toBe('make run-scheduler');
+    // the relaunch command is taken verbatim from the backend (OS-aware)
+    expect(item.command).toBe('.\\.venv\\Scripts\\python.exe scripts\\run_scheduler_supervised.py');
   });
 
-  it('is a degraded (amber) alarm with a command for a non-critical dependency', () => {
+  it('is a degraded (amber) alarm carrying the backend relaunch command', () => {
     service.status.set({
       status: 'degraded',
       generated_at: '',
       down: ['celery_worker'],
-      checks: { celery_worker: { status: 'down', detail: 'no workers responded' } },
+      checks: {
+        celery_worker: { status: 'down', detail: 'no workers responded', command: 'make run-worker' },
+      },
     });
     expect(service.severity()).toBe('degraded');
     const item = service.items()[0];
