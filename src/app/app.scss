@@ -22,3 +22,34 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+// Global system-health alarm (scheduler / Celery / Redis / DB). Amber for a
+// degraded (non-critical) service, red for a down critical one. Mirrors the
+// offline banner but lists each failing dependency.
+.fox-system-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1090;
+  padding: 0.5rem 1rem;
+  background: #b45309; // amber-700 (degraded)
+  color: #fff;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  &--down {
+    background: #b91c1c; // red-700 (critical down)
+  }
+
+  &__title {
+    font-weight: 600;
+  }
+
+  &__list {
+    margin: 0;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+}

@@ -14,6 +14,25 @@
   </div>
 }
 
+@if (auth.isLoggedIn() && systemStatus.alarm()) {
+  <div
+    class="fox-system-banner"
+    [class.fox-system-banner--down]="systemStatus.severity() === 'down'"
+    role="alert"
+    aria-live="assertive"
+  >
+    <i class="pi pi-exclamation-triangle mr-2"></i>
+    <span class="fox-system-banner__title">
+      {{ systemStatus.severity() === 'down' ? 'Incident système' : 'Service dégradé' }}
+    </span>
+    <ul class="fox-system-banner__list">
+      @for (message of systemStatus.messages(); track message) {
+        <li>{{ message }}</li>
+      }
+    </ul>
+  </div>
+}
+
 @if (auth.isLoggedIn()) {
   <div class="fox-shell">
     <app-topmenu />
