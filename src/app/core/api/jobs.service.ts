@@ -77,4 +77,15 @@ export class JobsService {
       ),
     );
   }
+
+  artifactUrl(jobId: string, kind: 'screenshot' | 'page_source'): string {
+    return `${this.base}/jobs/${encodeURIComponent(jobId)}/artifacts/${kind}`;
+  }
+
+  async artifactBlob(jobId: string, kind: 'screenshot' | 'page_source'): Promise<string> {
+    const blob = await firstValueFrom(
+      this.http.get(this.artifactUrl(jobId, kind), { responseType: 'blob' }),
+    );
+    return URL.createObjectURL(blob);
+  }
 }
