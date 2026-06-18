@@ -21,6 +21,7 @@ import {
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
+import { ScenarioSlotsComponent } from './scenario-slots.component';
 
 @Component({
   selector: 'app-scenario-detail',
@@ -36,6 +37,7 @@ import { SharesDialogComponent } from '../shares/shares-dialog.component';
     PageHeaderComponent,
     EmptyStateComponent,
     SharesDialogComponent,
+    ScenarioSlotsComponent,
   ],
   template: `
     <app-page-header
@@ -183,6 +185,10 @@ import { SharesDialogComponent } from '../shares/shares-dialog.component';
             }
           </p-tabpanels>
         </p-tabs>
+      </p-card>
+
+      <p-card styleClass="mt-3">
+        <app-scenario-slots [scenarioId]="s.scenario_id" [canEdit]="isWritable()" />
       </p-card>
     } @else if (!loading()) {
       <app-empty-state

@@ -36,6 +36,19 @@ describe('SlotsService', () => {
     await promise;
   });
 
+  it('listForScenario() filters by scenario_id and returns items', async () => {
+    const promise = service.listForScenario('s1');
+    const req = http.expectOne(
+      `${environment.apiBaseUrl}/slots?scenario_id=s1&limit=500&offset=0`,
+    );
+    expect(req.request.method).toBe('GET');
+    const rows = [
+      { slot_id: 'a', scenario_id: 's1', days: [0], start: '08:00', end: '08:15', enabled: true },
+    ];
+    req.flush({ items: rows, total: 1, limit: 500, offset: 0 });
+    expect(await promise).toEqual(rows);
+  });
+
   it('create() sets Idempotency-Key header', async () => {
     const dto: Slot = {
       slot_id: 'slot1',

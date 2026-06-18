@@ -79,28 +79,20 @@ export const routes: Routes = [
           ).then((m) => m.StepCollectionsEditorComponent),
       },
       {
-        path: 'slots',
+        path: 'executions',
         loadComponent: () =>
-          import('./features/slots/list/slots-list.component').then(
-            (m) => m.SlotsListComponent,
-          ),
+          import('./features/executions/executions.component').then((m) => m.ExecutionsComponent),
       },
-      {
-        path: 'jobs',
-        loadComponent: () =>
-          import('./features/jobs/list/jobs-list.component').then((m) => m.JobsListComponent),
-      },
+      // Jobs + Historique merged into the unified Exécutions view; keep the
+      // list URLs working via redirects (the detail view jobs/:id stays).
+      { path: 'jobs', pathMatch: 'full', redirectTo: 'executions' },
+      { path: 'history', pathMatch: 'full', redirectTo: 'executions' },
       {
         path: 'jobs/:id',
         loadComponent: () =>
           import('./features/jobs/detail/job-detail.component').then(
             (m) => m.JobDetailComponent,
           ),
-      },
-      {
-        path: 'history',
-        loadComponent: () =>
-          import('./features/history/history.component').then((m) => m.HistoryComponent),
       },
       {
         path: 'plan',
