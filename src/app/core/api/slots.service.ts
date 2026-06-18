@@ -24,6 +24,12 @@ export class SlotsService {
     );
   }
 
+  /** Slots belonging to a single scenario (server-side `scenario_id` filter). */
+  async listForScenario(scenarioId: string): Promise<SlotSummary[]> {
+    const page = await this.list({ scenario_id: scenarioId, limit: 500, offset: 0 });
+    return page.items;
+  }
+
   get(slotId: string): Promise<Slot> {
     return firstValueFrom(
       this.http.get<Slot>(`${this.base}/slots/${encodeURIComponent(slotId)}`),

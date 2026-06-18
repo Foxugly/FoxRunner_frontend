@@ -79,7 +79,7 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
         icon="pi pi-arrow-left"
         severity="secondary"
         [text]="true"
-        routerLink="/jobs"
+        routerLink="/executions"
       />
       <p-button
         icon="pi pi-refresh"

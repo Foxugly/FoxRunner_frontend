@@ -71,9 +71,9 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
       <app-empty-state
         icon="pi-calendar-plus"
         title="Aucun créneau planifié"
-        message="Crée des slots actifs pour alimenter le planning."
+        message="Ajoute des créneaux actifs depuis un scénario (section Planification) pour alimenter le planning."
       >
-        <p-button label="Voir les slots" icon="pi pi-calendar" routerLink="/slots" />
+        <p-button label="Voir les scénarios" icon="pi pi-sitemap" routerLink="/scenarios" />
       </app-empty-state>
     }
   `,
