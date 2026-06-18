@@ -10,6 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
+import { SlotsService } from '../../../core/api/slots.service';
 import type { ScenarioSummary } from '../../../core/api/types';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
@@ -65,6 +66,13 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
         <a [routerLink]="['/scenarios', s.scenario_id]">{{ s.scenario_id }}</a>
       </ng-template>
       <ng-template appCell="description" let-s>{{ s.description || '—' }}</ng-template>
+      <ng-template appCell="slots" let-s>
+        @if (slotCounts()[s.scenario_id]; as n) {
+          <p-tag severity="secondary" [value]="n + (n > 1 ? ' créneaux' : ' créneau')" />
+        } @else {
+          <span class="text-color-secondary text-sm">—</span>
+        }
+      </ng-template>
       <ng-template appCell="role" let-s>
         @if (s.role === 'owner') {
           <p-tag severity="success" value="Propriétaire" />
@@ -154,16 +162,20 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
 })
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
+  private readonly slotsService = inject(SlotsService);
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
 
   readonly items = signal<ScenarioSummary[]>([]);
   readonly loading = signal(false);
+  /** scenario_id -> number of slots, for the "N créneaux" badge. */
+  readonly slotCounts = signal<Record<string, number>>({});
 
   readonly columns: DataTableColumn[] = [
     { field: 'scenario_id', header: 'Scenario ID', sortable: true },
     { field: 'description', header: 'Description', sortable: true },
+    { field: 'slots', header: 'Créneaux', width: '8rem', searchable: false },
     { field: 'role', header: 'Rôle', width: '8rem', searchable: false },
     { field: 'network', header: 'Réseau', width: '10rem', searchable: false },
     { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
@@ -193,10 +205,25 @@ export class ScenariosListComponent implements OnInit {
       if (page.total > 500) {
         console.warn(`scenarios: ${page.total} rows exceed the 500 client cap; showing first 500.`);
       }
+      void this.loadSlotCounts();
     } catch {
       /* interceptor toasts */
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  /** One bounded call, grouped client-side, for the "N créneaux" badges. */
+  private async loadSlotCounts(): Promise<void> {
+    try {
+      const page = await this.slotsService.list({ limit: 500, offset: 0 });
+      const counts: Record<string, number> = {};
+      for (const slot of page.items) {
+        counts[slot.scenario_id] = (counts[slot.scenario_id] ?? 0) + 1;
+      }
+      this.slotCounts.set(counts);
+    } catch {
+      /* badge is best-effort */
     }
   }
 

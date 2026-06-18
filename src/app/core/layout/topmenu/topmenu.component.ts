@@ -28,7 +28,6 @@ export class TopmenuComponent {
     const base: NavLink[] = [
       { label: 'Tableau de bord', icon: 'pi pi-home', link: '/', exact: true },
       { label: 'Scénarios', icon: 'pi pi-sitemap', link: '/scenarios' },
-      { label: 'Slots', icon: 'pi pi-calendar', link: '/slots' },
       { label: 'Jobs', icon: 'pi pi-play', link: '/jobs' },
       { label: 'Plan', icon: 'pi pi-clock', link: '/plan' },
       { label: 'Historique', icon: 'pi pi-history', link: '/history' },

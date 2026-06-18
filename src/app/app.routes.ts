@@ -79,13 +79,6 @@ export const routes: Routes = [
           ).then((m) => m.StepCollectionsEditorComponent),
       },
       {
-        path: 'slots',
-        loadComponent: () =>
-          import('./features/slots/list/slots-list.component').then(
-            (m) => m.SlotsListComponent,
-          ),
-      },
-      {
         path: 'jobs',
         loadComponent: () =>
           import('./features/jobs/list/jobs-list.component').then((m) => m.JobsListComponent),

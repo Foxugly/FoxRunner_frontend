@@ -24,14 +24,6 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
         </p-card>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Slots" subheader="Planification des créneaux">
-          <p>Créer et gérer les plages horaires d'exécution hebdomadaires.</p>
-          <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-calendar" routerLink="/slots" />
-          </ng-template>
-        </p-card>
-      </div>
-      <div class="col-12 md:col-6 lg:col-4">
         <p-card header="Jobs" subheader="Suivi des exécutions">
           <p>File d'attente, suivi en direct, relance et annulation.</p>
           <ng-template pTemplate="footer">
