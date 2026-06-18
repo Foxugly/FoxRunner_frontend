@@ -37,7 +37,7 @@ import { StatusTagComponent } from '../../../shared/components/status-tag/status
         icon="pi pi-arrow-left"
         severity="secondary"
         [text]="true"
-        routerLink="/jobs"
+        routerLink="/executions"
       />
       <p-button
         icon="pi pi-refresh"

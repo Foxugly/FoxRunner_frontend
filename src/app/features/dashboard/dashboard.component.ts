@@ -126,7 +126,7 @@ interface HealthRow {
           <ng-template pTemplate="header">
             <div class="flex align-items-center justify-content-between p-3 pb-0">
               <span class="font-semibold"><i class="pi pi-history mr-2"></i>Activité récente</span>
-              <a class="text-sm" routerLink="/jobs">Tous les jobs →</a>
+              <a class="text-sm" routerLink="/executions">Toutes les exécutions →</a>
             </div>
           </ng-template>
           @if (recentJobs().length === 0) {

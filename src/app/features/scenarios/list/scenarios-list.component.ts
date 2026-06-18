@@ -11,11 +11,20 @@ import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { SlotsService } from '../../../core/api/slots.service';
+import { HistoryService } from '../../../core/api/history.service';
+import { JobsService } from '../../../core/api/jobs.service';
 import type { ScenarioSummary } from '../../../core/api/types';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
 import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
 import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
+import { StatusTagComponent } from '../../../shared/components/status-tag/status-tag.component';
+import { ApiDatePipe } from '../../../shared/pipes/api-date.pipe';
+
+interface LastRun {
+  status: string;
+  when: string;
+}
 
 @Component({
   selector: 'app-scenarios-list',
@@ -32,6 +41,8 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
     PageHeaderComponent,
     DataTableComponent,
     CellTemplateDirective,
+    StatusTagComponent,
+    ApiDatePipe,
   ],
   template: `
     <app-page-header
@@ -71,6 +82,16 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
           <p-tag severity="secondary" [value]="n + (n > 1 ? ' créneaux' : ' créneau')" />
         } @else {
           <span class="text-color-secondary text-sm">—</span>
+        }
+      </ng-template>
+      <ng-template appCell="last_run" let-s>
+        @if (lastRuns()[s.scenario_id]; as lr) {
+          <span class="flex align-items-center gap-2">
+            <app-status-tag [status]="lr.status" />
+            <span class="text-color-secondary text-xs">{{ lr.when | apiDate: 'short' }}</span>
+          </span>
+        } @else {
+          <span class="text-color-secondary text-sm">jamais</span>
         }
       </ng-template>
       <ng-template appCell="role" let-s>
@@ -163,6 +184,8 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
   private readonly slotsService = inject(SlotsService);
+  private readonly historyService = inject(HistoryService);
+  private readonly jobsService = inject(JobsService);
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
@@ -171,11 +194,14 @@ export class ScenariosListComponent implements OnInit {
   readonly loading = signal(false);
   /** scenario_id -> number of slots, for the "N créneaux" badge. */
   readonly slotCounts = signal<Record<string, number>>({});
+  /** scenario_id -> most recent run (job or scheduled), for the "dernier run" badge. */
+  readonly lastRuns = signal<Record<string, LastRun>>({});
 
   readonly columns: DataTableColumn[] = [
     { field: 'scenario_id', header: 'Scenario ID', sortable: true },
     { field: 'description', header: 'Description', sortable: true },
     { field: 'slots', header: 'Créneaux', width: '8rem', searchable: false },
+    { field: 'last_run', header: 'Dernier run', width: '11rem', searchable: false },
     { field: 'role', header: 'Rôle', width: '8rem', searchable: false },
     { field: 'network', header: 'Réseau', width: '10rem', searchable: false },
     { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
@@ -206,6 +232,7 @@ export class ScenariosListComponent implements OnInit {
         console.warn(`scenarios: ${page.total} rows exceed the 500 client cap; showing first 500.`);
       }
       void this.loadSlotCounts();
+      void this.loadLastRuns(me.id);
     } catch {
       /* interceptor toasts */
     } finally {
@@ -225,6 +252,30 @@ export class ScenariosListComponent implements OnInit {
     } catch {
       /* badge is best-effort */
     }
+  }
+
+  /** Most recent run per scenario across on-demand jobs + scheduled history. */
+  private async loadLastRuns(userId: string): Promise<void> {
+    const [jobsRes, histRes] = await Promise.allSettled([
+      this.jobsService.list({ user_id: userId, limit: 100, offset: 0 }),
+      this.historyService.list(userId, { limit: 100, offset: 0 }),
+    ]);
+    const map: Record<string, LastRun> = {};
+    const consider = (scenario: string, status: string, when: string) => {
+      const cur = map[scenario];
+      if (!cur || cur.when < when) map[scenario] = { status, when };
+    };
+    if (jobsRes.status === 'fulfilled') {
+      for (const j of jobsRes.value.items) {
+        consider(j.target_id, j.status, j.finished_at ?? j.started_at ?? j.created_at);
+      }
+    }
+    if (histRes.status === 'fulfilled') {
+      for (const h of histRes.value.items) {
+        consider(h.scenario_id, h.status, h.executed_at);
+      }
+    }
+    this.lastRuns.set(map);
   }
 
   askDuplicate(s: ScenarioSummary): void {
