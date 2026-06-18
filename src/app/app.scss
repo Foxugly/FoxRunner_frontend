@@ -52,4 +52,12 @@
     padding-left: 1.25rem;
     list-style: disc;
   }
+
+  &__fix code {
+    background: rgba(0, 0, 0, 0.28);
+    padding: 0.05rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    user-select: all; // one click selects the whole command for copying
+  }
 }

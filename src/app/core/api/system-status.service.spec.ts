@@ -25,10 +25,10 @@ describe('SystemStatusService', () => {
     service.status.set({ status: 'ok', generated_at: '', down: [], checks: {} });
     expect(service.alarm()).toBe(false);
     expect(service.severity()).toBeNull();
-    expect(service.messages()).toEqual([]);
+    expect(service.items()).toEqual([]);
   });
 
-  it('is a critical (red) alarm with a humanized age when the scheduler is down', () => {
+  it('is a critical (red) alarm with a humanized age + relaunch command when the scheduler is down', () => {
     const status: SystemStatus = {
       status: 'down',
       generated_at: '',
@@ -38,11 +38,13 @@ describe('SystemStatusService', () => {
     service.status.set(status);
     expect(service.alarm()).toBe(true);
     expect(service.severity()).toBe('down');
-    expect(service.messages()[0]).toContain('Scheduleur hors-ligne');
-    expect(service.messages()[0]).toContain('12 min');
+    const item = service.items()[0];
+    expect(item.label).toContain('Scheduleur hors-ligne');
+    expect(item.label).toContain('12 min');
+    expect(item.command).toBe('make run-scheduler');
   });
 
-  it('is a degraded (amber) alarm for a non-critical dependency', () => {
+  it('is a degraded (amber) alarm with a command for a non-critical dependency', () => {
     service.status.set({
       status: 'degraded',
       generated_at: '',
@@ -50,6 +52,8 @@ describe('SystemStatusService', () => {
       checks: { celery_worker: { status: 'down', detail: 'no workers responded' } },
     });
     expect(service.severity()).toBe('degraded');
-    expect(service.messages()[0]).toContain('worker Celery');
+    const item = service.items()[0];
+    expect(item.label).toContain('worker Celery');
+    expect(item.command).toBe('make run-worker');
   });
 });

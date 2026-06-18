@@ -26,8 +26,15 @@
       {{ systemStatus.severity() === 'down' ? 'Incident système' : 'Service dégradé' }}
     </span>
     <ul class="fox-system-banner__list">
-      @for (message of systemStatus.messages(); track message) {
-        <li>{{ message }}</li>
+      @for (item of systemStatus.items(); track item.label) {
+        <li>
+          {{ item.label }}
+          @if (item.command) {
+            <span class="fox-system-banner__fix">
+              — à relancer : <code>{{ item.command }}</code>
+            </span>
+          }
+        </li>
       }
     </ul>
   </div>

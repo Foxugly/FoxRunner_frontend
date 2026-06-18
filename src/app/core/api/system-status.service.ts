@@ -50,8 +50,9 @@ export class SystemStatusService {
     return s && s.status !== 'ok' ? s.status : null;
   });
 
-  /** Human-readable French lines, one per failing dependency. */
-  readonly messages = computed<string[]>(() => buildMessages(this.status()));
+  /** One entry per failing dependency: a French line + (when the operator can
+   * fix it by running something) the exact command to relaunch it. */
+  readonly items = computed<AlarmItem[]>(() => buildItems(this.status()));
 
   constructor() {
     timer(0, POLL_MS)
@@ -69,6 +70,13 @@ export class SystemStatusService {
   }
 }
 
+/** A failing-dependency line for the banner, with an optional fix command. */
+export interface AlarmItem {
+  label: string;
+  /** Shell command to relaunch the dependency (operator can copy/paste it). */
+  command?: string;
+}
+
 const LABELS: Record<string, string> = {
   database: 'Base de données injoignable',
   redis: 'Redis (broker) injoignable',
@@ -77,19 +85,29 @@ const LABELS: Record<string, string> = {
   scheduler: 'Scheduleur hors-ligne',
 };
 
-function buildMessages(status: SystemStatus | null): string[] {
+// Manual relaunch command per runnable dependency. The scheduler one is the
+// supervised launcher (auto-restarts on crash); shown in the banner so the
+// operator can fix it directly when no OS supervisor restarts it (e.g. Windows
+// without a Scheduled Task). Redis/DB are infra (no in-app command).
+const COMMANDS: Record<string, string> = {
+  scheduler: 'make run-scheduler',
+  celery_worker: 'make run-worker',
+  celery_beat: 'make run-beat',
+};
+
+function buildItems(status: SystemStatus | null): AlarmItem[] {
   if (!status || status.status === 'ok') return [];
   return status.down.map((name) => {
     const check = status.checks?.[name];
-    const label = LABELS[name] ?? name;
+    const base = LABELS[name] ?? name;
+    let label: string;
     if (name === 'scheduler' && check) {
       const age = check.age_seconds;
-      if (typeof age === 'number') {
-        return `${label} (depuis ${formatAge(age)})`;
-      }
-      return `${label} (arrêté)`;
+      label = typeof age === 'number' ? `${base} (depuis ${formatAge(age)})` : `${base} (arrêté)`;
+    } else {
+      label = check?.detail ? `${base} — ${check.detail}` : base;
     }
-    return check?.detail ? `${label} — ${check.detail}` : label;
+    return { label, command: COMMANDS[name] };
   });
 }
 
