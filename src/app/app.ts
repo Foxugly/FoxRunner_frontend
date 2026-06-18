@@ -4,6 +4,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { AuthService } from './core/auth/auth.service';
 import { NetworkHealthService } from './core/http/network-health.service';
+import { SystemStatusService } from './core/api/system-status.service';
 import { TopmenuComponent } from './core/layout/topmenu/topmenu.component';
 import { FooterComponent } from './core/layout/footer/footer.component';
 
@@ -23,4 +24,5 @@ import { FooterComponent } from './core/layout/footer/footer.component';
 export class App {
   readonly auth = inject(AuthService);
   readonly network = inject(NetworkHealthService);
+  readonly systemStatus = inject(SystemStatusService);
 }

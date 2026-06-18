@@ -8,7 +8,7 @@ import { JobsService } from '../../core/api/jobs.service';
 import { PlanService } from '../../core/api/plan.service';
 import { ScenariosService } from '../../core/api/scenarios.service';
 import { SlotsService } from '../../core/api/slots.service';
-import { SystemStatusService, type SystemStatus } from '../../core/api/system-status.service';
+import { SystemStatusService } from '../../core/api/system-status.service';
 import type { Job, Plan } from '../../core/api/types';
 import { ApiDatePipe } from '../../shared/pipes/api-date.pipe';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -170,7 +170,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private readonly scenarios = inject(ScenariosService);
   private readonly slots = inject(SlotsService);
 
-  readonly system = signal<SystemStatus | null>(null);
+  // Reuse the global alarm-banner SystemStatusService (auto-polls /system/status
+  // into a `status` signal) rather than running a second poll loop.
+  readonly system = computed(() => this.statusService.status());
   readonly plan = signal<Plan | null>(null);
   readonly recentJobs = signal<Job[]>([]);
   readonly counts = signal<{ scenarios: number; activeSlots: number; activeJobs: number }>({
@@ -236,23 +238,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private async refreshLive(): Promise<void> {
+    // System health is auto-polled by SystemStatusService (read via `system`).
     const me = this.auth.currentUser();
-    await Promise.all([
-      this.statusService
-        .get()
-        .then((s) => this.system.set(s))
-        .catch(() => {
-          /* tile shows unavailable */
-        }),
-      me
-        ? this.jobs
-            .list({ user_id: me.id, limit: 5 })
-            .then((page) => this.recentJobs.set(page.items))
-            .catch(() => {
-              /* keep previous */
-            })
-        : Promise.resolve(),
-    ]);
+    if (!me) return;
+    await this.jobs
+      .list({ user_id: me.id, limit: 5 })
+      .then((page) => this.recentJobs.set(page.items))
+      .catch(() => {
+        /* keep previous */
+      });
   }
 
   private async loadPlan(): Promise<void> {
