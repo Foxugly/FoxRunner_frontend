@@ -640,6 +640,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pushit-targets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Pushit Targets */
+        get: operations["accounts_pushit_api_list_pushit_targets"];
+        put?: never;
+        /** Create Pushit Target */
+        post: operations["accounts_pushit_api_create_pushit_target"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pushit-targets/{target_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Pushit Target */
+        delete: operations["accounts_pushit_api_delete_pushit_target"];
+        options?: never;
+        head?: never;
+        /** Update Pushit Target */
+        patch: operations["accounts_pushit_api_update_pushit_target"];
+        trace?: never;
+    };
+    "/api/v1/pushit-targets/{target_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Pushit Target
+         * @description Send a one-off test notification through this target.
+         *
+         *     Lets the user confirm the token/base_url from the UI without waiting
+         *     for a real scheduler alert. Returns ``{sent: bool}`` -- a False means
+         *     PushIT rejected the call (bad token, network) so the UI can flag it.
+         */
+        post: operations["accounts_pushit_api_test_pushit_target"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/scenarios": {
         parameters: {
             query?: never;
@@ -1531,6 +1591,61 @@ export interface components {
         MonitoringSummary: {
             graph: components["schemas"]["MonitoringGraph"];
             jobs: components["schemas"]["MonitoringJobs"];
+        };
+        /** PushItTargetIn */
+        PushItTargetIn: {
+            /** App Token */
+            app_token: string;
+            /**
+             * Base Url
+             * @default https://pushit-api.foxugly.com/api/v1
+             */
+            base_url: string;
+            /**
+             * Is Default
+             * @default false
+             */
+            is_default: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Title
+             * @default FoxRunner
+             */
+            title: string;
+        };
+        /** PushItTargetOut */
+        PushItTargetOut: {
+            /** App Token */
+            app_token: string;
+            /** Base Url */
+            base_url: string;
+            /** Id */
+            id: number;
+            /** Is Default */
+            is_default: boolean;
+            /** Name */
+            name: string;
+            /** Title */
+            title: string;
+        };
+        /** PushItTargetPatchIn */
+        PushItTargetPatchIn: {
+            /** App Token */
+            app_token?: string | null;
+            /** Base Url */
+            base_url?: string | null;
+            /** Is Default */
+            is_default?: boolean | null;
+            /** Name */
+            name?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** PushItTestOut */
+        PushItTestOut: {
+            /** Sent */
+            sent: boolean;
         };
         /** ResetPasswordIn */
         ResetPasswordIn: {
@@ -2990,6 +3105,163 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MonitoringSummary"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_list_pushit_targets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushItTargetOut"][];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_create_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushItTargetIn"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushItTargetOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_delete_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_update_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PushItTargetPatchIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushItTargetOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    accounts_pushit_api_test_pushit_target: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PushItTestOut"];
                 };
             };
             /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
