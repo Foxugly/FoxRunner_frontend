@@ -121,15 +121,16 @@ const KIND_OPTIONS: KindOption[] = [
           <td>{{ formatSize(a.size) }}</td>
           <td>{{ formatDate(a.updated_at) }}</td>
           <td>
-            <a
-              [href]="downloadUrl(a)"
-              target="_blank"
-              rel="noopener"
-              class="p-button p-button-text p-button-sm p-button-rounded no-underline"
+            <p-button
+              icon="pi pi-download"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              size="small"
+              [loading]="downloading() === a.name"
               pTooltip="Télécharger"
-            >
-              <i class="pi pi-download"></i>
-            </a>
+              (onClick)="download(a)"
+            />
           </td>
         </tr>
       </ng-template>
@@ -154,6 +155,7 @@ export class AdminArtifactsComponent implements OnInit {
   readonly first = signal(0);
   readonly loading = signal(false);
   readonly pruning = signal(false);
+  readonly downloading = signal<string | null>(null);
 
   filterKind: 'screenshots' | 'pages' | null = null;
   pruneDays = 30;
@@ -175,8 +177,20 @@ export class AdminArtifactsComponent implements OnInit {
     void this.load(0, this.rows());
   }
 
-  downloadUrl(a: Artifact): string {
-    return this.service.downloadUrl(a.kind, a.name);
+  async download(a: Artifact): Promise<void> {
+    this.downloading.set(a.name);
+    try {
+      const url = await this.service.downloadBlob(a.kind, a.name);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = a.name;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+    } catch {
+      /* interceptor toasts */
+    } finally {
+      this.downloading.set(null);
+    }
   }
 
   formatSize(bytes: number): string {

@@ -339,7 +339,7 @@ export class ScenarioDetailComponent implements OnInit {
     a.href = url;
     a.download = `${s.scenario_id}.json`;
     a.click();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 0);
     this.messages.add({ severity: 'success', summary: 'Scénario exporté', detail: `${s.scenario_id}.json`, life: 3000 });
   }
 }
