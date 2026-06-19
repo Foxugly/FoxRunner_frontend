@@ -67,6 +67,14 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
         [disabled]="!scenario() || running()"
         (onClick)="confirmRealRun()"
       />
+      <p-button
+        label="Exporter JSON"
+        icon="pi pi-download"
+        severity="secondary"
+        [text]="true"
+        [disabled]="!scenario()"
+        (onClick)="exportJson()"
+      />
       @if (isWritable()) {
         <p-button
           label="Éditer"
@@ -312,5 +320,26 @@ export class ScenarioDetailComponent implements OnInit {
     } finally {
       this.running.set(false);
     }
+  }
+
+  /** Download the scenario (id + description + DSL definition) as a JSON file,
+   * re-importable via the scenarios list "Importer". */
+  exportJson(): void {
+    const s = this.scenario();
+    if (!s) return;
+    const payload = {
+      schema: 'foxrunner.scenario/1',
+      scenario_id: s.scenario_id,
+      description: s.description,
+      definition: s.definition,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${s.scenario_id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.messages.add({ severity: 'success', summary: 'Scénario exporté', detail: `${s.scenario_id}.json`, life: 3000 });
   }
 }

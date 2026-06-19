@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -13,7 +13,8 @@ import { ScenariosService } from '../../../core/api/scenarios.service';
 import { SlotsService } from '../../../core/api/slots.service';
 import { HistoryService } from '../../../core/api/history.service';
 import { JobsService } from '../../../core/api/jobs.service';
-import type { ScenarioSummary } from '../../../core/api/types';
+import type { ScenarioSummary, ScenarioCreate } from '../../../core/api/types';
+import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
 import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
@@ -56,6 +57,12 @@ interface LastRun {
         [loading]="loading()"
         (onClick)="reload()"
         pTooltip="Rafraîchir"
+      />
+      <p-button
+        label="Importer"
+        icon="pi pi-upload"
+        severity="secondary"
+        (onClick)="openImport()"
       />
       <p-button
         label="Nouveau"
@@ -178,6 +185,34 @@ interface LastRun {
       </ng-template>
     </p-dialog>
 
+    <p-dialog
+      header="Importer un scénario (JSON)"
+      [modal]="true"
+      [(visible)]="importOpen"
+      [style]="{ width: '40rem' }"
+    >
+      <div class="flex flex-column gap-3">
+        <div class="flex flex-column gap-2">
+          <label for="importId">Identifiant du scénario</label>
+          <input id="importId" pInputText [(ngModel)]="importId" placeholder="mon_scenario" />
+          <small class="text-color-secondary">Pré-rempli depuis le JSON ; modifie-le pour importer sous un autre nom.</small>
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="importFile">Fichier .json (optionnel)</label>
+          <input id="importFile" type="file" accept="application/json,.json" (change)="onImportFile($event)" />
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="importText">…ou colle le JSON</label>
+          <textarea id="importText" pInputText [(ngModel)]="importText" rows="10" class="font-mono text-sm"
+            placeholder='{ "scenario_id": "...", "description": "...", "definition": { "steps": [] } }'></textarea>
+        </div>
+      </div>
+      <ng-template pTemplate="footer">
+        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="importOpen = false" />
+        <p-button label="Importer" icon="pi pi-upload" [loading]="importing()" [disabled]="!importText.trim() || importing()" (onClick)="runImport()" />
+      </ng-template>
+    </p-dialog>
+
     <p-confirmDialog />
   `,
 })
@@ -189,6 +224,12 @@ export class ScenariosListComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly router = inject(Router);
+
+  importOpen = false;
+  importText = '';
+  importId = '';
+  readonly importing = signal(false);
 
   readonly items = signal<ScenarioSummary[]>([]);
   readonly loading = signal(false);
@@ -336,5 +377,68 @@ export class ScenariosListComponent implements OnInit {
         }
       },
     });
+  }
+
+  openImport(): void {
+    this.importText = '';
+    this.importId = '';
+    this.importOpen = true;
+  }
+
+  onImportFile(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.importText = String(reader.result ?? '');
+      this.prefillImportId();
+    };
+    reader.readAsText(file);
+  }
+
+  private prefillImportId(): void {
+    if (this.importId.trim()) return;
+    try {
+      const obj = JSON.parse(this.importText) as { scenario_id?: string };
+      if (obj.scenario_id) this.importId = obj.scenario_id;
+    } catch {
+      /* ignored — validated on import */
+    }
+  }
+
+  async runImport(): Promise<void> {
+    const me = this.auth.currentUser();
+    if (!me || !this.importText.trim()) return;
+    let parsed: Record<string, unknown>;
+    try {
+      parsed = JSON.parse(this.importText) as Record<string, unknown>;
+    } catch {
+      this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'Contenu illisible.', life: 4000 });
+      return;
+    }
+    // Tolerate either { scenario_id, description, definition } or a raw definition.
+    const definition = (parsed['definition'] ?? parsed) as Record<string, unknown>;
+    const scenarioId = (this.importId || (parsed['scenario_id'] as string) || '').trim();
+    if (!scenarioId) {
+      this.messages.add({ severity: 'error', summary: 'Identifiant requis', detail: 'Indique un identifiant de scénario.', life: 4000 });
+      return;
+    }
+    const dto: ScenarioCreate = {
+      scenario_id: scenarioId,
+      owner_user_id: me.id,
+      description: (parsed['description'] as string) ?? '',
+      definition,
+    };
+    this.importing.set(true);
+    try {
+      await this.service.create(dto, newIdempotencyKey());
+      this.messages.add({ severity: 'success', summary: 'Scénario importé', detail: scenarioId, life: 3000 });
+      this.importOpen = false;
+      this.router.navigate(['/scenarios', scenarioId]);
+    } catch {
+      /* interceptor toasts (e.g. 409 if the id already exists) */
+    } finally {
+      this.importing.set(false);
+    }
   }
 }
