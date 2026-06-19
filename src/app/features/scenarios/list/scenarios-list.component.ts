@@ -411,13 +411,22 @@ export class ScenariosListComponent implements OnInit {
     if (!me || !this.importText.trim()) return;
     let parsed: Record<string, unknown>;
     try {
-      parsed = JSON.parse(this.importText) as Record<string, unknown>;
+      const raw = JSON.parse(this.importText) as unknown;
+      if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+        this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'Le contenu doit être un objet JSON.', life: 4000 });
+        return;
+      }
+      parsed = raw as Record<string, unknown>;
     } catch {
       this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'Contenu illisible.', life: 4000 });
       return;
     }
     // Tolerate either { scenario_id, description, definition } or a raw definition.
     const definition = (parsed['definition'] ?? parsed) as Record<string, unknown>;
+    if (typeof definition !== 'object' || definition === null || Array.isArray(definition)) {
+      this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'La définition doit être un objet JSON.', life: 4000 });
+      return;
+    }
     const scenarioId = (this.importId || (parsed['scenario_id'] as string) || '').trim();
     if (!scenarioId) {
       this.messages.add({ severity: 'error', summary: 'Identifiant requis', detail: 'Indique un identifiant de scénario.', life: 4000 });

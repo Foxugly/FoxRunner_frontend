@@ -86,6 +86,13 @@ const STATUS_OPTIONS: Opt[] = [
       </div>
     </div>
 
+    @if (truncatedCount(); as n) {
+      <div class="mb-3 text-sm text-color-secondary flex align-items-center gap-2">
+        <i class="pi pi-info-circle"></i>
+        <span>Résultats tronqués (affiche les {{ n }} plus récents).</span>
+      </div>
+    }
+
     <p-table
       [value]="rows()"
       [paginator]="rows().length > 0"
@@ -171,6 +178,7 @@ export class ExecutionsComponent implements OnInit {
   readonly loading = signal(false);
   private readonly all = signal<ExecRow[]>([]);
   readonly rows = computed(() => this.all());
+  readonly truncatedCount = signal<number | null>(null);
 
   readonly detail = signal<History | null>(null);
   detailOpen = false;
@@ -202,8 +210,17 @@ export class ExecutionsComponent implements OnInit {
       if (histRes.status === 'fulfilled' && histRes.value) {
         rows.push(...histRes.value.items.map((h) => this.fromHistory(h)));
       }
-      rows.sort((a, b) => (a.when < b.when ? 1 : a.when > b.when ? -1 : 0));
+      rows.sort((a, b) => Date.parse(b.when) - Date.parse(a.when));
       this.all.set(rows);
+
+      let truncated = false;
+      if (jobsRes.status === 'fulfilled' && jobsRes.value && jobsRes.value.total > jobsRes.value.items.length) {
+        truncated = true;
+      }
+      if (histRes.status === 'fulfilled' && histRes.value && histRes.value.total > histRes.value.items.length) {
+        truncated = true;
+      }
+      this.truncatedCount.set(truncated ? rows.length : null);
     } finally {
       this.loading.set(false);
     }

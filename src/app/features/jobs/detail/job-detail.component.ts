@@ -312,6 +312,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
   private refreshTimer: ReturnType<typeof setInterval> | null = null;
   private jobId = '';
   private screenshotTried = false;
+  private destroyed = false;
 
   /** Step rows grouped by collection, only non-empty groups, in canonical order. */
   readonly groups = computed<StepGroup[]>(() => {
@@ -393,6 +394,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.stopAutoRefresh();
     this.revokeScreenshot();
   }
@@ -514,7 +516,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
   }
 
   private startAutoRefresh(): void {
-    if (this.refreshTimer) return;
+    if (this.destroyed || this.refreshTimer) return;
     this.refreshTimer = setInterval(() => this.reload(), 1_500);
   }
 

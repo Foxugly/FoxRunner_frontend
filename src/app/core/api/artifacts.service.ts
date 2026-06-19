@@ -28,6 +28,14 @@ export class ArtifactsService {
     return `${this.base}/artifacts/${encodeURIComponent(kind)}/${encodeURIComponent(name)}`;
   }
 
+  /** Fetch an artifact as an authenticated blob (carries the JWT via the interceptor). */
+  async downloadBlob(kind: string, name: string): Promise<string> {
+    const blob = await firstValueFrom(
+      this.http.get(this.downloadUrl(kind, name), { responseType: 'blob' }),
+    );
+    return URL.createObjectURL(blob);
+  }
+
   prune(olderThanDays = 30): Promise<unknown> {
     return firstValueFrom(
       this.http.delete(`${this.base}/artifacts`, {
