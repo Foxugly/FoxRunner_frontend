@@ -65,6 +65,12 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'config',
+        loadComponent: () =>
+          import('./features/config/config.component').then((m) => m.ConfigComponent),
+        canActivate: [superuserGuard],
+      },
+      {
         path: 'executions',
         loadComponent: () =>
           import('./features/executions/executions.component').then((m) => m.ExecutionsComponent),

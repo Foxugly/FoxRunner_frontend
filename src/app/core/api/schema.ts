@@ -365,6 +365,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Catalog Config Endpoint */
+        get: operations["catalog_api_get_catalog_config_endpoint"];
+        /** Update Catalog Config Endpoint */
+        put: operations["catalog_api_update_catalog_config_endpoint"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/graph/lifecycle": {
         parameters: {
             query?: never;
@@ -1227,6 +1245,62 @@ export interface components {
             offset: number;
             /** Total */
             total: number;
+        };
+        /**
+         * CatalogConfigIn
+         * @description Full replacement of the catalogue ``data`` block. A pushover secret left
+         *     blank or equal to the mask keeps the stored value (write-only secrets).
+         */
+        CatalogConfigIn: {
+            /**
+             * Default Network
+             * @default
+             */
+            default_network: string;
+            /**
+             * Default Pushover
+             * @default
+             */
+            default_pushover: string;
+            /**
+             * Networks
+             * @default {}
+             */
+            networks: {
+                [key: string]: unknown;
+            };
+            /**
+             * Pushovers
+             * @default {}
+             */
+            pushovers: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * CatalogConfigOut
+         * @description Global catalogue ``data`` block. Pushover ``token`` / ``user_key`` are
+         *     write-only: they come back masked (``catalog.services.MASKED_SECRET``).
+         */
+        CatalogConfigOut: {
+            /**
+             * Default Network
+             * @default
+             */
+            default_network: string;
+            /**
+             * Default Pushover
+             * @default
+             */
+            default_pushover: string;
+            /** Networks */
+            networks: {
+                [key: string]: unknown;
+            };
+            /** Pushovers */
+            pushovers: {
+                [key: string]: unknown;
+            };
         };
         /** ConfigChecksOut */
         ConfigChecksOut: {
@@ -2589,6 +2663,68 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_get_catalog_config_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogConfigOut"];
+                };
+            };
+            /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorOut"];
+                };
+            };
+        };
+    };
+    catalog_api_update_catalog_config_endpoint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CatalogConfigIn"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CatalogConfigOut"];
+                };
             };
             /** @description Erreur applicative renvoyee par le handler global ({code, message, details}). */
             default: {
