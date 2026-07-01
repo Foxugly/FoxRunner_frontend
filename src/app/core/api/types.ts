@@ -22,6 +22,8 @@ export type ScenarioSummary = S['ScenarioListItem'];
 export type ScenarioDetail = S['ScenarioDetailOut'];
 export type ScenarioCreate = S['ScenarioIn'];
 export type ScenarioUpdate = S['ScenarioPatchIn'];
+export type CatalogConfig = S['CatalogConfigOut'];
+export type CatalogConfigUpdate = S['CatalogConfigIn'];
 export type ScenarioBare = S['ScenarioOut'];
 export type ScenarioDataBundle = S['ScenarioDataOut'];
 

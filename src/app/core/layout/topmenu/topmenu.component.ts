@@ -35,6 +35,7 @@ export class TopmenuComponent {
     ];
     if (this.auth.isSuperuser()) {
       base.push({ label: 'Admin', icon: 'pi pi-cog', link: '/admin' });
+      base.push({ label: 'Configuration', icon: 'pi pi-sliders-h', link: '/config' });
     }
     return base;
   });
