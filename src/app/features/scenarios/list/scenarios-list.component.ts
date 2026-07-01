@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, type MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,6 +9,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Menu, MenuModule } from 'primeng/menu';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import type { ScenarioSummary, ScenarioCreate } from '../../../core/api/types';
@@ -29,6 +30,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     InputTextModule,
     ConfirmDialogModule,
     SkeletonModule,
+    MenuModule,
     PageHeaderComponent,
     EmptyStateComponent,
   ],
@@ -96,9 +98,12 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       <div class="grid">
         @for (s of items(); track s.scenario_id) {
           <div class="col-12 md:col-6 lg:col-4">
-            <a
+            <div
               class="scn-card border-1 surface-border border-round p-3 flex flex-column gap-3 h-full"
-              [routerLink]="['/scenarios', s.scenario_id]"
+              role="button"
+              tabindex="0"
+              (click)="openScenario(s)"
+              (keydown.enter)="onCardKey($event, s)"
             >
               <div class="flex align-items-start gap-3">
                 <span class="scn-card__icon">
@@ -110,6 +115,14 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
                     {{ s.role === 'owner' ? 'Vous êtes propriétaire' : 'Partagé avec vous' }}
                   </p>
                 </div>
+                <p-button
+                  icon="pi pi-ellipsis-v"
+                  severity="secondary"
+                  [text]="true"
+                  [rounded]="true"
+                  ariaLabel="Actions du scénario"
+                  (onClick)="onCardMenu($event, s, cardMenu)"
+                />
               </div>
               <div class="scn-card__footer">
                 @if (s.role === 'owner') {
@@ -119,11 +132,13 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
                 }
                 <i class="pi pi-arrow-right scn-card__arrow"></i>
               </div>
-            </a>
+            </div>
           </div>
         }
       </div>
     }
+
+    <p-menu #cardMenu [popup]="true" [model]="cardMenuItems" appendTo="body" />
 
     <p-dialog
       header="Dupliquer le scénario"
@@ -188,6 +203,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         background: #ffffff;
         color: inherit;
         text-decoration: none;
+        cursor: pointer;
         transition:
           transform 0.15s ease,
           box-shadow 0.15s ease,
@@ -262,6 +278,9 @@ export class ScenariosListComponent implements OnInit {
   /** Placeholder cards rendered while the list loads. */
   readonly skeletons = [0, 1, 2, 3, 4, 5];
 
+  /** Per-card "⋯" popup menu items, rebuilt for the clicked scenario. */
+  cardMenuItems: MenuItem[] = [];
+
   duplicateOpen = false;
   duplicating = signal(false);
   duplicateNewId = '';
@@ -273,6 +292,26 @@ export class ScenariosListComponent implements OnInit {
 
   reload(): void {
     void this.load();
+  }
+
+  /** Navigate into a scenario (whole-card click / Enter). */
+  openScenario(s: ScenarioSummary): void {
+    this.router.navigate(['/scenarios', s.scenario_id]);
+  }
+
+  /** Keyboard: only the card itself (not a child button) opens the scenario. */
+  onCardKey(event: Event, s: ScenarioSummary): void {
+    if (event.target === event.currentTarget) this.openScenario(s);
+  }
+
+  /** Open the "⋯" popup for one card without triggering the card navigation. */
+  onCardMenu(event: MouseEvent, s: ScenarioSummary, menu: Menu): void {
+    event.stopPropagation();
+    this.cardMenuItems = [
+      { label: 'Dupliquer', icon: 'pi pi-copy', command: () => this.askDuplicate(s) },
+      { label: 'Supprimer', icon: 'pi pi-trash', styleClass: 'text-red-500', command: () => this.askDelete(s) },
+    ];
+    menu.toggle(event);
   }
 
   private async load(): Promise<void> {
