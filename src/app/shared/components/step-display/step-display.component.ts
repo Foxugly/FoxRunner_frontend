@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
 import { stepLabel, type StepLike } from '../../../core/api/step-label';
 
 /** PrimeIcon per step type, so a step reads at a glance. */
@@ -42,6 +43,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
 @Component({
   selector: 'app-step-display',
   standalone: true,
+  imports: [ButtonModule],
   template: `
     <div class="flex flex-column gap-2">
       @for (step of steps(); track $index) {
@@ -64,6 +66,27 @@ const asStepList = (value: unknown): StepLike[] | null =>
                 </div>
               }
             </div>
+            @if (editable() && prefix() === '') {
+              <div class="flex gap-1 flex-shrink-0">
+                <p-button
+                  icon="pi pi-pencil"
+                  [rounded]="true"
+                  [text]="true"
+                  size="small"
+                  ariaLabel="Éditer l'étape"
+                  (onClick)="edit.emit($index)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [text]="true"
+                  size="small"
+                  severity="danger"
+                  ariaLabel="Supprimer l'étape"
+                  (onClick)="remove.emit($index)"
+                />
+              </div>
+            }
           </div>
         </div>
       }
@@ -108,6 +131,10 @@ const asStepList = (value: unknown): StepLike[] | null =>
 export class StepDisplayComponent {
   readonly steps = input.required<StepLike[]>();
   readonly prefix = input<string>('');
+  /** When true, top-level steps (prefix === '') show edit/delete actions. */
+  readonly editable = input<boolean>(false);
+  readonly edit = output<number>();
+  readonly remove = output<number>();
 
   label(step: StepLike): string {
     return stepLabel(step);
