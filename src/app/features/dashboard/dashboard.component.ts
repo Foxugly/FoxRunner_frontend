@@ -7,7 +7,6 @@ import { AuthService } from '../../core/auth/auth.service';
 import { JobsService } from '../../core/api/jobs.service';
 import { PlanService } from '../../core/api/plan.service';
 import { ScenariosService } from '../../core/api/scenarios.service';
-import { SlotsService } from '../../core/api/slots.service';
 import { SystemStatusService } from '../../core/api/system-status.service';
 import type { Job, Plan } from '../../core/api/types';
 import { ApiDatePipe } from '../../shared/pipes/api-date.pipe';
@@ -80,7 +79,7 @@ interface HealthRow {
         </p-card>
       </div>
 
-      <!-- Prochaine exécution + KPIs -->
+      <!-- Prochaine exécution -->
       <div class="col-12 lg:col-6">
         <p-card>
           <ng-template pTemplate="header">
@@ -89,39 +88,56 @@ interface HealthRow {
             </div>
           </ng-template>
           @if (plan(); as p) {
-            <div class="flex flex-column gap-1">
-              <div class="text-xl font-semibold">{{ p.scenario_id }}</div>
-              <div class="text-3xl font-bold text-primary">{{ countdown() }}</div>
+            <div class="flex flex-column align-items-center text-center gap-2 py-2">
+              <div class="text-3xl font-bold" style="color: var(--fox-primary)">{{ countdown() }}</div>
+              <a
+                [routerLink]="['/scenarios', p.scenario_id]"
+                class="text-lg font-semibold no-underline text-color"
+              >
+                {{ p.scenario_id }}
+              </a>
               <div class="text-color-secondary text-sm">
-                {{ p.scheduled_for | apiDate: 'medium' }} · slot {{ p.slot_id }}
+                <i class="pi pi-calendar mr-1"></i>{{ p.scheduled_for | apiDate: 'medium' }} · créneau {{ p.slot_id }}
               </div>
               <a class="text-sm mt-1" routerLink="/plan">Voir le planning →</a>
             </div>
           } @else {
-            <div class="text-color-secondary text-sm">
-              Aucun créneau planifié. Ajoute un créneau depuis un scénario.
+            <div class="flex flex-column align-items-center text-center gap-2 py-3 text-color-secondary">
+              <i class="pi pi-calendar-times text-2xl"></i>
+              <div class="text-sm">Aucun créneau planifié.<br />Ajoute un créneau depuis un scénario.</div>
             </div>
           }
+        </p-card>
+      </div>
 
-          <div class="flex gap-4 mt-3 pt-3 border-top-1 surface-border flex-wrap">
-            <div>
-              <div class="text-2xl font-semibold">{{ counts().scenarios }}</div>
-              <div class="text-color-secondary text-xs">scénarios</div>
+      <!-- Scénarios (compteur + accès) -->
+      <div class="col-12 lg:col-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <div class="p-3 pb-0">
+              <span class="font-semibold"><i class="pi pi-sitemap mr-2"></i>Scénarios</span>
             </div>
-            <div>
-              <div class="text-2xl font-semibold">{{ counts().activeSlots }}</div>
-              <div class="text-color-secondary text-xs">créneaux actifs</div>
+          </ng-template>
+          <div class="flex flex-column align-items-center text-center gap-2 py-2">
+            <div class="text-4xl font-bold" style="color: var(--fox-primary)">{{ scenarioCount() }}</div>
+            <div class="text-color-secondary text-sm">
+              {{ scenarioCount() > 1 ? 'scénarios enregistrés' : 'scénario enregistré' }}
             </div>
-            <div>
-              <div class="text-2xl font-semibold">{{ counts().activeJobs }}</div>
-              <div class="text-color-secondary text-xs">jobs actifs</div>
-            </div>
+            <p-button
+              class="mt-2"
+              label="Voir les scénarios"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              [text]="true"
+              size="small"
+              routerLink="/scenarios"
+            />
           </div>
         </p-card>
       </div>
 
       <!-- Activité récente -->
-      <div class="col-12">
+      <div class="col-12 lg:col-8">
         <p-card>
           <ng-template pTemplate="header">
             <div class="flex align-items-center justify-content-between p-3 pb-0">
@@ -168,18 +184,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private readonly planService = inject(PlanService);
   private readonly jobs = inject(JobsService);
   private readonly scenarios = inject(ScenariosService);
-  private readonly slots = inject(SlotsService);
 
   // Reuse the global alarm-banner SystemStatusService (auto-polls /system/status
   // into a `status` signal) rather than running a second poll loop.
   readonly system = computed(() => this.statusService.status());
   readonly plan = signal<Plan | null>(null);
   readonly recentJobs = signal<Job[]>([]);
-  readonly counts = signal<{ scenarios: number; activeSlots: number; activeJobs: number }>({
-    scenarios: 0,
-    activeSlots: 0,
-    activeJobs: 0,
-  });
+  readonly scenarioCount = signal<number>(0);
   readonly loading = signal(true);
   private readonly now = signal(0);
 
@@ -231,7 +242,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private async load(): Promise<void> {
     this.loading.set(true);
     try {
-      await Promise.all([this.refreshLive(), this.loadCounts(), this.loadPlan()]);
+      await Promise.all([this.refreshLive(), this.loadScenarioCount(), this.loadPlan()]);
     } finally {
       this.loading.set(false);
     }
@@ -259,25 +270,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async loadCounts(): Promise<void> {
+  private async loadScenarioCount(): Promise<void> {
     const me = this.auth.currentUser();
     if (!me) return;
-    const [scn, slotPage, running, queued] = await Promise.allSettled([
-      this.scenarios.list(me.id, 1, 0),
-      this.slots.list({ limit: 500, offset: 0 }),
-      this.jobs.list({ user_id: me.id, status: 'running', limit: 1 }),
-      this.jobs.list({ user_id: me.id, status: 'queued', limit: 1 }),
-    ]);
-    this.counts.set({
-      scenarios: scn.status === 'fulfilled' ? scn.value.total : 0,
-      activeSlots:
-        slotPage.status === 'fulfilled'
-          ? slotPage.value.items.filter((s) => s.enabled).length
-          : 0,
-      activeJobs:
-        (running.status === 'fulfilled' ? running.value.total : 0) +
-        (queued.status === 'fulfilled' ? queued.value.total : 0),
-    });
+    try {
+      const page = await this.scenarios.list(me.id, 1, 0);
+      this.scenarioCount.set(page.total);
+    } catch {
+      /* keep previous */
+    }
   }
 
   overallSeverity(): 'success' | 'warn' | 'danger' {

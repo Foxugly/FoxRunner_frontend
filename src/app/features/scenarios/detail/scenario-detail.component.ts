@@ -7,11 +7,13 @@ import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { JobsService } from '../../../core/api/jobs.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { StepCollectionsService } from '../../../core/api/step-collections.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
+import type { StepLike } from '../../../core/api/step-label';
 import {
   STEP_COLLECTIONS,
   STEP_COLLECTION_LABELS_FR,
@@ -19,7 +21,8 @@ import {
   type StepCollectionName,
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { DetailHeaderComponent } from '../../../shared/components/detail-header/detail-header.component';
+import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
 import { ScenarioSlotsComponent } from './scenario-slots.component';
 
@@ -33,70 +36,113 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     CardModule,
     TabsModule,
     TagModule,
+    TooltipModule,
     ConfirmDialogModule,
-    PageHeaderComponent,
+    DetailHeaderComponent,
+    StepDisplayComponent,
     EmptyStateComponent,
     SharesDialogComponent,
     ScenarioSlotsComponent,
   ],
   template: `
-    <app-page-header
-      [icon]="'pi-sitemap'"
+    <app-detail-header
+      icon="pi-sitemap"
+      eyebrow="Scénario"
       [title]="scenario()?.scenario_id ?? 'Scénario'"
+      [backLink]="['/scenarios']"
     >
       <p-button
-        label="Retour"
-        icon="pi pi-arrow-left"
+        detailHeaderActions
+        [rounded]="true"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
-        routerLink="/scenarios"
-      />
-      <p-button
-        label="Exécuter (dry-run)"
         icon="pi pi-play"
-        severity="secondary"
+        pTooltip="Exécuter (dry-run)"
+        tooltipPosition="bottom"
+        ariaLabel="Exécuter (dry-run)"
         [loading]="running()"
         [disabled]="!scenario() || running()"
         (onClick)="triggerRun(true)"
       />
       <p-button
-        label="Exécuter (réel)"
-        icon="pi pi-bolt"
+        detailHeaderActions
+        [rounded]="true"
+        [outlined]="true"
         severity="warn"
+        icon="pi pi-bolt"
+        pTooltip="Exécuter (réel)"
+        tooltipPosition="bottom"
+        ariaLabel="Exécuter (réel)"
         [loading]="running()"
         [disabled]="!scenario() || running()"
         (onClick)="confirmRealRun()"
       />
       <p-button
-        label="Exporter JSON"
-        icon="pi pi-download"
+        detailHeaderActions
+        [rounded]="true"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
+        icon="pi pi-download"
+        pTooltip="Exporter JSON"
+        tooltipPosition="bottom"
+        ariaLabel="Exporter JSON"
         [disabled]="!scenario()"
         (onClick)="exportJson()"
       />
       @if (isWritable()) {
         <p-button
-          label="Éditer"
+          detailHeaderActions
+          [rounded]="true"
+          [outlined]="true"
           icon="pi pi-pencil"
+          pTooltip="Éditer"
+          tooltipPosition="bottom"
+          ariaLabel="Éditer"
           [routerLink]="['/scenarios', scenario()?.scenario_id, 'edit']"
         />
+      }
+      @if (isWritable()) {
         <p-button
-          label="Éditer les steps"
-          icon="pi pi-code"
+          detailHeaderActions
+          [rounded]="true"
+          [outlined]="true"
           severity="secondary"
+          icon="pi pi-code"
+          pTooltip="Éditer les steps"
+          tooltipPosition="bottom"
+          ariaLabel="Éditer les steps"
           [routerLink]="['/scenarios', scenario()?.scenario_id, 'steps']"
         />
-        @if (isOwner()) {
-          <p-button
-            label="Partages"
-            icon="pi pi-share-alt"
-            severity="secondary"
-            (onClick)="sharesOpen = true"
-          />
-        }
       }
-    </app-page-header>
+      @if (isOwner()) {
+        <p-button
+          detailHeaderActions
+          [rounded]="true"
+          [outlined]="true"
+          severity="secondary"
+          icon="pi pi-share-alt"
+          pTooltip="Partages"
+          tooltipPosition="bottom"
+          ariaLabel="Partages"
+          (onClick)="sharesOpen = true"
+        />
+      }
+      @if (isOwner()) {
+        <p-button
+          detailHeaderActions
+          [rounded]="true"
+          [outlined]="true"
+          severity="danger"
+          icon="pi pi-trash"
+          pTooltip="Supprimer"
+          tooltipPosition="bottom"
+          ariaLabel="Supprimer"
+          [loading]="deleting()"
+          [disabled]="!scenario() || deleting()"
+          (onClick)="confirmDelete()"
+        />
+      }
+    </app-detail-header>
 
     <app-shares-dialog
       [scenarioId]="scenario()?.scenario_id ?? ''"
@@ -104,100 +150,97 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     />
 
     @if (scenario(); as s) {
-      <div class="grid">
-        <div class="col-12 md:col-6">
-          <p-card header="Métadonnées">
-            <div class="flex flex-column gap-2 text-sm">
-              <div><strong>Propriétaire :</strong> {{ s.owner_user_id }}</div>
-              <div>
-                <strong>Rôle :</strong>
-                @if (s.role === 'owner') {
-                  <p-tag severity="success" value="Propriétaire" />
-                } @else {
-                  <p-tag severity="info" [value]="s.role" />
-                }
-              </div>
-              <div>
-                <strong>Réseau entreprise requis :</strong>
-                {{ s.requires_enterprise_network ? 'Oui' : 'Non' }}
-              </div>
-              <div>
-                <strong>Écriture :</strong>
-                {{ s.writable ? 'Oui' : 'Non (lecture seule)' }}
-              </div>
-            </div>
-          </p-card>
-        </div>
-        <div class="col-12 md:col-6">
-          <p-card header="Décompte d'étapes">
-            <div class="grid text-center">
-              <div class="col-6 md:col-4">
-                <div class="text-2xl font-semibold">{{ s.before_steps }}</div>
-                <div class="text-color-secondary text-sm">before_steps</div>
-              </div>
-              <div class="col-6 md:col-4">
-                <div class="text-2xl font-semibold">{{ s.steps }}</div>
-                <div class="text-color-secondary text-sm">steps</div>
-              </div>
-              <div class="col-6 md:col-4">
-                <div class="text-2xl font-semibold">{{ s.on_success }}</div>
-                <div class="text-color-secondary text-sm">on_success</div>
-              </div>
-              <div class="col-6 md:col-4">
-                <div class="text-2xl font-semibold">{{ s.on_failure }}</div>
-                <div class="text-color-secondary text-sm">on_failure</div>
-              </div>
-              <div class="col-6 md:col-4">
-                <div class="text-2xl font-semibold">{{ s.finally_steps }}</div>
-                <div class="text-color-secondary text-sm">finally_steps</div>
-              </div>
-            </div>
-          </p-card>
-        </div>
-      </div>
-
-      <p-card header="Step collections" styleClass="mt-3">
-        <p-tabs [value]="'before_steps'">
-          <p-tablist>
-            @for (col of collections; track col) {
-              <p-tab [value]="col">
-                {{ labelFor(col) }} ({{ stepsByCollection()[col]?.length ?? 0 }})
-              </p-tab>
-            }
-          </p-tablist>
-          <p-tabpanels>
-            @for (col of collections; track col) {
-              <p-tabpanel [value]="col">
-                @if ((stepsByCollection()[col]?.length ?? 0) === 0) {
-                  <app-empty-state
-                    icon="pi-code"
-                    title="Aucune étape"
-                    [message]="'La collection ' + col + ' est vide.'"
-                  />
-                } @else {
-                  <div class="flex flex-column gap-2">
-                    @for (step of stepsByCollection()[col]; track $index) {
-                      <div class="p-3 border-1 surface-border border-round">
-                        <div class="flex align-items-center justify-content-between gap-2">
-                          <div class="flex align-items-center gap-2">
-                            <p-tag severity="secondary" [value]="'#' + $index" />
-                            <strong>{{ stepType(step) }}</strong>
-                          </div>
-                          <small class="text-color-secondary">{{ stepSummary(step) }}</small>
-                        </div>
-                      </div>
-                    }
+      <p-tabs value="general">
+        <p-tablist>
+          <p-tab value="general"><i class="pi pi-info-circle mr-2"></i>Informations générales</p-tab>
+          <p-tab value="planning"><i class="pi pi-calendar mr-2"></i>Planification</p-tab>
+          <p-tab value="steps"><i class="pi pi-code mr-2"></i>Étapes ({{ totalSteps() }})</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <!-- Onglet 1 : informations générales -->
+          <p-tabpanel value="general">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <p-card header="Métadonnées">
+                  <div class="flex flex-column gap-2 text-sm">
+                    <div><strong>Identifiant :</strong> {{ s.scenario_id }}</div>
+                    <div><strong>Propriétaire :</strong> {{ s.owner_user_id }}</div>
+                    <div>
+                      <strong>Rôle :</strong>
+                      @if (s.role === 'owner') {
+                        <p-tag severity="success" value="Propriétaire" />
+                      } @else {
+                        <p-tag severity="info" [value]="s.role" />
+                      }
+                    </div>
+                    <div>
+                      <strong>Réseau entreprise requis :</strong>
+                      {{ s.requires_enterprise_network ? 'Oui' : 'Non' }}
+                    </div>
+                    <div>
+                      <strong>Écriture :</strong>
+                      {{ s.writable ? 'Oui' : 'Non (lecture seule)' }}
+                    </div>
                   </div>
-                }
-              </p-tabpanel>
-            }
-          </p-tabpanels>
-        </p-tabs>
-      </p-card>
+                </p-card>
+              </div>
+              <div class="col-12 md:col-6">
+                <p-card header="Décompte d'étapes">
+                  <div class="grid text-center">
+                    <div class="col-6 md:col-4">
+                      <div class="text-2xl font-semibold">{{ s.before_steps }}</div>
+                      <div class="text-color-secondary text-sm">Préparation</div>
+                    </div>
+                    <div class="col-6 md:col-4">
+                      <div class="text-2xl font-semibold">{{ s.steps }}</div>
+                      <div class="text-color-secondary text-sm">Corps</div>
+                    </div>
+                    <div class="col-6 md:col-4">
+                      <div class="text-2xl font-semibold">{{ s.on_success }}</div>
+                      <div class="text-color-secondary text-sm">Succès</div>
+                    </div>
+                    <div class="col-6 md:col-4">
+                      <div class="text-2xl font-semibold">{{ s.on_failure }}</div>
+                      <div class="text-color-secondary text-sm">Échec</div>
+                    </div>
+                    <div class="col-6 md:col-4">
+                      <div class="text-2xl font-semibold">{{ s.finally_steps }}</div>
+                      <div class="text-color-secondary text-sm">Finalement</div>
+                    </div>
+                  </div>
+                </p-card>
+              </div>
+            </div>
+          </p-tabpanel>
 
-      <p-card styleClass="mt-3">
-        <app-scenario-slots [scenarioId]="s.scenario_id" [canEdit]="isWritable()" />
-      </p-card>
+          <!-- Onglet 2 : planification / créneaux -->
+          <p-tabpanel value="planning">
+            <app-scenario-slots [scenarioId]="s.scenario_id" [canEdit]="isWritable()" />
+          </p-tabpanel>
+
+          <!-- Onglet 3 : étapes, rendues en langage naturel -->
+          <p-tabpanel value="steps">
+            @if (totalSteps() === 0) {
+              <app-empty-state
+                icon="pi-code"
+                title="Aucune étape"
+                message="Ce scénario n'a pas encore d'étapes."
+              />
+            } @else {
+              @for (col of collections; track col) {
+                @if (stepsFor(col).length > 0) {
+                  <section class="mb-4">
+                    <h3 class="text-sm font-semibold text-color-secondary mt-0 mb-2">
+                      {{ labelFor(col) }} ({{ stepsFor(col).length }})
+                    </h3>
+                    <app-step-display [steps]="stepsFor(col)" />
+                  </section>
+                }
+              }
+            }
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
     } @else if (!loading()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
@@ -230,9 +273,14 @@ export class ScenarioDetailComponent implements OnInit {
   });
   readonly loading = signal(true);
   readonly running = signal(false);
+  readonly deleting = signal(false);
 
   readonly isWritable = computed(() => this.scenario()?.writable === true);
   readonly isOwner = computed(() => this.scenario()?.role === 'owner');
+  readonly totalSteps = computed(() => {
+    const by = this.stepsByCollection();
+    return this.collections.reduce((sum, col) => sum + (by[col]?.length ?? 0), 0);
+  });
   sharesOpen = false;
 
   ngOnInit(): void {
@@ -244,21 +292,9 @@ export class ScenarioDetailComponent implements OnInit {
     return STEP_COLLECTION_LABELS_FR[col];
   }
 
-  stepType(step: Record<string, unknown>): string {
-    return (step['type'] as string | undefined) ?? 'step';
-  }
-
-  stepSummary(step: Record<string, unknown>): string {
-    const keys = Object.keys(step).filter((k) => k !== 'type');
-    if (keys.length === 0) return '';
-    return keys
-      .slice(0, 3)
-      .map((k) => {
-        const v = step[k];
-        const str = typeof v === 'object' ? JSON.stringify(v) : String(v);
-        return `${k}=${str.length > 30 ? str.slice(0, 30) + '…' : str}`;
-      })
-      .join(' · ');
+  /** Steps of one collection, typed for the human-readable renderer. */
+  stepsFor(col: StepCollectionName): StepLike[] {
+    return (this.stepsByCollection()[col] ?? []) as StepLike[];
   }
 
   private async load(scenarioId: string): Promise<void> {
@@ -319,6 +355,40 @@ export class ScenarioDetailComponent implements OnInit {
       /* toast */
     } finally {
       this.running.set(false);
+    }
+  }
+
+  confirmDelete(): void {
+    const s = this.scenario();
+    if (!s) return;
+    this.confirm.confirm({
+      header: 'Supprimer le scénario ?',
+      message: `Le scénario « ${s.scenario_id} » sera définitivement supprimé.`,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Supprimer',
+      rejectLabel: 'Annuler',
+      acceptButtonProps: { severity: 'danger' },
+      accept: () => void this.deleteScenario(),
+    });
+  }
+
+  private async deleteScenario(): Promise<void> {
+    const s = this.scenario();
+    if (!s) return;
+    this.deleting.set(true);
+    try {
+      await this.scenariosService.remove(s.scenario_id);
+      this.messages.add({
+        severity: 'success',
+        summary: 'Scénario supprimé',
+        detail: s.scenario_id,
+        life: 3000,
+      });
+      this.router.navigate(['/scenarios']);
+    } catch {
+      /* toast via interceptor */
+    } finally {
+      this.deleting.set(false);
     }
   }
 

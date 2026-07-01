@@ -1,9 +1,11 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthMagicService } from '../../../core/api/auth-magic.service';
@@ -17,6 +19,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     ButtonModule,
     CardModule,
     InputTextModule,
+    MessageModule,
     PasswordModule,
   ],
   template: `
@@ -56,6 +59,9 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                   required
                 />
               </div>
+              @if (error(); as msg) {
+                <p-message severity="error" [text]="msg" styleClass="w-full" />
+              }
               <p-button
                 type="submit"
                 label="Se connecter"
@@ -124,6 +130,7 @@ export class LoginComponent {
   private readonly router = inject(Router);
 
   readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
@@ -138,19 +145,28 @@ export class LoginComponent {
 
   async onSubmit(): Promise<void> {
     if (this.loading() || this.form.invalid) return;
+    this.error.set(null);
     this.loading.set(true);
     try {
       const { email, password } = this.form.getRawValue();
       await this.auth.login(email, password);
       await this.router.navigate(['/']);
-    } catch {
-      // Toast handled by error interceptor.
+    } catch (err) {
+      const status = (err as HttpErrorResponse)?.status ?? 0;
+      this.error.set(
+        status === 401
+          ? 'E-mail ou mot de passe incorrect.'
+          : status === 0
+            ? 'Connexion au serveur impossible. Vérifie ta connexion internet.'
+            : 'La connexion a échoué. Réessaie dans un instant.',
+      );
     } finally {
       this.loading.set(false);
     }
   }
 
   enterMagicMode(): void {
+    this.error.set(null);
     this.magicForm.reset({ email: this.form.getRawValue().email });
     this.magicSent.set(false);
     this.magicMode.set(true);

@@ -16,6 +16,24 @@ function isApiError(body: unknown): body is ApiError {
   );
 }
 
+/** Human, non-technical toast titles per HTTP status. */
+const FRIENDLY_TITLES: Record<number, string> = {
+  0: 'Problème de connexion',
+  400: 'Requête invalide',
+  401: 'Session expirée',
+  403: 'Accès refusé',
+  404: 'Introuvable',
+  408: 'Délai dépassé',
+  409: 'Conflit',
+  422: 'Données invalides',
+  429: 'Trop de requêtes',
+};
+
+function friendlyTitle(status: number): string {
+  if (status >= 500) return 'Erreur serveur';
+  return FRIENDLY_TITLES[status] ?? 'Une erreur est survenue';
+}
+
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const messages = inject(MessageService);
   const auth = inject(AuthService);
@@ -30,30 +48,32 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       health.reportFailure(err.status);
       const reqId = err.headers?.get('X-Request-ID') ?? req.headers.get('X-Request-ID') ?? null;
       const apiError = isApiError(err.error) ? err.error : null;
-      const apiMessage = apiError?.message ?? err.message ?? 'Erreur inconnue.';
+      const apiMessage = apiError?.message ?? null;
       const apiCode = apiError?.code ?? `http_${err.status}`;
 
-      if (err.status === 401 && !req.url.includes('/auth/jwt/login')) {
+      // The login screen owns its own inline messaging, so a failed sign-in must
+      // NOT redirect and must NOT raise a generic toast.
+      const isLoginAttempt = req.url.includes('/auth/jwt/login');
+
+      if (err.status === 401 && !isLoginAttempt) {
         auth.clear();
         router.navigate(['/login']);
       }
 
-      const severity: 'error' | 'warn' | 'info' =
-        err.status >= 500 ? 'error' : err.status >= 400 ? 'warn' : 'info';
-      const suffix = reqId ? `\nRequest-ID: ${reqId}` : '';
-      messages.add({
-        severity,
-        summary: apiCode,
-        detail: `${apiMessage}${suffix}`,
-        life: 8000,
-        sticky: err.status >= 500,
-      });
-
-      if (reqId) {
-        console.error('[API error]', apiCode, apiMessage, 'X-Request-ID:', reqId);
-      } else {
-        console.error('[API error]', apiCode, apiMessage);
+      if (!isLoginAttempt) {
+        const severity: 'error' | 'warn' | 'info' =
+          err.status >= 500 ? 'error' : err.status >= 400 ? 'warn' : 'info';
+        messages.add({
+          severity,
+          summary: friendlyTitle(err.status),
+          detail: apiMessage ?? 'Réessaie dans un instant.',
+          life: 8000,
+          sticky: err.status >= 500,
+        });
       }
+
+      // The correlation id stays in the console for support — never in the user's face.
+      console.error('[API error]', apiCode, apiMessage ?? err.message, reqId ? `X-Request-ID: ${reqId}` : '');
 
       return throwError(() => err);
     }),
