@@ -11,18 +11,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
-import { SlotsService } from '../../../core/api/slots.service';
-import { HistoryService } from '../../../core/api/history.service';
-import { JobsService } from '../../../core/api/jobs.service';
 import type { ScenarioSummary, ScenarioCreate } from '../../../core/api/types';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-
-interface LastRun {
-  status: string;
-  when: string;
-}
 
 @Component({
   selector: 'app-scenarios-list',
@@ -254,9 +246,6 @@ interface LastRun {
 })
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
-  private readonly slotsService = inject(SlotsService);
-  private readonly historyService = inject(HistoryService);
-  private readonly jobsService = inject(JobsService);
   private readonly auth = inject(AuthService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
@@ -269,10 +258,6 @@ export class ScenariosListComponent implements OnInit {
 
   readonly items = signal<ScenarioSummary[]>([]);
   readonly loading = signal(false);
-  /** scenario_id -> number of slots, for the "N créneaux" badge. */
-  readonly slotCounts = signal<Record<string, number>>({});
-  /** scenario_id -> most recent run (job or scheduled), for the "dernier run" badge. */
-  readonly lastRuns = signal<Record<string, LastRun>>({});
 
   /** Placeholder cards rendered while the list loads. */
   readonly skeletons = [0, 1, 2, 3, 4, 5];
@@ -301,51 +286,11 @@ export class ScenariosListComponent implements OnInit {
       if (page.total > 500) {
         console.warn(`scenarios: ${page.total} rows exceed the 500 client cap; showing first 500.`);
       }
-      void this.loadSlotCounts();
-      void this.loadLastRuns(me.id);
     } catch {
       /* interceptor toasts */
     } finally {
       this.loading.set(false);
     }
-  }
-
-  /** One bounded call, grouped client-side, for the "N créneaux" badges. */
-  private async loadSlotCounts(): Promise<void> {
-    try {
-      const page = await this.slotsService.list({ limit: 500, offset: 0 });
-      const counts: Record<string, number> = {};
-      for (const slot of page.items) {
-        counts[slot.scenario_id] = (counts[slot.scenario_id] ?? 0) + 1;
-      }
-      this.slotCounts.set(counts);
-    } catch {
-      /* badge is best-effort */
-    }
-  }
-
-  /** Most recent run per scenario across on-demand jobs + scheduled history. */
-  private async loadLastRuns(userId: string): Promise<void> {
-    const [jobsRes, histRes] = await Promise.allSettled([
-      this.jobsService.list({ user_id: userId, limit: 100, offset: 0 }),
-      this.historyService.list(userId, { limit: 100, offset: 0 }),
-    ]);
-    const map: Record<string, LastRun> = {};
-    const consider = (scenario: string, status: string, when: string) => {
-      const cur = map[scenario];
-      if (!cur || cur.when < when) map[scenario] = { status, when };
-    };
-    if (jobsRes.status === 'fulfilled') {
-      for (const j of jobsRes.value.items) {
-        consider(j.target_id, j.status, j.finished_at ?? j.started_at ?? j.created_at);
-      }
-    }
-    if (histRes.status === 'fulfilled') {
-      for (const h of histRes.value.items) {
-        consider(h.scenario_id, h.status, h.executed_at);
-      }
-    }
-    this.lastRuns.set(map);
   }
 
   askDuplicate(s: ScenarioSummary): void {
