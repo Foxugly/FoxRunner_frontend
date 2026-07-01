@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
+import { TextareaModule } from 'primeng/textarea';
 import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { JobsService } from '../../../core/api/jobs.service';
@@ -34,7 +37,7 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
+    FormsModule,
     ButtonModule,
     CardModule,
     TabsModule,
@@ -42,6 +45,8 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     TooltipModule,
     ConfirmDialogModule,
     DialogModule,
+    InputTextModule,
+    TextareaModule,
     DetailHeaderComponent,
     StepDisplayComponent,
     EmptyStateComponent,
@@ -95,18 +100,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
         [disabled]="!scenario()"
         (onClick)="exportJson()"
       />
-      @if (isWritable()) {
-        <p-button
-          detailHeaderActions
-          [rounded]="true"
-          [outlined]="true"
-          icon="pi pi-pencil"
-          pTooltip="Éditer"
-          tooltipPosition="bottom"
-          ariaLabel="Éditer"
-          [routerLink]="['/scenarios', scenario()?.scenario_id, 'edit']"
-        />
-      }
       @if (isOwner()) {
         <p-button
           detailHeaderActions
@@ -154,27 +147,80 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
           <p-tabpanel value="general">
             <div class="grid">
               <div class="col-12 md:col-6">
-                <p-card header="Métadonnées">
-                  <div class="flex flex-column gap-2 text-sm">
-                    <div><strong>Identifiant :</strong> {{ s.scenario_id }}</div>
-                    <div><strong>Propriétaire :</strong> {{ s.owner_user_id }}</div>
-                    <div>
-                      <strong>Rôle :</strong>
-                      @if (s.role === 'owner') {
-                        <p-tag severity="success" value="Propriétaire" />
-                      } @else {
-                        <p-tag severity="secondary" [value]="s.role" />
+                <p-card>
+                  <ng-template pTemplate="header">
+                    <div class="flex align-items-center justify-content-between p-3 pb-0">
+                      <span class="font-semibold">Métadonnées</span>
+                      @if (isWritable() && !editingInfo()) {
+                        <p-button
+                          icon="pi pi-pencil"
+                          [text]="true"
+                          [rounded]="true"
+                          size="small"
+                          severity="secondary"
+                          pTooltip="Modifier"
+                          ariaLabel="Modifier les informations"
+                          (onClick)="startEditInfo()"
+                        />
                       }
                     </div>
-                    <div>
-                      <strong>Réseau entreprise requis :</strong>
-                      {{ s.requires_enterprise_network ? 'Oui' : 'Non' }}
+                  </ng-template>
+
+                  @if (!editingInfo()) {
+                    <div class="flex flex-column gap-2 text-sm">
+                      <div><strong>Identifiant :</strong> {{ s.scenario_id }}</div>
+                      <div><strong>Propriétaire :</strong> {{ s.owner_user_id }}</div>
+                      <div>
+                        <strong>Rôle :</strong>
+                        @if (s.role === 'owner') {
+                          <p-tag severity="success" value="Propriétaire" />
+                        } @else {
+                          <p-tag severity="secondary" [value]="s.role" />
+                        }
+                      </div>
+                      <div>
+                        <strong>Réseau entreprise requis :</strong>
+                        {{ s.requires_enterprise_network ? 'Oui' : 'Non' }}
+                      </div>
+                      <div>
+                        <strong>Écriture :</strong>
+                        {{ s.writable ? 'Oui' : 'Non (lecture seule)' }}
+                      </div>
+                      <div><strong>Description :</strong> {{ s.description || '—' }}</div>
                     </div>
-                    <div>
-                      <strong>Écriture :</strong>
-                      {{ s.writable ? 'Oui' : 'Non (lecture seule)' }}
+                  } @else {
+                    <div class="meta-grid">
+                      <div class="meta-item">
+                        <label class="meta-label" for="edit-owner">Propriétaire</label>
+                        <div class="meta-value">
+                          <input
+                            id="edit-owner"
+                            pInputText
+                            [(ngModel)]="draftOwner"
+                            placeholder="email ou UUID"
+                          />
+                        </div>
+                      </div>
+                      <div class="meta-item">
+                        <label class="meta-label" for="edit-desc">Description</label>
+                        <div class="meta-value">
+                          <textarea
+                            id="edit-desc"
+                            pTextarea
+                            rows="3"
+                            [(ngModel)]="draftDescription"
+                            placeholder="Que fait ce scénario ?"
+                          ></textarea>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                    <app-form-footer
+                      [loading]="savingInfo()"
+                      [disabled]="savingInfo()"
+                      (save)="saveInfo()"
+                      (cancelled)="cancelEditInfo()"
+                    />
+                  }
                 </p-card>
               </div>
               <div class="col-12 md:col-6">
@@ -319,6 +365,48 @@ export class ScenarioDetailComponent implements OnInit {
     return this.collections.reduce((sum, col) => sum + (by[col]?.length ?? 0), 0);
   });
   sharesOpen = false;
+
+  // --- Inline metadata editing (replaces the standalone /edit page) ---
+  readonly editingInfo = signal(false);
+  readonly savingInfo = signal(false);
+  draftDescription = '';
+  draftOwner = '';
+
+  startEditInfo(): void {
+    const s = this.scenario();
+    if (!s) return;
+    this.draftDescription = s.description ?? '';
+    this.draftOwner = s.owner_user_id ?? '';
+    this.editingInfo.set(true);
+  }
+
+  cancelEditInfo(): void {
+    this.editingInfo.set(false);
+  }
+
+  async saveInfo(): Promise<void> {
+    const s = this.scenario();
+    if (!s) return;
+    this.savingInfo.set(true);
+    try {
+      const updated = await this.scenariosService.patch(s.scenario_id, {
+        description: this.draftDescription,
+        owner_user_id: this.draftOwner,
+      });
+      this.scenario.set(updated);
+      this.messages.add({
+        severity: 'success',
+        summary: 'Scénario mis à jour',
+        detail: s.scenario_id,
+        life: 2500,
+      });
+      this.editingInfo.set(false);
+    } catch {
+      /* errors surfaced by the HTTP interceptor */
+    } finally {
+      this.savingInfo.set(false);
+    }
+  }
 
   // --- Inline step editing (replaces the standalone /steps editor) ---
   stepDialogOpen = false;

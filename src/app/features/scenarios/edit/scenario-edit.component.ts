@@ -1,19 +1,18 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
-import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
-import type { ScenarioDetail } from '../../../core/api/types';
 import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
-import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
+/** A fresh scenario starts empty; steps are added afterwards from the "Étapes"
+ * tab of the detail page (no raw-JSON definition editor here anymore). */
 const EMPTY_DEFINITION = {
   before_steps: [],
   steps: [],
@@ -22,6 +21,12 @@ const EMPTY_DEFINITION = {
   finally_steps: [],
 };
 
+/**
+ * Scenario creation form (`/scenarios/new`). Metadata only — id, description,
+ * owner. The definition is seeded empty and the steps are edited inline in the
+ * scenario's "Étapes" tab. There is no standalone edit page anymore: existing
+ * scenarios are edited in place on the detail view.
+ */
 @Component({
   selector: 'app-scenario-edit',
   standalone: true,
@@ -30,31 +35,17 @@ const EMPTY_DEFINITION = {
     CardModule,
     InputTextModule,
     TextareaModule,
-    TooltipModule,
     FormFooterComponent,
     PageHeaderComponent,
-    JsonEditorComponent,
   ],
   template: `
-    <app-page-header
-      [icon]="isEdit() ? 'pi pi-pencil' : 'pi pi-plus'"
-      [title]="isEdit() ? 'Modifier le scénario' : 'Nouveau scénario'"
-    />
+    <app-page-header icon="pi pi-plus" title="Nouveau scénario" />
 
     <p-card>
       <h3 class="builder-section-title">Informations</h3>
       <form [formGroup]="form" class="meta-grid cols-2">
         <div class="meta-item">
-          <label class="meta-label" for="scenario_id">
-            Identifiant
-            @if (isEdit()) {
-              <i
-                class="pi pi-info-circle"
-                pTooltip="L'identifiant ne peut pas être modifié après création."
-                tooltipPosition="top"
-              ></i>
-            }
-          </label>
+          <label class="meta-label" for="scenario_id">Identifiant</label>
           <div class="meta-value">
             <input
               id="scenario_id"
@@ -88,27 +79,15 @@ const EMPTY_DEFINITION = {
           </div>
         </div>
       </form>
-    </p-card>
-
-    <p-card styleClass="mt-3">
-      <h3 class="builder-section-title">Définition (JSON)</h3>
-      <p class="text-color-secondary text-sm mb-2">
-        Structure recommandée : objet avec clés <code>before_steps</code>, <code>steps</code>,
-        <code>on_success</code>, <code>on_failure</code>, <code>finally_steps</code> (tableaux
-        d'étapes). Chaque étape suit le DSL FoxRunner.
+      <p class="text-color-secondary text-sm mt-2 mb-0">
+        Les étapes s'ajoutent ensuite dans l'onglet « Étapes » du scénario.
       </p>
-      <app-json-editor
-        label="Définition"
-        [value]="definition()"
-        (valueChange)="onDefinitionChange($event)"
-        (validChange)="jsonValid.set($event)"
-        [rows]="20"
-      />
     </p-card>
 
     <app-form-footer
+      saveLabel="Créer"
       [loading]="saving()"
-      [disabled]="form.invalid || !jsonValid() || saving()"
+      [disabled]="form.invalid || saving()"
       (save)="save()"
       (cancelled)="onCancel()"
     />
@@ -118,16 +97,10 @@ export class ScenarioEditComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(ScenariosService);
   private readonly auth = inject(AuthService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly messages = inject(MessageService);
 
-  readonly scenarioId = signal<string>('');
-  readonly isEdit = computed(() => this.scenarioId() !== '');
   readonly saving = signal(false);
-  readonly jsonValid = signal(true);
-  readonly definition = signal<Record<string, unknown>>(EMPTY_DEFINITION);
-  private latestDefinition: Record<string, unknown> = EMPTY_DEFINITION;
   private idempotencyKey = '';
 
   readonly form = this.fb.nonNullable.group({
@@ -137,37 +110,9 @@ export class ScenarioEditComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.scenarioId.set(id);
-      void this.loadExisting(id);
-    } else {
-      const me = this.auth.currentUser();
-      this.form.patchValue({ owner_user_id: me?.email ?? '' });
-      this.idempotencyKey = newIdempotencyKey();
-    }
-  }
-
-  private async loadExisting(id: string): Promise<void> {
     const me = this.auth.currentUser();
-    if (!me) return;
-    try {
-      const s: ScenarioDetail = await this.service.get(me.id, id);
-      this.form.patchValue({
-        scenario_id: s.scenario_id,
-        description: s.description,
-        owner_user_id: s.owner_user_id,
-      });
-      this.form.controls.scenario_id.disable();
-      this.latestDefinition = (s.definition ?? EMPTY_DEFINITION) as Record<string, unknown>;
-      this.definition.set(this.latestDefinition);
-    } catch {
-      /* toast */
-    }
-  }
-
-  onDefinitionChange(v: unknown): void {
-    this.latestDefinition = (v ?? {}) as Record<string, unknown>;
+    this.form.patchValue({ owner_user_id: me?.email ?? '' });
+    this.idempotencyKey = newIdempotencyKey();
   }
 
   onCancel(): void {
@@ -175,45 +120,30 @@ export class ScenarioEditComponent implements OnInit {
   }
 
   async save(): Promise<void> {
-    if (this.form.invalid || !this.jsonValid()) return;
+    if (this.form.invalid) return;
     this.saving.set(true);
     try {
       const values = this.form.getRawValue();
-      if (this.isEdit()) {
-        await this.service.patch(this.scenarioId(), {
-          description: values.description,
+      const created = await this.service.create(
+        {
+          scenario_id: values.scenario_id,
           owner_user_id: values.owner_user_id,
-          definition: this.latestDefinition,
-        });
-        this.messages.add({
-          severity: 'success',
-          summary: 'Scénario mis à jour',
-          detail: this.scenarioId(),
-          life: 3000,
-        });
-        this.router.navigate(['/scenarios', this.scenarioId()]);
-      } else {
-        const created = await this.service.create(
-          {
-            scenario_id: values.scenario_id,
-            owner_user_id: values.owner_user_id,
-            description: values.description,
-            definition: this.latestDefinition,
-          },
-          this.idempotencyKey,
-        );
-        this.messages.add({
-          severity: 'success',
-          summary: 'Scénario créé',
-          detail: created.scenario_id,
-          life: 3000,
-        });
-        // Regenerate idempotency key for a follow-up creation.
-        this.idempotencyKey = newIdempotencyKey();
-        this.router.navigate(['/scenarios', created.scenario_id]);
-      }
+          description: values.description,
+          definition: EMPTY_DEFINITION,
+        },
+        this.idempotencyKey,
+      );
+      this.messages.add({
+        severity: 'success',
+        summary: 'Scénario créé',
+        detail: created.scenario_id,
+        life: 3000,
+      });
+      // Regenerate the idempotency key in case the user creates another.
+      this.idempotencyKey = newIdempotencyKey();
+      this.router.navigate(['/scenarios', created.scenario_id]);
     } catch {
-      /* toast */
+      /* errors surfaced by the HTTP interceptor */
     } finally {
       this.saving.set(false);
     }
