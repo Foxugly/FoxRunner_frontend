@@ -65,13 +65,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'scenarios/:id/edit',
-        loadComponent: () =>
-          import('./features/scenarios/edit/scenario-edit.component').then(
-            (m) => m.ScenarioEditComponent,
-          ),
-      },
-      {
         path: 'executions',
         loadComponent: () =>
           import('./features/executions/executions.component').then((m) => m.ExecutionsComponent),
