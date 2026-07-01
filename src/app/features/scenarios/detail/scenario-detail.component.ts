@@ -5,6 +5,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { TabsModule } from 'primeng/tabs';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -22,6 +23,8 @@ import {
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { DetailHeaderComponent } from '../../../shared/components/detail-header/detail-header.component';
+import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
+import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
 import { ScenarioSlotsComponent } from './scenario-slots.component';
@@ -38,9 +41,12 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     TagModule,
     TooltipModule,
     ConfirmDialogModule,
+    DialogModule,
     DetailHeaderComponent,
     StepDisplayComponent,
     EmptyStateComponent,
+    FormFooterComponent,
+    JsonEditorComponent,
     SharesDialogComponent,
     ScenarioSlotsComponent,
   ],
@@ -99,19 +105,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
           tooltipPosition="bottom"
           ariaLabel="Éditer"
           [routerLink]="['/scenarios', scenario()?.scenario_id, 'edit']"
-        />
-      }
-      @if (isWritable()) {
-        <p-button
-          detailHeaderActions
-          [rounded]="true"
-          [outlined]="true"
-          severity="secondary"
-          icon="pi pi-code"
-          pTooltip="Éditer les steps"
-          tooltipPosition="bottom"
-          ariaLabel="Éditer les steps"
-          [routerLink]="['/scenarios', scenario()?.scenario_id, 'steps']"
         />
       }
       @if (isOwner()) {
@@ -218,9 +211,9 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
             <app-scenario-slots [scenarioId]="s.scenario_id" [canEdit]="isWritable()" />
           </p-tabpanel>
 
-          <!-- Onglet 3 : étapes, rendues en langage naturel -->
+          <!-- Onglet 3 : étapes, rendues en langage naturel, éditables inline -->
           <p-tabpanel value="steps">
-            @if (totalSteps() === 0) {
+            @if (totalSteps() === 0 && !isWritable()) {
               <app-empty-state
                 icon="pi-code"
                 title="Aucune étape"
@@ -228,12 +221,32 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
               />
             } @else {
               @for (col of collections; track col) {
-                @if (stepsFor(col).length > 0) {
+                @if (stepsFor(col).length > 0 || isWritable()) {
                   <section class="mb-4">
-                    <h3 class="text-sm font-semibold text-color-secondary mt-0 mb-2">
-                      {{ labelFor(col) }} ({{ stepsFor(col).length }})
-                    </h3>
-                    <app-step-display [steps]="stepsFor(col)" />
+                    <div class="flex align-items-center justify-content-between mb-2">
+                      <h3 class="text-sm font-semibold text-color-secondary m-0">
+                        {{ labelFor(col) }} ({{ stepsFor(col).length }})
+                      </h3>
+                      @if (isWritable()) {
+                        <p-button
+                          label="Ajouter une étape"
+                          icon="pi pi-plus"
+                          size="small"
+                          [text]="true"
+                          (onClick)="openAddStep(col)"
+                        />
+                      }
+                    </div>
+                    @if (stepsFor(col).length > 0) {
+                      <app-step-display
+                        [steps]="stepsFor(col)"
+                        [editable]="isWritable()"
+                        (edit)="openEditStep(col, $event)"
+                        (remove)="askDeleteStep(col, $event)"
+                      />
+                    } @else {
+                      <p class="text-sm text-color-secondary m-0">Vide.</p>
+                    }
                   </section>
                 }
               }
@@ -248,6 +261,30 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
         message="Vérifie l'identifiant dans l'URL."
       />
     }
+
+    <p-dialog
+      [modal]="true"
+      [(visible)]="stepDialogOpen"
+      [header]="stepDialogHeader()"
+      [style]="{ width: '700px' }"
+      [closable]="!savingStep()"
+    >
+      <app-json-editor
+        label="Étape (JSON)"
+        [value]="draftStep()"
+        (valueChange)="onDraftStepChange($event)"
+        (validChange)="draftStepValid.set($event)"
+        [rows]="16"
+      />
+      <ng-template pTemplate="footer">
+        <app-form-footer
+          [loading]="savingStep()"
+          [disabled]="!draftStepValid() || savingStep()"
+          (save)="saveStep()"
+          (cancelled)="closeStepDialog()"
+        />
+      </ng-template>
+    </p-dialog>
 
     <p-confirmDialog />
   `,
@@ -282,6 +319,120 @@ export class ScenarioDetailComponent implements OnInit {
     return this.collections.reduce((sum, col) => sum + (by[col]?.length ?? 0), 0);
   });
   sharesOpen = false;
+
+  // --- Inline step editing (replaces the standalone /steps editor) ---
+  stepDialogOpen = false;
+  readonly editCollection = signal<StepCollectionName>('steps');
+  readonly editIndex = signal<number | null>(null);
+  readonly draftStep = signal<Record<string, unknown>>({});
+  readonly draftStepValid = signal(true);
+  readonly savingStep = signal(false);
+  readonly stepDialogHeader = computed(() =>
+    this.editIndex() !== null ? `Éditer l'étape #${this.editIndex()}` : 'Ajouter une étape',
+  );
+  private latestDraftStep: Record<string, unknown> = {};
+
+  openAddStep(col: StepCollectionName): void {
+    this.editCollection.set(col);
+    this.editIndex.set(null);
+    const seed = { type: 'sleep', seconds: 1 };
+    this.draftStep.set(seed);
+    this.latestDraftStep = seed;
+    this.draftStepValid.set(true);
+    this.stepDialogOpen = true;
+  }
+
+  openEditStep(col: StepCollectionName, index: number): void {
+    const step = (this.stepsByCollection()[col] ?? [])[index];
+    if (!step) return;
+    this.editCollection.set(col);
+    this.editIndex.set(index);
+    this.draftStep.set(step);
+    this.latestDraftStep = step;
+    this.draftStepValid.set(true);
+    this.stepDialogOpen = true;
+  }
+
+  closeStepDialog(): void {
+    this.stepDialogOpen = false;
+    this.editIndex.set(null);
+  }
+
+  onDraftStepChange(v: unknown): void {
+    this.latestDraftStep = (v ?? {}) as Record<string, unknown>;
+  }
+
+  async saveStep(): Promise<void> {
+    const me = this.auth.currentUser();
+    const s = this.scenario();
+    if (!me || !s || !this.draftStepValid()) return;
+    this.savingStep.set(true);
+    try {
+      const col = this.editCollection();
+      const idx = this.editIndex();
+      if (idx === null) {
+        await this.stepsService.append(me.id, s.scenario_id, col, this.latestDraftStep);
+      } else {
+        await this.stepsService.replace(me.id, s.scenario_id, col, idx, this.latestDraftStep);
+      }
+      this.messages.add({
+        severity: 'success',
+        summary: idx === null ? 'Étape ajoutée' : 'Étape modifiée',
+        detail: this.labelFor(col),
+        life: 2500,
+      });
+      this.closeStepDialog();
+      await this.reloadSteps();
+    } catch {
+      /* errors are surfaced by the HTTP interceptor */
+    } finally {
+      this.savingStep.set(false);
+    }
+  }
+
+  askDeleteStep(col: StepCollectionName, index: number): void {
+    this.confirm.confirm({
+      header: `Supprimer ${this.labelFor(col)} #${index} ?`,
+      message: 'Cette action est immédiate et non réversible.',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Supprimer',
+      rejectLabel: 'Annuler',
+      acceptButtonProps: { severity: 'danger' },
+      accept: async () => {
+        const me = this.auth.currentUser();
+        const s = this.scenario();
+        if (!me || !s) return;
+        try {
+          await this.stepsService.remove(me.id, s.scenario_id, col, index);
+          this.messages.add({
+            severity: 'success',
+            summary: 'Étape supprimée',
+            detail: this.labelFor(col),
+            life: 2500,
+          });
+          await this.reloadSteps();
+        } catch {
+          /* errors surfaced by the interceptor */
+        }
+      },
+    });
+  }
+
+  private async reloadSteps(): Promise<void> {
+    const me = this.auth.currentUser();
+    const s = this.scenario();
+    if (!me || !s) return;
+    const steps = await this.stepsService.getAll(me.id, s.scenario_id).catch(() => null);
+    if (steps) {
+      this.stepsByCollection.set({
+        before_steps: steps.before_steps ?? [],
+        steps: steps.steps ?? [],
+        on_success: steps.on_success ?? [],
+        on_failure: steps.on_failure ?? [],
+        finally_steps: steps.finally_steps ?? [],
+      });
+    }
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

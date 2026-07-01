@@ -72,13 +72,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'scenarios/:id/steps',
-        loadComponent: () =>
-          import(
-            './features/scenarios/step-collections-editor/step-collections-editor.component'
-          ).then((m) => m.StepCollectionsEditorComponent),
-      },
-      {
         path: 'executions',
         loadComponent: () =>
           import('./features/executions/executions.component').then((m) => m.ExecutionsComponent),
