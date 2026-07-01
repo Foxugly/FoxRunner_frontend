@@ -14,6 +14,7 @@ import { ApiDatePipe } from '../../../shared/pipes/api-date.pipe';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
 import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
 import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
+import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
@@ -32,6 +33,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     ApiDatePipe,
     DataTableComponent,
     CellTemplateDirective,
+    FormFooterComponent,
     JsonEditorComponent,
     PageHeaderComponent,
   ],
@@ -96,37 +98,35 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       [style]="{ width: '640px' }"
       [closable]="!saving()"
     >
-      <div class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
-          <label for="key">Clé</label>
-          <input id="key" pInputText [(ngModel)]="draftKey" [disabled]="editing()" />
+      <div class="meta-grid">
+        <div class="meta-item">
+          <label class="meta-label" for="key">Clé</label>
+          <div class="meta-value">
+            <input id="key" pInputText [(ngModel)]="draftKey" [disabled]="editing()" />
+          </div>
         </div>
-        <div class="flex flex-column gap-2">
-          <label for="desc">Description</label>
-          <textarea id="desc" pTextarea rows="2" [(ngModel)]="draftDesc"></textarea>
+        <div class="meta-item">
+          <label class="meta-label" for="desc">Description</label>
+          <div class="meta-value">
+            <textarea id="desc" pTextarea rows="2" [(ngModel)]="draftDesc"></textarea>
+          </div>
         </div>
-        <app-json-editor
-          label="Valeur (JSON)"
-          [value]="draftValue()"
-          (valueChange)="onValueChange($event)"
-          (validChange)="draftValid.set($event)"
-          [rows]="14"
-        />
+        <div class="meta-item meta-item--full">
+          <app-json-editor
+            label="Valeur (JSON)"
+            [value]="draftValue()"
+            (valueChange)="onValueChange($event)"
+            (validChange)="draftValid.set($event)"
+            [rows]="14"
+          />
+        </div>
       </div>
       <ng-template pTemplate="footer">
-        <p-button
-          label="Annuler"
-          severity="secondary"
-          [text]="true"
-          (onClick)="closeDialog()"
-          [disabled]="saving()"
-        />
-        <p-button
-          label="Enregistrer"
-          icon="pi pi-save"
+        <app-form-footer
           [loading]="saving()"
           [disabled]="!draftKey || !draftValid() || saving()"
-          (onClick)="save()"
+          (save)="save()"
+          (cancelled)="closeDialog()"
         />
       </ng-template>
     </p-dialog>

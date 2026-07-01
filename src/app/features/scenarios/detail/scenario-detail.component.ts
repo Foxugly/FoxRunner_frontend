@@ -170,7 +170,7 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
                       @if (s.role === 'owner') {
                         <p-tag severity="success" value="Propriétaire" />
                       } @else {
-                        <p-tag severity="info" [value]="s.role" />
+                        <p-tag severity="secondary" [value]="s.role" />
                       }
                     </div>
                     <div>

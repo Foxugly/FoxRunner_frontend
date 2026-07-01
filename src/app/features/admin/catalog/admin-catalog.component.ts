@@ -97,7 +97,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           @if (importResult(); as r) {
             <div class="mt-3 text-sm">
               @if (r.dry_run) {
-                <i class="pi pi-info-circle text-blue-500 mr-1"></i>Simulation uniquement.
+                <i class="pi pi-info-circle text-color-secondary mr-1"></i>Simulation uniquement.
               } @else {
                 <i class="pi pi-check text-green-500 mr-1"></i>Import effectué.
               }

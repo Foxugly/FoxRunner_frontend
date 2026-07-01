@@ -1,15 +1,16 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
+import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import type { ScenarioDetail } from '../../../core/api/types';
+import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
@@ -26,74 +27,71 @@ const EMPTY_DEFINITION = {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     CardModule,
-    ButtonModule,
     InputTextModule,
     TextareaModule,
+    TooltipModule,
+    FormFooterComponent,
     PageHeaderComponent,
     JsonEditorComponent,
   ],
   template: `
     <app-page-header
-      [icon]="isEdit() ? 'pi-pencil' : 'pi-plus'"
+      [icon]="isEdit() ? 'pi pi-pencil' : 'pi pi-plus'"
       [title]="isEdit() ? 'Modifier le scénario' : 'Nouveau scénario'"
-    >
-      <p-button
-        label="Annuler"
-        icon="pi pi-times"
-        severity="secondary"
-        [text]="true"
-        routerLink="/scenarios"
-      />
-      <p-button
-        label="Enregistrer"
-        icon="pi pi-save"
-        [loading]="saving()"
-        [disabled]="form.invalid || !jsonValid() || saving()"
-        (onClick)="save()"
-      />
-    </app-page-header>
+    />
 
     <p-card>
-      <form [formGroup]="form" class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
-          <label for="scenario_id">Identifiant</label>
-          <input
-            id="scenario_id"
-            pInputText
-            formControlName="scenario_id"
-            placeholder="ex. alice_pointer"
-          />
-          @if (isEdit()) {
-            <small class="text-color-secondary">
-              L'identifiant ne peut pas être modifié après création.
-            </small>
-          }
+      <h3 class="builder-section-title">Informations</h3>
+      <form [formGroup]="form" class="meta-grid cols-2">
+        <div class="meta-item">
+          <label class="meta-label" for="scenario_id">
+            Identifiant
+            @if (isEdit()) {
+              <i
+                class="pi pi-info-circle"
+                pTooltip="L'identifiant ne peut pas être modifié après création."
+                tooltipPosition="top"
+              ></i>
+            }
+          </label>
+          <div class="meta-value">
+            <input
+              id="scenario_id"
+              pInputText
+              formControlName="scenario_id"
+              placeholder="ex. alice_pointer"
+            />
+          </div>
         </div>
-        <div class="flex flex-column gap-2">
-          <label for="description">Description</label>
-          <textarea
-            id="description"
-            pTextarea
-            rows="3"
-            formControlName="description"
-            placeholder="Que fait ce scénario ?"
-          ></textarea>
+        <div class="meta-item">
+          <label class="meta-label" for="owner">Propriétaire</label>
+          <div class="meta-value">
+            <input
+              id="owner"
+              pInputText
+              formControlName="owner_user_id"
+              placeholder="email ou UUID"
+            />
+          </div>
         </div>
-        <div class="flex flex-column gap-2">
-          <label for="owner">Propriétaire</label>
-          <input
-            id="owner"
-            pInputText
-            formControlName="owner_user_id"
-            placeholder="email ou UUID"
-          />
+        <div class="meta-item meta-item--full">
+          <label class="meta-label" for="description">Description</label>
+          <div class="meta-value">
+            <textarea
+              id="description"
+              pTextarea
+              rows="3"
+              formControlName="description"
+              placeholder="Que fait ce scénario ?"
+            ></textarea>
+          </div>
         </div>
       </form>
     </p-card>
 
-    <p-card header="Définition (JSON)" styleClass="mt-3">
+    <p-card styleClass="mt-3">
+      <h3 class="builder-section-title">Définition (JSON)</h3>
       <p class="text-color-secondary text-sm mb-2">
         Structure recommandée : objet avec clés <code>before_steps</code>, <code>steps</code>,
         <code>on_success</code>, <code>on_failure</code>, <code>finally_steps</code> (tableaux
@@ -107,6 +105,13 @@ const EMPTY_DEFINITION = {
         [rows]="20"
       />
     </p-card>
+
+    <app-form-footer
+      [loading]="saving()"
+      [disabled]="form.invalid || !jsonValid() || saving()"
+      (save)="save()"
+      (cancelled)="onCancel()"
+    />
   `,
 })
 export class ScenarioEditComponent implements OnInit {
@@ -163,6 +168,10 @@ export class ScenarioEditComponent implements OnInit {
 
   onDefinitionChange(v: unknown): void {
     this.latestDefinition = (v ?? {}) as Record<string, unknown>;
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/scenarios']);
   }
 
   async save(): Promise<void> {

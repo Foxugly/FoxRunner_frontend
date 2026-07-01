@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { SkeletonModule } from 'primeng/skeleton';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { SlotsService } from '../../../core/api/slots.service';
@@ -16,11 +17,7 @@ import { JobsService } from '../../../core/api/jobs.service';
 import type { ScenarioSummary, ScenarioCreate } from '../../../core/api/types';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
-import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
-import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
-import { StatusTagComponent } from '../../../shared/components/status-tag/status-tag.component';
-import { ApiDatePipe } from '../../../shared/pipes/api-date.pipe';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 interface LastRun {
   status: string;
@@ -39,11 +36,9 @@ interface LastRun {
     DialogModule,
     InputTextModule,
     ConfirmDialogModule,
+    SkeletonModule,
     PageHeaderComponent,
-    DataTableComponent,
-    CellTemplateDirective,
-    StatusTagComponent,
-    ApiDatePipe,
+    EmptyStateComponent,
   ],
   template: `
     <app-page-header
@@ -67,96 +62,76 @@ interface LastRun {
       <p-button
         label="Nouveau"
         icon="pi pi-plus"
+        severity="success"
         routerLink="/scenarios/new"
       />
     </app-page-header>
 
-    <app-data-table
-      [value]="items()"
-      [columns]="columns"
-      [loading]="loading()"
-      dataKey="scenario_id"
-      emptyIcon="pi-sitemap"
-      emptyTitle="Aucun scénario"
-      emptyMessage="Crée un premier scénario pour démarrer."
-    >
-      <ng-template appCell="scenario_id" let-s>
-        <a [routerLink]="['/scenarios', s.scenario_id]">{{ s.scenario_id }}</a>
-      </ng-template>
-      <ng-template appCell="description" let-s>{{ s.description || '—' }}</ng-template>
-      <ng-template appCell="slots" let-s>
-        @if (slotCounts()[s.scenario_id]; as n) {
-          <p-tag severity="secondary" [value]="n + (n > 1 ? ' créneaux' : ' créneau')" />
-        } @else {
-          <span class="text-color-secondary text-sm">—</span>
+    @if (loading()) {
+      <div class="grid">
+        @for (i of skeletons; track i) {
+          <div class="col-12 md:col-6 lg:col-4">
+            <div class="scn-card scn-card--static border-1 surface-border border-round p-3 flex flex-column gap-3 h-full">
+              <div class="flex align-items-start gap-3">
+                <p-skeleton shape="circle" size="2.5rem" />
+                <div class="flex-1 flex flex-column gap-2">
+                  <p-skeleton width="60%" height="1.1rem" />
+                  <p-skeleton width="40%" height="0.75rem" />
+                </div>
+              </div>
+              <div class="scn-card__footer">
+                <p-skeleton width="6rem" height="1.5rem" borderRadius="16px" />
+              </div>
+            </div>
+          </div>
         }
-      </ng-template>
-      <ng-template appCell="last_run" let-s>
-        @if (lastRuns()[s.scenario_id]; as lr) {
-          <span class="flex align-items-center gap-2">
-            <app-status-tag [status]="lr.status" />
-            <span class="text-color-secondary text-xs">{{ lr.when | apiDate: 'short' }}</span>
-          </span>
-        } @else {
-          <span class="text-color-secondary text-sm">jamais</span>
+      </div>
+    } @else if (items().length === 0) {
+      <app-empty-state
+        icon="pi-sitemap"
+        title="Aucun scénario"
+        subtitle="Crée un premier scénario pour démarrer."
+        [tone]="'emerald'"
+      >
+        <p-button
+          label="Créer un scénario"
+          icon="pi pi-plus"
+          severity="success"
+          routerLink="/scenarios/new"
+        />
+      </app-empty-state>
+    } @else {
+      <div class="grid">
+        @for (s of items(); track s.scenario_id) {
+          <div class="col-12 md:col-6 lg:col-4">
+            <a
+              class="scn-card border-1 surface-border border-round p-3 flex flex-column gap-3 h-full"
+              [routerLink]="['/scenarios', s.scenario_id]"
+            >
+              <div class="flex align-items-start gap-3">
+                <span class="scn-card__icon">
+                  <i class="pi pi-sitemap"></i>
+                </span>
+                <div class="flex-1 min-w-0">
+                  <h3 class="scn-card__title m-0">{{ s.scenario_id }}</h3>
+                  <p class="scn-card__subtitle m-0 mt-1">
+                    {{ s.role === 'owner' ? 'Vous êtes propriétaire' : 'Partagé avec vous' }}
+                  </p>
+                </div>
+              </div>
+              <div class="scn-card__footer">
+                @if (s.role === 'owner') {
+                  <p-tag severity="success" value="Propriétaire" />
+                } @else {
+                  <p-tag severity="secondary" value="Partagé" />
+                }
+                <i class="pi pi-arrow-right scn-card__arrow"></i>
+              </div>
+            </a>
+          </div>
         }
-      </ng-template>
-      <ng-template appCell="role" let-s>
-        @if (s.role === 'owner') {
-          <p-tag severity="success" value="Propriétaire" />
-        } @else {
-          <p-tag severity="info" value="Partagé" />
-        }
-      </ng-template>
-      <ng-template appCell="network" let-s>
-        @if (s.requires_enterprise_network) {
-          <span pTooltip="Requiert le réseau entreprise/VPN">
-            <i class="pi pi-lock mr-1"></i>Entreprise
-          </span>
-        } @else {
-          <span class="text-color-secondary">Public</span>
-        }
-      </ng-template>
-      <ng-template appCell="actions" let-s>
-        <div class="flex gap-1">
-          <p-button
-            icon="pi pi-eye"
-            [rounded]="true"
-            [text]="true"
-            size="small"
-            severity="secondary"
-            [routerLink]="['/scenarios', s.scenario_id]"
-            pTooltip="Détail"
-          />
-          @if (s.writable) {
-            <p-button
-              icon="pi pi-copy"
-              [rounded]="true"
-              [text]="true"
-              size="small"
-              severity="secondary"
-              (onClick)="askDuplicate(s)"
-              pTooltip="Dupliquer"
-            />
-            <p-button
-              icon="pi pi-trash"
-              [rounded]="true"
-              [text]="true"
-              size="small"
-              severity="danger"
-              (onClick)="askDelete(s)"
-              pTooltip="Supprimer"
-            />
-          }
-        </div>
-      </ng-template>
-      <p-button
-        emptyActions
-        label="Créer un scénario"
-        icon="pi pi-plus"
-        routerLink="/scenarios/new"
-      />
-    </app-data-table>
+      </div>
+    }
 
     <p-dialog
       header="Dupliquer le scénario"
@@ -215,6 +190,67 @@ interface LastRun {
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .scn-card {
+        background: #ffffff;
+        color: inherit;
+        text-decoration: none;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease,
+          border-color 0.15s ease;
+      }
+      .scn-card:not(.scn-card--static):hover {
+        transform: translateY(-2px);
+        border-color: var(--fox-primary);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
+      }
+      .scn-card__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        background: rgba(16, 185, 129, 0.12);
+        color: var(--fox-primary);
+      }
+      .scn-card__icon i {
+        font-size: 1.15rem;
+      }
+      .scn-card__title {
+        font-size: 1rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .scn-card__subtitle {
+        font-size: 0.8rem;
+        color: var(--text-color-secondary);
+      }
+      .scn-card__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: auto;
+      }
+      .scn-card__arrow {
+        color: var(--fox-primary);
+        opacity: 0;
+        transform: translateX(-4px);
+        transition:
+          opacity 0.15s ease,
+          transform 0.15s ease;
+      }
+      .scn-card:hover .scn-card__arrow {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    `,
+  ],
 })
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
@@ -238,15 +274,8 @@ export class ScenariosListComponent implements OnInit {
   /** scenario_id -> most recent run (job or scheduled), for the "dernier run" badge. */
   readonly lastRuns = signal<Record<string, LastRun>>({});
 
-  readonly columns: DataTableColumn[] = [
-    { field: 'scenario_id', header: 'Scenario ID', sortable: true },
-    { field: 'description', header: 'Description', sortable: true },
-    { field: 'slots', header: 'Créneaux', width: '8rem', searchable: false },
-    { field: 'last_run', header: 'Dernier run', width: '11rem', searchable: false },
-    { field: 'role', header: 'Rôle', width: '8rem', searchable: false },
-    { field: 'network', header: 'Réseau', width: '10rem', searchable: false },
-    { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
-  ];
+  /** Placeholder cards rendered while the list loads. */
+  readonly skeletons = [0, 1, 2, 3, 4, 5];
 
   duplicateOpen = false;
   duplicating = signal(false);

@@ -7,12 +7,14 @@ import { DialogModule } from 'primeng/dialog';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { SlotsService } from '../../../core/api/slots.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import type { Slot, SlotSummary } from '../../../core/api/types';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 interface DayOption {
   value: number;
@@ -50,21 +52,29 @@ const DAYS: readonly DayOption[] = [
     InputMaskModule,
     MultiSelectModule,
     CheckboxModule,
+    SkeletonModule,
+    EmptyStateComponent,
   ],
   template: `
     <div class="flex align-items-center justify-content-between mb-3">
       <span class="font-semibold"><i class="pi pi-calendar mr-2"></i>Planification</span>
       @if (canEdit()) {
-        <p-button label="Créneau" icon="pi pi-plus" size="small" (onClick)="openCreate()" />
+        <p-button label="Créneau" icon="pi pi-plus" severity="success" size="small" (onClick)="openCreate()" />
       }
     </div>
 
     @if (loading()) {
-      <div class="text-color-secondary text-sm"><i class="pi pi-spin pi-spinner mr-2"></i>Chargement…</div>
-    } @else if (slots().length === 0) {
-      <div class="text-color-secondary text-sm p-3 border-1 surface-border border-round">
-        Ce scénario n'a pas encore de créneau planifié.
+      <div class="flex flex-column gap-2">
+        <p-skeleton height="3rem" />
+        <p-skeleton height="3rem" />
+        <p-skeleton height="3rem" />
       </div>
+    } @else if (slots().length === 0) {
+      <app-empty-state
+        icon="pi-calendar"
+        title="Aucun créneau planifié"
+        message="Ce scénario n'a pas encore de créneau planifié."
+      />
     } @else {
       <div class="flex flex-column gap-2">
         @for (s of slots(); track s.slot_id) {

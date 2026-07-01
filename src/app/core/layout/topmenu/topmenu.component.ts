@@ -1,6 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../auth/auth.service';
 import { ThemeService } from '../../theme/theme.service';
@@ -15,7 +17,7 @@ interface NavLink {
 @Component({
   selector: 'app-topmenu',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, ButtonModule, TooltipModule],
+  imports: [RouterLink, RouterLinkActive, ButtonModule, MenuModule, TooltipModule],
   templateUrl: './topmenu.component.html',
   styleUrl: './topmenu.component.scss',
 })
@@ -36,6 +38,11 @@ export class TopmenuComponent {
     }
     return base;
   });
+
+  readonly userMenu = computed<MenuItem[]>(() => [
+    { label: 'Profil', icon: 'pi pi-user', routerLink: '/profile' },
+    { label: 'Déconnexion', icon: 'pi pi-sign-out', command: () => void this.logout() },
+  ]);
 
   toggleMenu(): void {
     this.menuOpen.update((v) => !v);

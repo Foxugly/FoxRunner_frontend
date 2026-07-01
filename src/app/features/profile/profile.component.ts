@@ -2,12 +2,13 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../core/auth/auth.service';
 import { TimezonesService } from '../../core/api/timezones.service';
+import { FormFooterComponent } from '../../shared/components/form-footer/form-footer.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { PushItTargetsComponent } from './pushit-targets.component';
 
@@ -16,11 +17,12 @@ import { PushItTargetsComponent } from './pushit-targets.component';
   standalone: true,
   imports: [
     FormsModule,
-    ButtonModule,
     CardModule,
     InputTextModule,
     SelectModule,
     AutoCompleteModule,
+    TooltipModule,
+    FormFooterComponent,
     PageHeaderComponent,
     PushItTargetsComponent,
   ],
@@ -31,55 +33,51 @@ import { PushItTargetsComponent } from './pushit-targets.component';
     />
 
     <p-card styleClass="max-w-30rem">
-      <div class="flex flex-column gap-4">
-        <div class="flex flex-column gap-2">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            pInputText
-            type="email"
-            [value]="auth.currentUser()?.email ?? ''"
-            disabled
-          />
+      <div class="meta-grid">
+        <div class="meta-item">
+          <label class="meta-label" for="email">Email</label>
+          <div class="meta-value">
+            <input
+              id="email"
+              pInputText
+              type="email"
+              [value]="auth.currentUser()?.email ?? ''"
+              disabled
+            />
+          </div>
         </div>
 
-        <div class="flex flex-column gap-2">
-          <label for="tz">Fuseau horaire (IANA)</label>
-          <p-autocomplete
-            inputId="tz"
-            [(ngModel)]="selectedTimezone"
-            [suggestions]="filteredTimezones()"
-            (completeMethod)="onSearch($event)"
-            [dropdown]="true"
-            [forceSelection]="false"
-            placeholder="Europe/Brussels"
-            appendTo="body"
-            styleClass="w-full"
-          />
-          <small class="text-color-secondary">
-            Les horodatages de l'API sont affichés dans ce fuseau. Les horaires de slots
-            ({{ "08:00" }}, etc.) restent exprimés en heure locale métier.
-          </small>
-        </div>
-
-        <div class="flex gap-2">
-          <p-button
-            label="Enregistrer"
-            icon="pi pi-save"
-            [loading]="saving()"
-            [disabled]="saving() || !dirty()"
-            (onClick)="save()"
-          />
-          <p-button
-            label="Annuler"
-            icon="pi pi-times"
-            severity="secondary"
-            [text]="true"
-            [disabled]="!dirty()"
-            (onClick)="resetToCurrent()"
-          />
+        <div class="meta-item">
+          <label class="meta-label" for="tz">
+            Fuseau horaire (IANA)
+            <i
+              class="pi pi-info-circle"
+              pTooltip="Les horodatages de l'API sont affichés dans ce fuseau. Les horaires de slots (08:00, etc.) restent exprimés en heure locale métier."
+              tooltipPosition="top"
+            ></i>
+          </label>
+          <div class="meta-value">
+            <p-autocomplete
+              inputId="tz"
+              [(ngModel)]="selectedTimezone"
+              [suggestions]="filteredTimezones()"
+              (completeMethod)="onSearch($event)"
+              [dropdown]="true"
+              [forceSelection]="false"
+              placeholder="Europe/Brussels"
+              appendTo="body"
+              styleClass="w-full"
+            />
+          </div>
         </div>
       </div>
+
+      <app-form-footer
+        [loading]="saving()"
+        [disabled]="saving() || !dirty()"
+        (save)="save()"
+        (cancelled)="resetToCurrent()"
+      />
     </p-card>
 
     <app-pushit-targets class="block mt-4" />

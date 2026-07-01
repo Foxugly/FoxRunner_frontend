@@ -11,6 +11,8 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { PushItTargetsService } from '../../core/api/pushit-targets.service';
 import type { PushItTarget } from '../../core/api/types';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { FormFooterComponent } from '../../shared/components/form-footer/form-footer.component';
 
 @Component({
   selector: 'app-pushit-targets',
@@ -25,6 +27,8 @@ import type { PushItTarget } from '../../core/api/types';
     TableModule,
     TagModule,
     TooltipModule,
+    EmptyStateComponent,
+    FormFooterComponent,
   ],
   template: `
     <p-card>
@@ -42,12 +46,14 @@ import type { PushItTarget } from '../../core/api/types';
           <p-button
             label="Ajouter"
             icon="pi pi-plus"
+            severity="success"
             size="small"
             (onClick)="openCreate()"
           />
         </div>
       </ng-template>
 
+      @if (loading() || targets().length > 0) {
       <p-table
         [value]="targets()"
         [loading]="loading()"
@@ -99,14 +105,22 @@ import type { PushItTarget } from '../../core/api/types';
             </td>
           </tr>
         </ng-template>
-        <ng-template #emptymessage>
-          <tr>
-            <td colspan="5" class="text-center text-color-secondary p-4">
-              Aucune application PushIT. Cliquez sur « Ajouter » pour en créer une.
-            </td>
-          </tr>
-        </ng-template>
       </p-table>
+      } @else {
+        <app-empty-state
+          icon="pi-bell"
+          title="Aucune application PushIT"
+          subtitle="Ajoutez une application pour recevoir vos notifications (alertes du scheduleur et étapes notify)."
+        >
+          <p-button
+            label="Ajouter"
+            icon="pi pi-plus"
+            severity="success"
+            size="small"
+            (onClick)="openCreate()"
+          />
+        </app-empty-state>
+      }
     </p-card>
 
     <!-- Create / edit dialog -->
@@ -117,40 +131,46 @@ import type { PushItTarget } from '../../core/api/types';
       [style]="{ width: '32rem' }"
       [header]="dialogHeader()"
     >
-      <form
-        [formGroup]="form"
-        class="flex flex-column gap-3"
-        (ngSubmit)="save()"
-      >
-        <div class="flex flex-column gap-2">
-          <label for="pit-name">Nom</label>
-          <input id="pit-name" pInputText formControlName="name" placeholder="Mon téléphone" />
-        </div>
-        <div class="flex flex-column gap-2">
-          <label for="pit-token">Token de l'app (X-App-Token)</label>
-          <input id="pit-token" pInputText formControlName="app_token" placeholder="apt_…" />
-        </div>
-        <div class="flex flex-column gap-2">
-          <label for="pit-base">URL de base de l'API</label>
-          <input id="pit-base" pInputText formControlName="base_url" />
-        </div>
-        <div class="flex flex-column gap-2">
-          <label for="pit-title">Titre des notifications</label>
-          <input id="pit-title" pInputText formControlName="title" />
-        </div>
-        <div class="flex align-items-center gap-2">
-          <p-checkbox inputId="pit-default" formControlName="is_default" [binary]="true" />
-          <label for="pit-default">Application par défaut</label>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="meta-grid">
+          <div class="meta-item">
+            <label class="meta-label" for="pit-name">Nom</label>
+            <div class="meta-value">
+              <input id="pit-name" pInputText formControlName="name" placeholder="Mon téléphone" />
+            </div>
+          </div>
+          <div class="meta-item">
+            <label class="meta-label" for="pit-token">Token de l'app (X-App-Token)</label>
+            <div class="meta-value">
+              <input id="pit-token" pInputText formControlName="app_token" placeholder="apt_…" />
+            </div>
+          </div>
+          <div class="meta-item">
+            <label class="meta-label" for="pit-base">URL de base de l'API</label>
+            <div class="meta-value">
+              <input id="pit-base" pInputText formControlName="base_url" />
+            </div>
+          </div>
+          <div class="meta-item">
+            <label class="meta-label" for="pit-title">Titre des notifications</label>
+            <div class="meta-value">
+              <input id="pit-title" pInputText formControlName="title" />
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Application par défaut</span>
+            <div class="meta-value">
+              <p-checkbox inputId="pit-default" formControlName="is_default" [binary]="true" />
+            </div>
+          </div>
         </div>
       </form>
       <ng-template #footer>
-        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="closeDialog()" />
-        <p-button
-          label="Enregistrer"
-          icon="pi pi-save"
+        <app-form-footer
           [loading]="saving()"
           [disabled]="form.invalid || saving()"
-          (onClick)="save()"
+          (save)="save()"
+          (cancelled)="closeDialog()"
         />
       </ng-template>
     </p-dialog>

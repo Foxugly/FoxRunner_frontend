@@ -100,7 +100,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
               <tr>
                 <td><code class="text-xs">{{ s.subscription_id }}</code></td>
                 <td class="text-xs">{{ s.resource }}</td>
-                <td><p-tag severity="info" [value]="s.change_type" /></td>
+                <td><p-tag severity="secondary" [value]="s.change_type" /></td>
                 <td>
                   <div>{{ s.expiration_datetime | apiDate: 'medium' }}</div>
                   @if (isExpiringSoon(s)) {
@@ -180,7 +180,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
               <tr>
                 <td>{{ n.created_at | apiDate: 'medium' }}</td>
                 <td><code class="text-xs">{{ n.subscription_id }}</code></td>
-                <td><p-tag severity="info" [value]="n.change_type" /></td>
+                <td><p-tag severity="secondary" [value]="n.change_type" /></td>
                 <td class="text-xs">{{ n.resource }}</td>
                 <td>{{ n.lifecycle_event || '—' }}</td>
               </tr>

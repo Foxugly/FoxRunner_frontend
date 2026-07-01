@@ -85,10 +85,10 @@
   gap: 0.25rem;
 }
 
-.topbar__email {
-  color: rgba(226, 232, 240, 0.75);
-  font-size: 0.85rem;
-  margin-right: 0.35rem;
+.topbar__user ::ng-deep .p-button-label {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .topbar__toggle {
@@ -131,7 +131,7 @@
   .topbar__nav {
     display: none;
   }
-  .topbar__email {
+  .topbar__user ::ng-deep .p-button-label {
     display: none;
   }
   .topbar__toggle {

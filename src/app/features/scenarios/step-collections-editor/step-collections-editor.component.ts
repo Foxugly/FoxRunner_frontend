@@ -15,6 +15,7 @@ import {
   type StepCollectionName,
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
@@ -33,6 +34,7 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
     ConfirmDialogModule,
     PageHeaderComponent,
     EmptyStateComponent,
+    FormFooterComponent,
     JsonEditorComponent,
   ],
   template: `
@@ -64,6 +66,7 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
               <p-button
                 label="Ajouter une étape"
                 icon="pi pi-plus"
+                severity="success"
                 (onClick)="openAdd(col)"
               />
             </div>
@@ -125,13 +128,11 @@ type StepsByCollection = Record<StepCollectionName, Record<string, unknown>[]>;
         [rows]="16"
       />
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="closeDialog()" />
-        <p-button
-          label="Enregistrer"
-          icon="pi pi-save"
+        <app-form-footer
           [loading]="saving()"
           [disabled]="!draftValid() || saving()"
-          (onClick)="saveStep()"
+          (save)="saveStep()"
+          (cancelled)="closeDialog()"
         />
       </ng-template>
     </p-dialog>

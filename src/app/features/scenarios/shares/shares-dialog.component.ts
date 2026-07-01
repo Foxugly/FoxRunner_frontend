@@ -42,6 +42,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
           <p-button
             label="Ajouter"
             icon="pi pi-plus"
+            severity="success"
             [loading]="saving()"
             [disabled]="!newUserId || saving()"
             (onClick)="add()"

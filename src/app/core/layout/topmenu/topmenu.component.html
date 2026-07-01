@@ -20,7 +20,6 @@
     </nav>
 
     <div class="topbar__actions">
-      <span class="topbar__email">{{ auth.currentUser()?.email }}</span>
       <p-button
         [icon]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
         [rounded]="true"
@@ -30,23 +29,16 @@
         pTooltip="Basculer thème"
         ariaLabel="Basculer thème"
       />
+      <p-menu #userMenuPopup [model]="userMenu()" [popup]="true" appendTo="body" />
       <p-button
         icon="pi pi-user"
-        [rounded]="true"
+        [label]="auth.currentUser()?.email ?? ''"
         severity="secondary"
         [text]="true"
-        routerLink="/profile"
-        pTooltip="Profil"
-        ariaLabel="Profil"
-      />
-      <p-button
-        icon="pi pi-sign-out"
-        [rounded]="true"
-        severity="secondary"
-        [text]="true"
-        (onClick)="logout()"
-        pTooltip="Déconnexion"
-        ariaLabel="Déconnexion"
+        (onClick)="userMenuPopup.toggle($event)"
+        ariaLabel="Menu utilisateur"
+        aria-haspopup="true"
+        class="topbar__user"
       />
       <button
         type="button"

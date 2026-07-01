@@ -115,7 +115,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         <tr>
           <td>{{ a.created_at | apiDate: 'medium' }}</td>
           <td>{{ a.actor_user_id }}</td>
-          <td><p-tag severity="info" [value]="a.action" /></td>
+          <td><p-tag severity="secondary" [value]="a.action" /></td>
           <td>
             <div class="text-sm">
               <div>{{ a.target_type }}</div>

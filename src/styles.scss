@@ -1,5 +1,6 @@
 @use 'primeicons/primeicons.css';
 @use 'primeflex/primeflex.css';
+@use 'styles/forms-meta';
 
 :root {
   --fox-primary: #10b981;
@@ -22,6 +23,18 @@ body {
 .fox-brand {
   color: var(--fox-primary);
   font-weight: 700;
+}
+
+/* Links: emerald accent, never the browser's default blue underline
+   (fleet §3.15 visual language). Colour is the affordance — no underline, so
+   block/card links (e.g. the scenarios grid) don't underline on hover. Chrome
+   (topbar/footer) sets its own colours. */
+a {
+  color: var(--fox-primary);
+  text-decoration: none;
+}
+a:hover {
+  color: #059669;
 }
 
 /* Topbar (dark): make PrimeNG secondary text-buttons legible on the dark bar. */

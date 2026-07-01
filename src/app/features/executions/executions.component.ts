@@ -122,7 +122,7 @@ const STATUS_OPTIONS: Opt[] = [
           </td>
           <td>
             @if (r.source === 'job') {
-              <p-tag severity="info" value="à la demande" />
+              <p-tag severity="secondary" value="à la demande" />
             } @else {
               <p-tag severity="secondary" value="planifié" />
             }

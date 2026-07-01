@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { AuthService } from '../../core/auth/auth.service';
 import { JobsService } from '../../core/api/jobs.service';
@@ -12,6 +13,7 @@ import type { Job, Plan } from '../../core/api/types';
 import { ApiDatePipe } from '../../shared/pipes/api-date.pipe';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { StatusTagComponent } from '../../shared/components/status-tag/status-tag.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 const CHECK_LABELS: Record<string, string> = {
   database: 'Base de données',
@@ -34,7 +36,17 @@ interface HealthRow {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, ButtonModule, CardModule, TagModule, ApiDatePipe, PageHeaderComponent, StatusTagComponent],
+  imports: [
+    RouterLink,
+    ButtonModule,
+    CardModule,
+    SkeletonModule,
+    TagModule,
+    ApiDatePipe,
+    PageHeaderComponent,
+    StatusTagComponent,
+    EmptyStateComponent,
+  ],
   template: `
     <app-page-header icon="pi-home" title="Tableau de bord" />
 
@@ -67,14 +79,16 @@ interface HealthRow {
                 }
               }
             </div>
-          } @else {
-            <div class="text-color-secondary text-sm">
-              @if (loading()) {
-                <i class="pi pi-spin pi-spinner mr-2"></i>Chargement…
-              } @else {
-                État indisponible.
-              }
+          } @else if (loading()) {
+            <div class="flex flex-column gap-2">
+              <p-skeleton height="1.5rem" />
+              <p-skeleton height="1.5rem" />
+              <p-skeleton height="1.5rem" />
+              <p-skeleton height="1.5rem" />
+              <p-skeleton height="1.5rem" />
             </div>
+          } @else {
+            <div class="text-color-secondary text-sm">État indisponible.</div>
           }
         </p-card>
       </div>
@@ -146,7 +160,7 @@ interface HealthRow {
             </div>
           </ng-template>
           @if (recentJobs().length === 0) {
-            <div class="text-color-secondary text-sm">Aucune exécution récente.</div>
+            <app-empty-state icon="pi-history" title="Aucune exécution récente" />
           } @else {
             <div class="flex flex-column gap-2">
               @for (j of recentJobs(); track j.job_id) {

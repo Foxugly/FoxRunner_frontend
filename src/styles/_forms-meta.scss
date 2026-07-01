@@ -1,0 +1,80 @@
+// Shared form layout system (fleet OPERATIONS.md §3.15). Global (not component-
+// scoped) so inline-template standalone forms can use the classes.
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr; // single column by default
+  gap: 1rem;
+
+  &.cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  &.cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  &.cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (max-width: 767px) {
+    &.cols-2,
+    &.cols-3,
+    &.cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// One field cell — FLAT: no per-field border / fill / padding.
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.meta-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--p-text-muted-color, #6b7280);
+}
+
+// The widget is stretched full-width; toggles / colour swatches keep their size.
+.meta-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  > * {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  > p-toggleswitch,
+  > p-colorpicker {
+    flex: 0 0 auto;
+  }
+}
+
+.meta-hint {
+  font-size: 0.75rem;
+  color: var(--p-text-muted-color, #6b7280);
+
+  &--error {
+    color: var(--p-red-500, #ef4444);
+  }
+}
+
+// Logical group header (Infos / Planning / …).
+.builder-section-title {
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--surface-border, #e5e7eb);
+}

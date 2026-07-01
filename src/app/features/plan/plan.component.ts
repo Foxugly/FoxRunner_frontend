@@ -60,9 +60,9 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
             @if (p.requires_enterprise_network) {
               <p-tag value="Réseau entreprise requis" severity="warn" />
             }
-            <p-tag value="Steps : {{ p.steps }}" severity="info" />
+            <p-tag value="Steps : {{ p.steps }}" severity="secondary" />
             @if (p.before_steps > 0) {
-              <p-tag value="Before : {{ p.before_steps }}" severity="info" />
+              <p-tag value="Before : {{ p.before_steps }}" severity="secondary" />
             }
           </div>
         </div>
