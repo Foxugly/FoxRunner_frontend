@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -48,7 +48,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     DialogModule,
     InputTextModule,
     TextareaModule,
-    RouterLink,
     PageHeaderComponent,
     StepDisplayComponent,
     EmptyStateComponent,
@@ -58,14 +57,11 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     ScenarioSlotsComponent,
   ],
   template: `
-    <app-page-header icon="pi-sitemap" [title]="scenario()?.scenario_id ?? 'Scénario'">
-      <p-button
-        label="Retour"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [text]="true"
-        routerLink="/scenarios"
-      />
+    <app-page-header
+      icon="pi-sitemap"
+      [title]="scenario()?.scenario_id ?? 'Scénario'"
+      [backLink]="['/scenarios']"
+    >
       <p-button
         [rounded]="true"
         [outlined]="true"

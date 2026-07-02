@@ -40,7 +40,7 @@ type PushoverEntry = Record<string, unknown>;
     JsonEditorComponent,
   ],
   template: `
-    <app-page-header icon="pi-server" title="Configuration du catalogue" />
+    <app-page-header icon="pi-server" title="Configuration du catalogue" [backLink]="'/admin'" />
 
     @if (loading()) {
       <p-card>

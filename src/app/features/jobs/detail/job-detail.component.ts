@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -60,7 +60,6 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
   selector: 'app-job-detail',
   standalone: true,
   imports: [
-    RouterLink,
     CardModule,
     ButtonModule,
     TagModule,
@@ -73,14 +72,11 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
     StatusTagComponent,
   ],
   template: `
-    <app-page-header icon="pi-play" [title]="'Job ' + (jobIdShort() || '…')">
-      <p-button
-        label="Retour"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [text]="true"
-        routerLink="/executions"
-      />
+    <app-page-header
+      icon="pi-play"
+      [title]="'Job ' + (jobIdShort() || '…')"
+      [backLink]="'/executions'"
+    >
       <p-button
         icon="pi pi-refresh"
         severity="secondary"

@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -15,7 +14,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   standalone: true,
   imports: [
     FormsModule,
-    RouterLink,
     CardModule,
     ButtonModule,
     ToggleSwitchModule,
@@ -26,14 +24,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-file-export"
       title="Catalogue"
+      [backLink]="'/admin'"
     >
-      <p-button
-        label="Retour admin"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [text]="true"
-        routerLink="/admin"
-      />
     </app-page-header>
 
     <div class="grid">
