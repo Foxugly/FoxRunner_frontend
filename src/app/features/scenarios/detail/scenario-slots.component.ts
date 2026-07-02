@@ -82,7 +82,7 @@ const DAYS: readonly DayOption[] = [
             <div class="flex align-items-center gap-3 flex-wrap">
               <div class="flex gap-1">
                 @for (d of days; track d.value) {
-                  <p-tag [severity]="s.days?.includes(d.value) ? 'success' : 'secondary'" [value]="d.label" />
+                  <p-tag [severity]="s.days.includes(d.value) ? 'success' : 'secondary'" [value]="d.label" />
                 }
               </div>
               <span class="font-medium">{{ s.start }} → {{ s.end }}</span>

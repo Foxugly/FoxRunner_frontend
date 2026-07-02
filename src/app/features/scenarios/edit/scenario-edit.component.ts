@@ -8,6 +8,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
+import type { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
@@ -93,7 +94,7 @@ const EMPTY_DEFINITION = {
     />
   `,
 })
-export class ScenarioEditComponent implements OnInit {
+export class ScenarioEditComponent implements OnInit, HasUnsavedChanges {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(ScenariosService);
   private readonly auth = inject(AuthService);
@@ -102,6 +103,8 @@ export class ScenarioEditComponent implements OnInit {
 
   readonly saving = signal(false);
   private idempotencyKey = '';
+  /** Set when navigating away intentionally (save/cancel), to skip the guard. */
+  private leaving = false;
 
   readonly form = this.fb.nonNullable.group({
     scenario_id: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_\-.]+$/)]],
@@ -116,7 +119,12 @@ export class ScenarioEditComponent implements OnInit {
   }
 
   onCancel(): void {
+    this.leaving = true;
     this.router.navigate(['/scenarios']);
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty && !this.leaving;
   }
 
   async save(): Promise<void> {
@@ -141,6 +149,7 @@ export class ScenarioEditComponent implements OnInit {
       });
       // Regenerate the idempotency key in case the user creates another.
       this.idempotencyKey = newIdempotencyKey();
+      this.leaving = true;
       this.router.navigate(['/scenarios', created.scenario_id]);
     } catch {
       /* errors surfaced by the HTTP interceptor */
