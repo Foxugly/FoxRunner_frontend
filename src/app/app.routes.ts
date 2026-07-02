@@ -85,11 +85,6 @@ export const routes: Routes = [
         canDeactivate: [unsavedChangesGuard],
       },
       {
-        path: 'plan',
-        loadComponent: () =>
-          import('./features/plan/plan.component').then((m) => m.PlanComponent),
-      },
-      {
         path: 'admin',
         canActivate: [superuserGuard],
         children: [

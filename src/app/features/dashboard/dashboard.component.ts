@@ -113,7 +113,6 @@ interface HealthRow {
               <div class="text-color-secondary text-sm">
                 <i class="pi pi-calendar mr-1"></i>{{ p.scheduled_for | apiDate: 'medium' }} · créneau {{ p.slot_id }}
               </div>
-              <a class="text-sm mt-1" routerLink="/plan">Voir le planning →</a>
             </div>
           } @else {
             <div class="flex flex-column align-items-center text-center gap-2 py-3 text-color-secondary">
