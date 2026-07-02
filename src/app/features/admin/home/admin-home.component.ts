@@ -32,6 +32,14 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         </p-card>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
+        <p-card header="Configuration" subheader="Pushovers, réseaux, défauts">
+          <p>Le bloc « data » global du catalogue : identifiants Pushover, profils réseaux et clés par défaut.</p>
+          <ng-template pTemplate="footer">
+            <p-button label="Ouvrir" icon="pi pi-server" routerLink="/admin/config" />
+          </ng-template>
+        </p-card>
+      </div>
+      <div class="col-12 md:col-6 lg:col-4">
         <p-card header="Audit" subheader="Journal d'événements">
           <p>Traces horodatées des actions, filtrables par acteur et cible.</p>
           <ng-template pTemplate="footer">

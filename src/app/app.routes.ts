@@ -68,12 +68,6 @@ export const routes: Routes = [
         canDeactivate: [unsavedChangesGuard],
       },
       {
-        path: 'config',
-        loadComponent: () =>
-          import('./features/config/config.component').then((m) => m.ConfigComponent),
-        canActivate: [superuserGuard],
-      },
-      {
         path: 'executions',
         loadComponent: () =>
           import('./features/executions/executions.component').then((m) => m.ExecutionsComponent),
@@ -105,6 +99,12 @@ export const routes: Routes = [
               import('./features/admin/home/admin-home.component').then(
                 (m) => m.AdminHomeComponent,
               ),
+          },
+          {
+            path: 'config',
+            loadComponent: () =>
+              import('./features/config/config.component').then((m) => m.ConfigComponent),
+            canDeactivate: [unsavedChangesGuard],
           },
           {
             path: 'users',
