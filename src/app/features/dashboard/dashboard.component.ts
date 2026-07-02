@@ -153,9 +153,8 @@ interface HealthRow {
       <div class="col-12 lg:col-8">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center justify-content-between p-3 pb-0">
+            <div class="flex align-items-center p-3 pb-0">
               <span class="font-semibold"><i class="pi pi-history mr-2"></i>Activité récente</span>
-              <a class="text-sm" routerLink="/executions">Toutes les exécutions →</a>
             </div>
           </ng-template>
           @if (recentJobs().length === 0) {

@@ -75,7 +75,8 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
     <app-page-header
       icon="pi-play"
       [title]="'Job ' + (jobIdShort() || '…')"
-      [backLink]="'/executions'"
+      [backLink]="job()?.target_id ? ['/scenarios', job()!.target_id] : '/scenarios'"
+      [backQueryParams]="{ tab: 'executions' }"
     >
       <p-button
         icon="pi pi-refresh"
