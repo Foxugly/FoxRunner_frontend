@@ -24,15 +24,15 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         </p-card>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Paramètres" subheader="Clé → valeur JSON">
-          <p>Lecture/écriture des réglages applicatifs persistés.</p>
+        <p-card header="Paramètres applicatifs" subheader="Réglages clé → valeur (JSON)">
+          <p>Lecture/écriture des réglages applicatifs persistés (ex. heartbeat).</p>
           <ng-template pTemplate="footer">
             <p-button label="Ouvrir" icon="pi pi-sliders-h" routerLink="/admin/settings" />
           </ng-template>
         </p-card>
       </div>
       <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Configuration" subheader="Pushovers, réseaux, défauts">
+        <p-card header="Configuration du catalogue" subheader="Pushovers, réseaux, défauts">
           <p>Le bloc « data » global du catalogue : identifiants Pushover, profils réseaux et clés par défaut.</p>
           <ng-template pTemplate="footer">
             <p-button label="Ouvrir" icon="pi pi-server" routerLink="/admin/config" />
