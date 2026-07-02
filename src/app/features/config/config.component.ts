@@ -1,14 +1,16 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CatalogConfigService } from '../../core/api/catalog-config.service';
+import type { HasUnsavedChanges } from '../../core/guards/unsaved-changes.guard';
 import { FormFooterComponent } from '../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -27,6 +29,7 @@ type PushoverEntry = Record<string, unknown>;
     FormsModule,
     ButtonModule,
     CardModule,
+    ConfirmDialogModule,
     DialogModule,
     InputNumberModule,
     InputTextModule,
@@ -54,6 +57,7 @@ type PushoverEntry = Record<string, unknown>;
                 inputId="def-pushover"
                 [options]="pushoverKeys()"
                 [(ngModel)]="defaultPushover"
+                (ngModelChange)="dirty.set(true)"
                 [showClear]="true"
                 placeholder="—"
               />
@@ -66,6 +70,7 @@ type PushoverEntry = Record<string, unknown>;
                 inputId="def-network"
                 [options]="networkKeys()"
                 [(ngModel)]="defaultNetwork"
+                (ngModelChange)="dirty.set(true)"
                 [showClear]="true"
                 placeholder="—"
               />
@@ -118,7 +123,7 @@ type PushoverEntry = Record<string, unknown>;
                     [rounded]="true"
                     severity="danger"
                     ariaLabel="Supprimer le pushover"
-                    (onClick)="removePushover(key)"
+                    (onClick)="confirmRemovePushover(key)"
                   />
                 </div>
               </div>
@@ -142,7 +147,7 @@ type PushoverEntry = Record<string, unknown>;
 
       <app-form-footer
         [loading]="saving()"
-        [disabled]="!networksValid() || saving()"
+        [disabled]="!dirty() || !networksValid() || saving()"
         (save)="save()"
         (cancelled)="load()"
       />
@@ -204,24 +209,29 @@ type PushoverEntry = Record<string, unknown>;
         />
       </ng-template>
     </p-dialog>
+
+    <p-confirmDialog />
   `,
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent implements OnInit, HasUnsavedChanges {
   private readonly service = inject(CatalogConfigService);
   private readonly messages = inject(MessageService);
+  private readonly confirm = inject(ConfirmationService);
 
   readonly loading = signal(true);
   readonly saving = signal(false);
+  /** Pending, unsaved edits — drives the Save button and the leave guard. */
+  readonly dirty = signal(false);
 
   defaultPushover = '';
   defaultNetwork = '';
   readonly pushovers = signal<Record<string, PushoverEntry>>({});
   readonly networks = signal<Record<string, unknown>>({});
+  readonly networkKeys = signal<string[]>([]);
   readonly networksValid = signal(true);
   private latestNetworks: Record<string, unknown> = {};
 
   readonly pushoverKeys = computed(() => Object.keys(this.pushovers()));
-  readonly networkKeys = computed(() => Object.keys(this.networks()));
 
   // Pushover add/edit dialog
   pushoverDialogOpen = false;
@@ -236,17 +246,15 @@ export class ConfigComponent implements OnInit {
     void this.load();
   }
 
+  hasUnsavedChanges(): boolean {
+    return this.dirty();
+  }
+
   async load(): Promise<void> {
     this.loading.set(true);
     try {
       const cfg = await this.service.get();
-      this.defaultPushover = cfg.default_pushover ?? '';
-      this.defaultNetwork = cfg.default_network ?? '';
-      this.pushovers.set({ ...((cfg.pushovers ?? {}) as Record<string, PushoverEntry>) });
-      const networks = { ...((cfg.networks ?? {}) as Record<string, unknown>) };
-      this.networks.set(networks);
-      this.latestNetworks = networks;
-      this.networksValid.set(true);
+      this.applyConfig(cfg);
     } catch {
       /* errors surfaced by the HTTP interceptor */
     } finally {
@@ -254,8 +262,27 @@ export class ConfigComponent implements OnInit {
     }
   }
 
+  private applyConfig(cfg: {
+    default_pushover?: string;
+    default_network?: string;
+    pushovers?: Record<string, unknown>;
+    networks?: Record<string, unknown>;
+  }): void {
+    this.defaultPushover = cfg.default_pushover ?? '';
+    this.defaultNetwork = cfg.default_network ?? '';
+    this.pushovers.set({ ...((cfg.pushovers ?? {}) as Record<string, PushoverEntry>) });
+    const networks = { ...((cfg.networks ?? {}) as Record<string, unknown>) };
+    this.networks.set(networks);
+    this.latestNetworks = networks;
+    this.networkKeys.set(Object.keys(networks));
+    this.networksValid.set(true);
+    this.dirty.set(false);
+  }
+
   onNetworksChange(value: unknown): void {
     this.latestNetworks = (value ?? {}) as Record<string, unknown>;
+    this.networkKeys.set(Object.keys(this.latestNetworks));
+    this.dirty.set(true);
   }
 
   openPushover(key: string | null): void {
@@ -286,18 +313,32 @@ export class ConfigComponent implements OnInit {
     if (this.draftSound) entry['sound'] = this.draftSound;
     if (this.draftTimeout !== null) entry['timeout_seconds'] = this.draftTimeout;
     this.pushovers.set({ ...this.pushovers(), [key]: entry });
+    this.dirty.set(true);
     this.pushoverDialogOpen = false;
   }
 
-  removePushover(key: string): void {
+  confirmRemovePushover(key: string): void {
+    this.confirm.confirm({
+      header: 'Supprimer le pushover ?',
+      message: `« ${key} » sera retiré de la configuration à l'enregistrement.`,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Supprimer',
+      rejectLabel: 'Annuler',
+      acceptButtonProps: { severity: 'danger' },
+      accept: () => this.removePushover(key),
+    });
+  }
+
+  private removePushover(key: string): void {
     const next = { ...this.pushovers() };
     delete next[key];
     this.pushovers.set(next);
     if (this.defaultPushover === key) this.defaultPushover = '';
+    this.dirty.set(true);
   }
 
   async save(): Promise<void> {
-    if (!this.networksValid()) return;
+    if (!this.dirty() || !this.networksValid()) return;
     this.saving.set(true);
     try {
       const updated = await this.service.update({
@@ -306,12 +347,7 @@ export class ConfigComponent implements OnInit {
         pushovers: this.pushovers(),
         networks: this.latestNetworks,
       });
-      this.defaultPushover = updated.default_pushover ?? '';
-      this.defaultNetwork = updated.default_network ?? '';
-      this.pushovers.set({ ...((updated.pushovers ?? {}) as Record<string, PushoverEntry>) });
-      const networks = { ...((updated.networks ?? {}) as Record<string, unknown>) };
-      this.networks.set(networks);
-      this.latestNetworks = networks;
+      this.applyConfig(updated);
       this.messages.add({
         severity: 'success',
         summary: 'Configuration enregistrée',

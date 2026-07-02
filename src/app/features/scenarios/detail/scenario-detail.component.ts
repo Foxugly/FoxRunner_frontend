@@ -29,6 +29,7 @@ import { DetailHeaderComponent } from '../../../shared/components/detail-header/
 import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
+import type { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
 import { ScenarioSlotsComponent } from './scenario-slots.component';
 
@@ -335,7 +336,7 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     <p-confirmDialog />
   `,
 })
-export class ScenarioDetailComponent implements OnInit {
+export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
@@ -371,6 +372,10 @@ export class ScenarioDetailComponent implements OnInit {
   readonly savingInfo = signal(false);
   draftDescription = '';
   draftOwner = '';
+
+  hasUnsavedChanges(): boolean {
+    return this.editingInfo();
+  }
 
   startEditInfo(): void {
     const s = this.scenario();

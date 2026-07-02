@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { superuserGuard } from './core/auth/superuser.guard';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 export const routes: Routes = [
   {
@@ -56,6 +57,7 @@ export const routes: Routes = [
           import('./features/scenarios/edit/scenario-edit.component').then(
             (m) => m.ScenarioEditComponent,
           ),
+        canDeactivate: [unsavedChangesGuard],
       },
       {
         path: 'scenarios/:id',
@@ -63,6 +65,7 @@ export const routes: Routes = [
           import('./features/scenarios/detail/scenario-detail.component').then(
             (m) => m.ScenarioDetailComponent,
           ),
+        canDeactivate: [unsavedChangesGuard],
       },
       {
         path: 'config',
@@ -85,6 +88,7 @@ export const routes: Routes = [
           import('./features/jobs/detail/job-detail.component').then(
             (m) => m.JobDetailComponent,
           ),
+        canDeactivate: [unsavedChangesGuard],
       },
       {
         path: 'plan',
