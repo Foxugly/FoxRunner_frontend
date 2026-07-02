@@ -40,7 +40,7 @@ const EMPTY_DEFINITION = {
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi pi-plus" title="Nouveau scénario" />
+    <app-page-header icon="pi-plus" title="Nouveau scénario" />
 
     <p-card>
       <h3 class="builder-section-title">Informations</h3>
