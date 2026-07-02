@@ -32,7 +32,7 @@ describe('AuthMagicService', () => {
     const req = http.expectOne(`${environment.apiBaseUrl}/auth/magic-link/exchange`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ token: 'tok-1' });
-    req.flush({ access_token: 'jwt-123', token_type: 'bearer' });
-    expect(await p).toEqual({ access_token: 'jwt-123', token_type: 'bearer' });
+    req.flush({ access_token: 'jwt-123', refresh_token: 'ref-123', token_type: 'bearer' });
+    expect(await p).toEqual({ access_token: 'jwt-123', refresh_token: 'ref-123', token_type: 'bearer' });
   });
 });

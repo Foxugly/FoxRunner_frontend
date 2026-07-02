@@ -19,6 +19,8 @@ describe('AuthService.loginWithToken', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     });
@@ -29,7 +31,7 @@ describe('AuthService.loginWithToken', () => {
   afterEach(() => http.verify());
 
   it('stores the token and loads the current user', async () => {
-    const p = service.loginWithToken('jwt-123');
+    const p = service.loginWithToken('jwt-123', 'refresh-123');
     const req = http.expectOne(`${environment.apiBaseUrl}/users/me`);
     expect(req.request.method).toBe('GET');
     req.flush(USER);

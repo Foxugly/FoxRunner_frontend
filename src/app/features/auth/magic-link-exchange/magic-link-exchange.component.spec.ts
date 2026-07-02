@@ -26,10 +26,10 @@ function setup(token: string | null, exchange: () => Promise<unknown>) {
 describe('MagicLinkExchangeComponent', () => {
   it('exchanges the token, signs in and navigates home on success', async () => {
     const { fixture, loginWithToken, navigate } = setup('tok', () =>
-      Promise.resolve({ access_token: 'jwt-1', token_type: 'bearer' }),
+      Promise.resolve({ access_token: 'jwt-1', refresh_token: 'ref-1', token_type: 'bearer' }),
     );
     await fixture.componentInstance.ngOnInit();
-    expect(loginWithToken).toHaveBeenCalledWith('jwt-1');
+    expect(loginWithToken).toHaveBeenCalledWith('jwt-1', 'ref-1');
     expect(navigate).toHaveBeenCalledWith(['/']);
     expect(fixture.componentInstance.state()).toBe('working');
   });

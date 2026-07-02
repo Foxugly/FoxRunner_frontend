@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
@@ -18,6 +19,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     RouterLink,
     ButtonModule,
     CardModule,
+    CheckboxModule,
     InputTextModule,
     MessageModule,
     PasswordModule,
@@ -62,6 +64,10 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
               @if (error(); as msg) {
                 <p-message severity="error" [text]="msg" styleClass="w-full" />
               }
+              <div class="flex align-items-center gap-2">
+                <p-checkbox inputId="remember" formControlName="remember" [binary]="true" />
+                <label for="remember" class="text-sm">Se souvenir de moi</label>
+              </div>
               <p-button
                 type="submit"
                 label="Se connecter"
@@ -134,6 +140,7 @@ export class LoginComponent {
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
+    remember: [true],
   });
 
   readonly magicMode = signal(false);
@@ -148,8 +155,8 @@ export class LoginComponent {
     this.error.set(null);
     this.loading.set(true);
     try {
-      const { email, password } = this.form.getRawValue();
-      await this.auth.login(email, password);
+      const { email, password, remember } = this.form.getRawValue();
+      await this.auth.login(email, password, remember);
       await this.router.navigate(['/']);
     } catch (err) {
       const status = (err as HttpErrorResponse)?.status ?? 0;

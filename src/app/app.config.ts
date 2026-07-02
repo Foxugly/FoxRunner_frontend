@@ -1,4 +1,5 @@
 import {
+  APP_INITIALIZER,
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
@@ -14,6 +15,7 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/http/auth.interceptor';
 import { errorInterceptor } from './core/http/error.interceptor';
 import { primeNgFrenchTranslation } from './core/i18n/primeng-fr';
+import { AuthService } from './core/auth/auth.service';
 
 // Emerald is the single fleet accent (OPERATIONS.md §3.15). Remap BOTH the
 // `primary` semantic AND the `green` primitive onto Emerald so that
@@ -49,6 +51,20 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      deps: [AuthService],
+      useFactory: (auth: AuthService) => async () => {
+        if (!auth.hasStoredRefresh()) return;
+        try {
+          await auth.refresh();
+          await auth.refreshCurrentUser();
+        } catch {
+          auth.clear();
+        }
+      },
+    },
     provideAnimations(),
     providePrimeNG({
       theme: {
