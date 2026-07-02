@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -15,7 +14,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     CardModule,
     ButtonModule,
     InputNumberModule,
@@ -26,14 +24,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-trash"
       title="Rétention"
+      [backLink]="'/admin'"
     >
-      <p-button
-        label="Retour admin"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [text]="true"
-        routerLink="/admin"
-      />
     </app-page-header>
 
     <p-card styleClass="max-w-30rem">

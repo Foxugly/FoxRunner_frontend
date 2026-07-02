@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -24,7 +23,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    RouterLink,
     TableModule,
     TabsModule,
     CardModule,
@@ -43,14 +41,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-cloud"
       title="Microsoft Graph"
+      [backLink]="'/admin'"
     >
-      <p-button
-        label="Retour admin"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [text]="true"
-        routerLink="/admin"
-      />
     </app-page-header>
 
     <p-tabs value="subs">

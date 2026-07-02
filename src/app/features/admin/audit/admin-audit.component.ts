@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -17,7 +16,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   standalone: true,
   imports: [
     FormsModule,
-    RouterLink,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -31,14 +29,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <app-page-header
       icon="pi-list"
       title="Audit"
+      [backLink]="'/admin'"
     >
-      <p-button
-        label="Retour admin"
-        icon="pi pi-arrow-left"
-        severity="secondary"
-        [text]="true"
-        routerLink="/admin"
-      />
       <p-button
         icon="pi pi-refresh"
         severity="secondary"
