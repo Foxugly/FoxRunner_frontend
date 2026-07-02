@@ -42,6 +42,10 @@ yarn-error.log
 
 # Scratch copy of the backend OpenAPI (used by `npm run gen:api:file`)
 /openapi.local.json
+
+# Generated OpenAPI client. Source of truth is the committed openapi.json;
+# regenerate with `npm run gen:api` (live backend) or `npm run gen:api:offline`.
+/src/app/core/api/schema.ts
 /libpeerconnection.log
 testem.log
 /typings

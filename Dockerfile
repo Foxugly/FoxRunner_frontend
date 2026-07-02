@@ -7,8 +7,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
-# Copy source and build. The OpenAPI schema is expected to be committed.
+# Copy source, generate the OpenAPI client from the committed openapi.json
+# (schema.ts is generated, not committed), then build.
 COPY . .
+RUN npm run gen:api:offline
 RUN npm run build -- --configuration production
 
 FROM nginx:1.27-alpine AS runtime
