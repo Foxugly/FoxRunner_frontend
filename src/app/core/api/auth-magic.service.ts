@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 
 interface MagicExchangeResponse {
   access_token: string;
+  refresh_token: string;
   token_type: string;
 }
 

@@ -57,7 +57,7 @@ export class MagicLinkExchangeComponent implements OnInit {
     }
     try {
       const res = await this.authMagic.exchange(this.token);
-      await this.auth.loginWithToken(res.access_token);
+      await this.auth.loginWithToken(res.access_token, res.refresh_token);
       await this.router.navigate(['/']);
     } catch (err) {
       this.state.set((err as HttpErrorResponse)?.status === 410 ? 'expired' : 'invalid');

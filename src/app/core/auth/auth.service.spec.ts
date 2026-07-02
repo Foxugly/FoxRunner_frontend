@@ -10,6 +10,8 @@ describe('AuthService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
     TestBed.configureTestingModule({
       providers: [
         provideHttpClient(),
@@ -32,7 +34,7 @@ describe('AuthService', () => {
       is_verified: true,
       timezone_name: 'Europe/Brussels',
     };
-    const promise = service.login('alice@test.local', 'secret');
+    const promise = service.login('alice@test.local', 'secret', true);
 
     const loginReq = http.expectOne(`${environment.apiBaseUrl}/auth/jwt/login`);
     expect(loginReq.request.method).toBe('POST');
@@ -40,7 +42,7 @@ describe('AuthService', () => {
       'application/x-www-form-urlencoded',
     );
     expect(loginReq.request.body).toBe('username=alice@test.local&password=secret');
-    loginReq.flush({ access_token: 'tok-abc', token_type: 'bearer' });
+    loginReq.flush({ access_token: 'tok-abc', refresh_token: 'ref-abc', token_type: 'bearer' });
     await Promise.resolve();
     await Promise.resolve();
 
@@ -73,5 +75,56 @@ describe('AuthService', () => {
     expect(service.token()).toBeNull();
     expect(service.currentUser()).toBeNull();
     expect(service.isLoggedIn()).toBe(false);
+  });
+});
+
+describe('AuthService remember-me', () => {
+  let svc: AuthService;
+  let http: HttpTestingController;
+
+  beforeEach(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ],
+    });
+    svc = TestBed.inject(AuthService);
+    http = TestBed.inject(HttpTestingController);
+  });
+
+  it('persists refresh in localStorage when remember=true', async () => {
+    const p = svc.login('a@b.io', 'pw', true);
+    http.expectOne(`${environment.apiBaseUrl}/auth/jwt/login`).flush({
+      access_token: 'acc', refresh_token: 'ref', token_type: 'bearer',
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+    http.expectOne(`${environment.apiBaseUrl}/users/me`).flush({
+      id: '1', email: 'a@b.io', is_active: true, is_superuser: false,
+      is_verified: true, timezone_name: 'Europe/Brussels',
+    });
+    await p;
+    expect(localStorage.getItem('fox.refresh')).toBe('ref');
+    expect(sessionStorage.getItem('fox.refresh')).toBeNull();
+  });
+
+  it('uses sessionStorage when remember=false', async () => {
+    const p = svc.login('a@b.io', 'pw', false);
+    http.expectOne(`${environment.apiBaseUrl}/auth/jwt/login`).flush({
+      access_token: 'acc', refresh_token: 'ref', token_type: 'bearer',
+    });
+    await Promise.resolve();
+    await Promise.resolve();
+    http.expectOne(`${environment.apiBaseUrl}/users/me`).flush({
+      id: '1', email: 'a@b.io', is_active: true, is_superuser: false,
+      is_verified: true, timezone_name: 'Europe/Brussels',
+    });
+    await p;
+    expect(sessionStorage.getItem('fox.refresh')).toBe('ref');
+    expect(localStorage.getItem('fox.refresh')).toBeNull();
   });
 });
