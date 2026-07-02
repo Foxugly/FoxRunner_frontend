@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -25,7 +25,7 @@ import {
   type StepCollectionName,
 } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { DetailHeaderComponent } from '../../../shared/components/detail-header/detail-header.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { StepDisplayComponent } from '../../../shared/components/step-display/step-display.component';
@@ -48,7 +48,8 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     DialogModule,
     InputTextModule,
     TextareaModule,
-    DetailHeaderComponent,
+    RouterLink,
+    PageHeaderComponent,
     StepDisplayComponent,
     EmptyStateComponent,
     FormFooterComponent,
@@ -57,14 +58,15 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     ScenarioSlotsComponent,
   ],
   template: `
-    <app-detail-header
-      icon="pi-sitemap"
-      eyebrow="Scénario"
-      [title]="scenario()?.scenario_id ?? 'Scénario'"
-      [backLink]="['/scenarios']"
-    >
+    <app-page-header icon="pi-sitemap" [title]="scenario()?.scenario_id ?? 'Scénario'">
       <p-button
-        detailHeaderActions
+        label="Retour"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [text]="true"
+        routerLink="/scenarios"
+      />
+      <p-button
         [rounded]="true"
         [outlined]="true"
         severity="secondary"
@@ -77,7 +79,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
         (onClick)="triggerRun(true)"
       />
       <p-button
-        detailHeaderActions
         [rounded]="true"
         [outlined]="true"
         severity="warn"
@@ -90,7 +91,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
         (onClick)="confirmRealRun()"
       />
       <p-button
-        detailHeaderActions
         [rounded]="true"
         [outlined]="true"
         severity="secondary"
@@ -103,7 +103,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
       />
       @if (isOwner()) {
         <p-button
-          detailHeaderActions
           [rounded]="true"
           [outlined]="true"
           severity="secondary"
@@ -116,7 +115,6 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
       }
       @if (isOwner()) {
         <p-button
-          detailHeaderActions
           [rounded]="true"
           [outlined]="true"
           severity="danger"
@@ -129,7 +127,7 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
           (onClick)="confirmDelete()"
         />
       }
-    </app-detail-header>
+    </app-page-header>
 
     <app-shares-dialog
       [scenarioId]="scenario()?.scenario_id ?? ''"
