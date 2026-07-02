@@ -32,6 +32,7 @@ import { StepDisplayComponent } from '../../../shared/components/step-display/st
 import type { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.guard';
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
 import { ScenarioSlotsComponent } from './scenario-slots.component';
+import { ScenarioExecutionsComponent } from './scenario-executions.component';
 
 @Component({
   selector: 'app-scenario-detail',
@@ -55,6 +56,7 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     JsonEditorComponent,
     SharesDialogComponent,
     ScenarioSlotsComponent,
+    ScenarioExecutionsComponent,
   ],
   template: `
     <app-page-header
@@ -131,11 +133,12 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
     />
 
     @if (scenario(); as s) {
-      <p-tabs value="general">
+      <p-tabs [(value)]="activeTab">
         <p-tablist>
           <p-tab value="general"><i class="pi pi-info-circle mr-2"></i>Informations générales</p-tab>
           <p-tab value="planning"><i class="pi pi-calendar mr-2"></i>Planification</p-tab>
           <p-tab value="steps"><i class="pi pi-code mr-2"></i>Étapes ({{ totalSteps() }})</p-tab>
+          <p-tab value="executions"><i class="pi pi-play mr-2"></i>Exécutions</p-tab>
         </p-tablist>
         <p-tabpanels>
           <!-- Onglet 1 : informations générales -->
@@ -293,6 +296,10 @@ import { ScenarioSlotsComponent } from './scenario-slots.component';
               }
             }
           </p-tabpanel>
+          <!-- Onglet 4 : exécutions de ce scénario (à la demande + planifiées) -->
+          <p-tabpanel value="executions">
+            <app-scenario-executions [scenarioId]="s.scenario_id" />
+          </p-tabpanel>
         </p-tabpanels>
       </p-tabs>
     } @else if (!loading()) {
@@ -352,6 +359,9 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   readonly loading = signal(true);
   readonly running = signal(false);
   readonly deleting = signal(false);
+
+  /** Active detail tab; can be preselected via ?tab= (e.g. a job's back link). */
+  activeTab = 'general';
 
   readonly isWritable = computed(() => this.scenario()?.writable === true);
   readonly isOwner = computed(() => this.scenario()?.role === 'owner');
@@ -522,6 +532,10 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   }
 
   ngOnInit(): void {
+    const tab = this.route.snapshot.queryParamMap.get('tab');
+    if (tab && ['general', 'planning', 'steps', 'executions'].includes(tab)) {
+      this.activeTab = tab;
+    }
     const id = this.route.snapshot.paramMap.get('id');
     if (id) void this.load(id);
   }

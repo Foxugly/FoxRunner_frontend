@@ -68,15 +68,6 @@ export const routes: Routes = [
         canDeactivate: [unsavedChangesGuard],
       },
       {
-        path: 'executions',
-        loadComponent: () =>
-          import('./features/executions/executions.component').then((m) => m.ExecutionsComponent),
-      },
-      // Jobs + Historique merged into the unified Exécutions view; keep the
-      // list URLs working via redirects (the detail view jobs/:id stays).
-      { path: 'jobs', pathMatch: 'full', redirectTo: 'executions' },
-      { path: 'history', pathMatch: 'full', redirectTo: 'executions' },
-      {
         path: 'jobs/:id',
         loadComponent: () =>
           import('./features/jobs/detail/job-detail.component').then(

@@ -16,6 +16,7 @@ import { ButtonModule } from 'primeng/button';
             [outlined]="true"
             severity="secondary"
             [routerLink]="backLink"
+            [queryParams]="backQueryParams"
           />
         }
       </div>
@@ -45,4 +46,5 @@ export class PageHeaderComponent {
   @Input({ required: true }) title = '';
   @Input() icon?: string;
   @Input() backLink?: string | (string | number)[];
+  @Input() backQueryParams?: Record<string, unknown>;
 }
