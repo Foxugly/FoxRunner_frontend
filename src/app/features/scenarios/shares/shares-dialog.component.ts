@@ -32,13 +32,13 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       [style]="{ width: '560px' }"
       (onShow)="load()"
     >
-      <div class="flex flex-column gap-3">
-        <div class="flex gap-2">
+      <div class="shares-stack">
+        <div class="shares-add">
           <input
             pInputText
             [(ngModel)]="newUserId"
             [placeholder]="'scenarios.shares.add_placeholder' | transloco"
-            class="flex-1"
+            class="shares-add__input"
             [disabled]="saving()"
           />
           <p-button
@@ -95,6 +95,22 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .shares-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .shares-add {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .shares-add__input {
+        flex: 1 1 0;
+      }
+    `,
+  ],
 })
 export class SharesDialogComponent {
   private readonly service = inject(ScenariosService);

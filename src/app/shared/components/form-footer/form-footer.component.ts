@@ -14,7 +14,7 @@ import { LanguageService } from '../../../core/i18n/language.service';
   standalone: true,
   imports: [ButtonModule],
   template: `
-    <div class="flex justify-content-end gap-2 mt-2 footer-actions">
+    <div class="footer-actions">
       <p-button
         type="button"
         [label]="cancelText()"
@@ -34,6 +34,16 @@ import { LanguageService } from '../../../core/i18n/language.service';
       />
     </div>
   `,
+  styles: [
+    `
+      .footer-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+    `,
+  ],
 })
 export class FormFooterComponent {
   private readonly i18n = inject(TranslocoService);

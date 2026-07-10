@@ -52,37 +52,37 @@ interface HealthRow {
   template: `
     <app-page-header icon="pi-home" [title]="'dashboard.title' | transloco" />
 
-    <div class="grid">
+    <div class="dash-grid">
       <!-- Santé du système -->
-      <div class="col-12 lg:col-6">
+      <div class="dash-col-6">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center justify-content-between p-3 pb-0">
-              <span class="font-semibold"><i class="pi pi-heart-fill mr-2"></i>{{ 'dashboard.health.title' | transloco }}</span>
+            <div class="health-head">
+              <span class="card-title"><i class="pi pi-heart-fill"></i>{{ 'dashboard.health.title' | transloco }}</span>
               @if (system(); as sys) {
                 <p-tag [severity]="overallSeverity()" [value]="overallLabel(sys.status)" />
               }
             </div>
           </ng-template>
           @if (system(); as sys) {
-            <div class="flex flex-column gap-2">
+            <div class="stack-2">
               @for (row of healthRows(); track row.key) {
-                <div class="flex align-items-center justify-content-between gap-2">
-                  <span class="flex align-items-center gap-2">
+                <div class="health-row">
+                  <span class="inline-2">
                     <i [class]="'pi ' + iconFor(row.status)" [style.color]="colorFor(row.status)"></i>
                     {{ row.label }}
                   </span>
-                  <span class="text-sm text-color-secondary">{{ statusText(row.status) }}</span>
+                  <span class="status-text">{{ statusText(row.status) }}</span>
                 </div>
                 @if (row.command) {
-                  <div class="text-xs ml-4 -mt-1">
-                    <span class="text-color-secondary">{{ 'dashboard.health.restart' | transloco }} </span><code>{{ row.command }}</code>
+                  <div class="cmd-row">
+                    <span class="muted">{{ 'dashboard.health.restart' | transloco }} </span><code>{{ row.command }}</code>
                   </div>
                 }
               }
             </div>
           } @else if (loading()) {
-            <div class="flex flex-column gap-2">
+            <div class="stack-2">
               <p-skeleton height="1.5rem" />
               <p-skeleton height="1.5rem" />
               <p-skeleton height="1.5rem" />
@@ -90,56 +90,56 @@ interface HealthRow {
               <p-skeleton height="1.5rem" />
             </div>
           } @else {
-            <div class="text-color-secondary text-sm">{{ 'dashboard.health.unavailable' | transloco }}</div>
+            <div class="status-text">{{ 'dashboard.health.unavailable' | transloco }}</div>
           }
         </p-card>
       </div>
 
       <!-- Prochaine exécution -->
-      <div class="col-12 lg:col-6">
+      <div class="dash-col-6">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="p-3 pb-0">
-              <span class="font-semibold"><i class="pi pi-clock mr-2"></i>{{ 'dashboard.next.title' | transloco }}</span>
+            <div class="card-head">
+              <span class="card-title"><i class="pi pi-clock"></i>{{ 'dashboard.next.title' | transloco }}</span>
             </div>
           </ng-template>
           @if (plan(); as p) {
-            <div class="flex flex-column align-items-center text-center gap-2 py-2">
-              <div class="text-3xl font-bold" style="color: var(--accent)">{{ countdown() }}</div>
+            <div class="stat-body">
+              <div class="next-value" style="color: var(--accent)">{{ countdown() }}</div>
               <a
                 [routerLink]="['/scenarios', p.scenario_id]"
-                class="text-lg font-semibold no-underline text-color"
+                class="scenario-link"
               >
                 {{ p.scenario_id }}
               </a>
-              <div class="text-color-secondary text-sm">
-                <i class="pi pi-calendar mr-1"></i>{{ p.scheduled_for | apiDate: 'medium' }} · {{ 'dashboard.next.slot' | transloco: { slot: p.slot_id } }}
+              <div class="date-line">
+                <i class="pi pi-calendar"></i>{{ p.scheduled_for | apiDate: 'medium' }} · {{ 'dashboard.next.slot' | transloco: { slot: p.slot_id } }}
               </div>
             </div>
           } @else {
-            <div class="flex flex-column align-items-center text-center gap-2 py-3 text-color-secondary">
-              <i class="pi pi-calendar-times text-2xl"></i>
-              <div class="text-sm">{{ 'dashboard.next.empty_1' | transloco }}<br />{{ 'dashboard.next.empty_2' | transloco }}</div>
+            <div class="next-empty">
+              <i class="pi pi-calendar-times icon-2xl"></i>
+              <div class="small">{{ 'dashboard.next.empty_1' | transloco }}<br />{{ 'dashboard.next.empty_2' | transloco }}</div>
             </div>
           }
         </p-card>
       </div>
 
       <!-- Scénarios (compteur + accès) -->
-      <div class="col-12 lg:col-4">
+      <div class="dash-col-4">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="p-3 pb-0">
-              <span class="font-semibold"><i class="pi pi-sitemap mr-2"></i>{{ 'dashboard.scenarios.title' | transloco }}</span>
+            <div class="card-head">
+              <span class="card-title"><i class="pi pi-sitemap"></i>{{ 'dashboard.scenarios.title' | transloco }}</span>
             </div>
           </ng-template>
-          <div class="flex flex-column align-items-center text-center gap-2 py-2">
-            <div class="text-4xl font-bold" style="color: var(--accent)">{{ scenarioCount() }}</div>
-            <div class="text-color-secondary text-sm">
+          <div class="stat-body">
+            <div class="scenario-count" style="color: var(--accent)">{{ scenarioCount() }}</div>
+            <div class="status-text">
               {{ (scenarioCount() > 1 ? 'dashboard.scenarios.count_plural' : 'dashboard.scenarios.count_singular') | transloco }}
             </div>
             <p-button
-              class="mt-2"
+              class="stat-action"
               [label]="'dashboard.scenarios.view' | transloco"
               icon="pi pi-arrow-right"
               iconPos="right"
@@ -152,35 +152,35 @@ interface HealthRow {
       </div>
 
       <!-- Activité récente -->
-      <div class="col-12 lg:col-8">
+      <div class="dash-col-8">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center p-3 pb-0">
-              <span class="font-semibold"><i class="pi pi-history mr-2"></i>{{ 'dashboard.recent.title' | transloco }}</span>
+            <div class="recent-head">
+              <span class="card-title"><i class="pi pi-history"></i>{{ 'dashboard.recent.title' | transloco }}</span>
             </div>
           </ng-template>
           @if (recentJobs().length === 0) {
             <app-empty-state icon="pi-history" [title]="'dashboard.recent.empty' | transloco" />
           } @else {
-            <div class="flex flex-column gap-2">
+            <div class="stack-2">
               @for (j of recentJobs(); track j.job_id) {
                 <a
                   [routerLink]="['/jobs', j.job_id]"
-                  class="flex align-items-center justify-content-between gap-2 p-2 border-1 surface-border border-round no-underline text-color"
+                  class="recent-item"
                 >
-                  <span class="flex align-items-center gap-2">
+                  <span class="inline-2">
                     <app-status-tag [status]="j.status" />
-                    <span class="font-medium">{{ j.target_id }}</span>
+                    <span class="medium">{{ j.target_id }}</span>
                     @if (j.dry_run) {
                       <p-tag severity="secondary" value="dry-run" />
                     }
                   </span>
-                  <span class="flex align-items-center gap-3">
-                    <span class="text-color-secondary text-sm">{{ (j.finished_at ?? j.created_at) | apiDate: 'short' }}</span>
+                  <span class="inline-3">
+                    <span class="status-text">{{ (j.finished_at ?? j.created_at) | apiDate: 'short' }}</span>
                     @if (j.status === 'failed') {
-                      <span class="text-red-500 text-sm">{{ 'dashboard.recent.see_failure' | transloco }}</span>
+                      <span class="danger-text">{{ 'dashboard.recent.see_failure' | transloco }}</span>
                     } @else {
-                      <i class="pi pi-angle-right text-color-secondary"></i>
+                      <i class="pi pi-angle-right muted"></i>
                     }
                   </span>
                 </a>
@@ -191,6 +191,156 @@ interface HealthRow {
       </div>
     </div>
   `,
+  styles: [
+    `
+      .dash-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 1024px) {
+        .dash-grid {
+          grid-template-columns: repeat(12, 1fr);
+        }
+        .dash-col-6 {
+          grid-column: span 6;
+        }
+        .dash-col-4 {
+          grid-column: span 4;
+        }
+        .dash-col-8 {
+          grid-column: span 8;
+        }
+      }
+
+      .card-head {
+        padding: 1rem;
+        padding-bottom: 0;
+      }
+      .health-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        padding-bottom: 0;
+      }
+      .recent-head {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        padding-bottom: 0;
+      }
+
+      .card-title {
+        font-weight: 600;
+      }
+      .card-title i {
+        margin-right: 0.5rem;
+      }
+
+      .stack-2 {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .inline-2 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .inline-3 {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .health-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+      .status-text {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .cmd-row {
+        font-size: 0.75rem;
+        margin-left: 1.5rem;
+        margin-top: -0.25rem;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 0.875rem;
+      }
+      .medium {
+        font-weight: 500;
+      }
+      .danger-text {
+        color: var(--danger);
+        font-size: 0.875rem;
+      }
+      .icon-2xl {
+        font-size: 1.5rem;
+      }
+
+      .stat-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+        padding-block: 0.5rem;
+      }
+      .next-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+      }
+      .scenario-count {
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .scenario-link {
+        font-size: 1.125rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .date-line {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .date-line i {
+        margin-right: 0.25rem;
+      }
+      .next-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+        padding-block: 1rem;
+        color: var(--muted);
+      }
+      .stat-action {
+        margin-top: 0.5rem;
+      }
+
+      .recent-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--ink);
+      }
+    `,
+  ],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);

@@ -60,7 +60,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="subs">
-          <div class="flex justify-content-end mb-2 gap-2">
+          <div class="toolbar">
             <p-button
               icon="pi pi-refresh"
               severity="secondary"
@@ -98,8 +98,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             </ng-template>
             <ng-template pTemplate="body" let-s>
               <tr>
-                <td><code class="text-xs">{{ s.subscription_id }}</code></td>
-                <td class="text-xs">{{ s.resource }}</td>
+                <td><code class="id-code">{{ s.subscription_id }}</code></td>
+                <td class="res-cell">{{ s.resource }}</td>
                 <td><p-tag severity="secondary" [value]="s.change_type" /></td>
                 <td>
                   <div>{{ s.expiration_datetime | apiDate: 'medium' }}</div>
@@ -108,7 +108,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
                   }
                 </td>
                 <td>
-                  <div class="flex gap-1">
+                  <div class="row-actions">
                     <p-button
                       icon="pi pi-refresh"
                       [rounded]="true"
@@ -145,7 +145,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         </p-tabpanel>
 
         <p-tabpanel value="notifs">
-          <div class="flex justify-content-end mb-2">
+          <div class="toolbar-single">
             <p-button
               icon="pi pi-refresh"
               severity="secondary"
@@ -179,9 +179,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             <ng-template pTemplate="body" let-n>
               <tr>
                 <td>{{ n.created_at | apiDate: 'medium' }}</td>
-                <td><code class="text-xs">{{ n.subscription_id }}</code></td>
+                <td><code class="id-code">{{ n.subscription_id }}</code></td>
                 <td><p-tag severity="secondary" [value]="n.change_type" /></td>
-                <td class="text-xs">{{ n.resource }}</td>
+                <td class="res-cell">{{ n.resource }}</td>
                 <td>{{ n.lifecycle_event || '—' }}</td>
               </tr>
             </ng-template>
@@ -204,8 +204,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       [style]="{ width: '600px' }"
       [closable]="!saving()"
     >
-      <form [formGroup]="createForm" class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
+      <form [formGroup]="createForm" class="form-stack">
+        <div class="field">
           <label for="resource">{{ 'admin.graph.label_resource' | transloco }}</label>
           <input
             id="resource"
@@ -214,7 +214,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             placeholder="/me/messages"
           />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field">
           <label for="change_type">{{ 'admin.graph.label_change_type' | transloco }}</label>
           <input
             id="change_type"
@@ -223,7 +223,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             placeholder="created,updated"
           />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field">
           <label for="notification_url">{{ 'admin.graph.label_notification_url' | transloco }}</label>
           <input
             id="notification_url"
@@ -232,7 +232,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             placeholder="https://…/graph/webhook"
           />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field">
           <label for="lifecycle_url">{{ 'admin.graph.label_lifecycle_url' | transloco }}</label>
           <input
             id="lifecycle_url"
@@ -241,7 +241,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             placeholder="https://…/graph/lifecycle"
           />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field">
           <label for="expires">{{ 'admin.graph.label_expires' | transloco }}</label>
           <p-datepicker
             inputId="expires"
@@ -276,8 +276,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       [header]="'admin.graph.renew_dialog_title' | transloco"
       [style]="{ width: '460px' }"
     >
-      <div class="flex flex-column gap-3">
-        <div class="text-color-secondary">
+      <div class="form-stack">
+        <div class="muted">
           {{ 'admin.graph.renew_text' | transloco }}
           <code>{{ renewTarget()?.subscription_id }}</code>.
         </div>
@@ -307,6 +307,44 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 0.5rem;
+        gap: 0.5rem;
+      }
+      .toolbar-single {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 0.5rem;
+      }
+      .id-code {
+        font-size: 0.75rem;
+      }
+      .res-cell {
+        font-size: 0.75rem;
+      }
+      .row-actions {
+        display: flex;
+        gap: 0.25rem;
+      }
+      .form-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .muted {
+        color: var(--muted);
+      }
+    `,
+  ],
 })
 export class AdminGraphComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

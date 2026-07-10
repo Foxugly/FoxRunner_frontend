@@ -36,13 +36,13 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       />
     </app-page-header>
 
-    <div class="grid">
-      <div class="col-12 lg:col-6">
+    <div class="cards-grid">
+      <div>
         <p-card [header]="'admin.catalog.export_title' | transloco">
-          <p class="text-color-secondary">
+          <p class="muted">
             {{ 'admin.catalog.export_desc' | transloco }}
           </p>
-          <div class="flex gap-2 mt-2">
+          <div class="btn-row">
             <p-button
               [label]="'admin.catalog.load_export' | transloco"
               icon="pi pi-download"
@@ -59,16 +59,16 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             }
           </div>
           @if (exportData(); as e) {
-            <div class="mt-3 text-sm text-color-secondary">
+            <div class="export-note">
               {{ 'admin.catalog.export_loaded' | transloco: { scenarios: countKeys(e.scenarios), slots: countKeys(e.slots) } }}
             </div>
           }
         </p-card>
       </div>
 
-      <div class="col-12 lg:col-6">
+      <div>
         <p-card [header]="'admin.catalog.import_title' | transloco">
-          <p class="text-color-secondary">
+          <p class="muted">
             {{ 'admin.catalog.import_desc_before' | transloco }} <em>dry-run</em>
             {{ 'admin.catalog.import_desc_after' | transloco }}
           </p>
@@ -79,11 +79,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             (validChange)="importValid.set($event)"
             [rows]="14"
           />
-          <div class="flex align-items-center gap-3 mt-3">
+          <div class="toggle-row">
             <p-toggleswitch inputId="dry" [(ngModel)]="dryRun" />
             <label for="dry">{{ 'admin.catalog.dryrun_label' | transloco }}</label>
           </div>
-          <div class="flex gap-2 mt-3">
+          <div class="btn-row-lg">
             <p-button
               [label]="'admin.catalog.run_import' | transloco"
               icon="pi pi-upload"
@@ -94,13 +94,13 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             />
           </div>
           @if (importResult(); as r) {
-            <div class="mt-3 text-sm">
+            <div class="result-block">
               @if (r.dry_run) {
-                <i class="pi pi-info-circle text-color-secondary mr-1"></i>{{ 'admin.catalog.result_dryrun' | transloco }}
+                <i class="pi pi-info-circle icon-info"></i>{{ 'admin.catalog.result_dryrun' | transloco }}
               } @else {
-                <i class="pi pi-check text-green-500 mr-1"></i>{{ 'admin.catalog.result_done' | transloco }}
+                <i class="pi pi-check icon-ok"></i>{{ 'admin.catalog.result_done' | transloco }}
               }
-              <div class="mt-1">
+              <div class="result-counts">
                 {{ 'admin.catalog.result_counts' | transloco: { scenarios: r.scenarios ?? '—', slots: r.slots ?? '—' } }}
               </div>
             </div>
@@ -109,6 +109,59 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </div>
     </div>
   `,
+  styles: [
+    `
+      .cards-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 1024px) {
+        .cards-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .btn-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      .export-note {
+        margin-top: 1rem;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      .btn-row-lg {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+      .result-block {
+        margin-top: 1rem;
+        font-size: 0.875rem;
+      }
+      .icon-info {
+        color: var(--muted);
+        margin-right: 0.25rem;
+      }
+      .icon-ok {
+        color: var(--success);
+        margin-right: 0.25rem;
+      }
+      .result-counts {
+        margin-top: 0.25rem;
+      }
+    `,
+  ],
 })
 export class AdminCatalogComponent {
   private readonly service = inject(AdminService);

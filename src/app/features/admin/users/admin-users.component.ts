@@ -55,7 +55,7 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
       emptyIcon="pi-users"
       [emptyTitle]="'admin.users.empty_title' | transloco"
     >
-      <ng-template appCell="id" let-u><code class="text-xs">{{ u.id }}</code></ng-template>
+      <ng-template appCell="id" let-u><code class="id-code">{{ u.id }}</code></ng-template>
       <ng-template appCell="is_active" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_active"
@@ -79,6 +79,13 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
       </ng-template>
     </app-data-table>
   `,
+  styles: [
+    `
+      .id-code {
+        font-size: 0.75rem;
+      }
+    `,
+  ],
 })
 export class AdminUsersComponent implements OnInit {
   private readonly service = inject(AdminService);

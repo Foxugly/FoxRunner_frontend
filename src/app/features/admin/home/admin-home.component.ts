@@ -15,8 +15,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       [title]="'admin.home.title' | transloco"
     />
 
-    <div class="grid">
-      <div class="col-12 md:col-6 lg:col-4">
+    <div class="cards-grid">
+      <div>
         <p-card [header]="'admin.home.users_title' | transloco" [subheader]="'admin.home.users_subtitle' | transloco">
           <p>{{ 'admin.home.users_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -24,7 +24,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.settings_title' | transloco" [subheader]="'admin.home.settings_subtitle' | transloco">
           <p>{{ 'admin.home.settings_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -32,7 +32,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.config_title' | transloco" [subheader]="'admin.home.config_subtitle' | transloco">
           <p>{{ 'admin.home.config_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -40,7 +40,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.audit_title' | transloco" [subheader]="'admin.home.audit_subtitle' | transloco">
           <p>{{ 'admin.home.audit_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -48,7 +48,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.health_title' | transloco" [subheader]="'admin.home.health_subtitle' | transloco">
           <p>{{ 'admin.home.health_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -56,7 +56,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.retention_title' | transloco" [subheader]="'admin.home.retention_subtitle' | transloco">
           <p>{{ 'admin.home.retention_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -64,7 +64,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.catalog_title' | transloco" [subheader]="'admin.home.catalog_subtitle' | transloco">
           <p>{{ 'admin.home.catalog_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -72,7 +72,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.artifacts_title' | transloco" [subheader]="'admin.home.artifacts_subtitle' | transloco">
           <p>{{ 'admin.home.artifacts_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -80,7 +80,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
+      <div>
         <p-card [header]="'admin.home.graph_title' | transloco" [subheader]="'admin.home.graph_subtitle' | transloco">
           <p>{{ 'admin.home.graph_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
@@ -90,5 +90,24 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </div>
     </div>
   `,
+  styles: [
+    `
+      .cards-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 768px) {
+        .cards-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 1024px) {
+        .cards-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    `,
+  ],
 })
 export class AdminHomeComponent {}

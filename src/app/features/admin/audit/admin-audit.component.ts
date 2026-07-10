@@ -49,9 +49,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       />
     </app-page-header>
 
-    <div class="flex gap-3 mb-3 flex-wrap">
-      <div class="flex flex-column gap-1">
-        <label for="actor" class="text-sm text-color-secondary">{{ 'admin.audit.filter_actor' | transloco }}</label>
+    <div class="filter-bar">
+      <div class="filter-field">
+        <label for="actor" class="filter-label">{{ 'admin.audit.filter_actor' | transloco }}</label>
         <input
           id="actor"
           pInputText
@@ -60,8 +60,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           (keyup.enter)="reload()"
         />
       </div>
-      <div class="flex flex-column gap-1">
-        <label for="tgt-type" class="text-sm text-color-secondary">{{ 'admin.audit.filter_target_type' | transloco }}</label>
+      <div class="filter-field">
+        <label for="tgt-type" class="filter-label">{{ 'admin.audit.filter_target_type' | transloco }}</label>
         <input
           id="tgt-type"
           pInputText
@@ -70,8 +70,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           (keyup.enter)="reload()"
         />
       </div>
-      <div class="flex flex-column gap-1">
-        <label for="tgt-id" class="text-sm text-color-secondary">{{ 'admin.audit.filter_target_id' | transloco }}</label>
+      <div class="filter-field">
+        <label for="tgt-id" class="filter-label">{{ 'admin.audit.filter_target_id' | transloco }}</label>
         <input
           id="tgt-id"
           pInputText
@@ -79,7 +79,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           (keyup.enter)="reload()"
         />
       </div>
-      <div class="flex align-items-end">
+      <div class="filter-actions">
         <p-button
           [label]="'admin.common.apply' | transloco"
           icon="pi pi-filter"
@@ -118,13 +118,13 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           <td>{{ a.actor_user_id }}</td>
           <td><p-tag severity="secondary" [value]="a.action" /></td>
           <td>
-            <div class="text-sm">
+            <div class="target-cell">
               <div>{{ a.target_type }}</div>
-              <code class="text-xs">{{ a.target_id }}</code>
+              <code class="id-code">{{ a.target_id }}</code>
             </div>
           </td>
           <td
-            class="text-xs font-mono text-color-secondary text-overflow-ellipsis overflow-hidden white-space-nowrap"
+            class="diff-cell"
             [style.max-width.rem]="30"
             [pTooltip]="diff(a)"
             tooltipPosition="left"
@@ -146,6 +146,43 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </ng-template>
     </p-table>
   `,
+  styles: [
+    `
+      .filter-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      .filter-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .filter-label {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .filter-actions {
+        display: flex;
+        align-items: flex-end;
+      }
+      .target-cell {
+        font-size: 0.875rem;
+      }
+      .id-code {
+        font-size: 0.75rem;
+      }
+      .diff-cell {
+        font-size: 0.75rem;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: var(--muted);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    `,
+  ],
 })
 export class AdminAuditComponent implements OnInit {
   private readonly service = inject(AdminService);

@@ -58,15 +58,15 @@ const DAYS: readonly DayOption[] = [
     TranslocoPipe,
   ],
   template: `
-    <div class="flex align-items-center justify-content-between mb-3">
-      <span class="font-semibold"><i class="pi pi-calendar mr-2"></i>{{ 'scenarios.slots.heading' | transloco }}</span>
+    <div class="slots-head">
+      <span class="slots-title"><i class="pi pi-calendar ico-gap"></i>{{ 'scenarios.slots.heading' | transloco }}</span>
       @if (canEdit()) {
         <p-button [label]="'scenarios.slots.new_button' | transloco" icon="pi pi-plus" severity="success" size="small" (onClick)="openCreate()" />
       }
     </div>
 
     @if (loading()) {
-      <div class="flex flex-column gap-2">
+      <div class="slots-stack">
         <p-skeleton height="3rem" />
         <p-skeleton height="3rem" />
         <p-skeleton height="3rem" />
@@ -78,19 +78,19 @@ const DAYS: readonly DayOption[] = [
         [message]="'scenarios.slots.empty_message' | transloco"
       />
     } @else {
-      <div class="flex flex-column gap-2">
+      <div class="slots-stack">
         @for (s of slots(); track s.slot_id) {
-          <div class="flex align-items-center justify-content-between gap-2 p-2 border-1 surface-border border-round">
-            <div class="flex align-items-center gap-3 flex-wrap">
-              <div class="flex gap-1">
+          <div class="slot-row">
+            <div class="slot-info">
+              <div class="day-tags">
                 @for (d of days; track d.value) {
                   <p-tag [severity]="s.days.includes(d.value) ? 'success' : 'secondary'" [value]="'scenarios.slots.day.' + d.key | transloco" />
                 }
               </div>
-              <span class="font-medium">{{ s.start }} → {{ s.end }}</span>
-              <code class="text-xs text-color-secondary">{{ s.slot_id }}</code>
+              <span class="slot-time">{{ s.start }} → {{ s.end }}</span>
+              <code class="slot-id">{{ s.slot_id }}</code>
             </div>
-            <div class="flex align-items-center gap-1">
+            <div class="slot-actions">
               <p-toggleswitch
                 [(ngModel)]="s.enabled"
                 [disabled]="!canEdit()"
@@ -114,12 +114,12 @@ const DAYS: readonly DayOption[] = [
       [style]="{ width: '460px' }"
       [closable]="!saving()"
     >
-      <form [formGroup]="form" class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
+      <form [formGroup]="form" class="slot-form">
+        <div class="field-col">
           <label for="ss-slot-id">{{ 'scenarios.slots.id_label' | transloco }}</label>
           <input id="ss-slot-id" pInputText formControlName="slot_id" placeholder="morning_check" />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field-col">
           <label for="ss-days">{{ 'scenarios.slots.days_label' | transloco }}</label>
           <p-multiselect
             inputId="ss-days"
@@ -132,17 +132,17 @@ const DAYS: readonly DayOption[] = [
             appendTo="body"
           />
         </div>
-        <div class="flex gap-3">
-          <div class="flex flex-column gap-2 flex-1">
+        <div class="field-row">
+          <div class="field-col field-col--grow">
             <label for="ss-start">{{ 'scenarios.slots.start_label' | transloco }}</label>
             <p-inputmask inputId="ss-start" mask="99:99" formControlName="start" placeholder="08:00" slotChar="_" />
           </div>
-          <div class="flex flex-column gap-2 flex-1">
+          <div class="field-col field-col--grow">
             <label for="ss-end">{{ 'scenarios.slots.end_label' | transloco }}</label>
             <p-inputmask inputId="ss-end" mask="99:99" formControlName="end" placeholder="08:15" slotChar="_" />
           </div>
         </div>
-        <div class="flex align-items-center gap-2">
+        <div class="check-row">
           <p-checkbox inputId="ss-enabled" [binary]="true" formControlName="enabled" />
           <label for="ss-enabled">{{ 'scenarios.slots.enabled_label' | transloco }}</label>
         </div>
@@ -153,6 +153,80 @@ const DAYS: readonly DayOption[] = [
       </ng-template>
     </p-dialog>
   `,
+  styles: [
+    `
+      .slots-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+      .slots-title {
+        font-weight: 600;
+      }
+      .ico-gap {
+        margin-right: 0.5rem;
+      }
+      .slots-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .slot-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .slot-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .day-tags {
+        display: flex;
+        gap: 0.25rem;
+      }
+      .slot-time {
+        font-weight: 500;
+      }
+      .slot-id {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .slot-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .slot-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .field-col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .field-row {
+        display: flex;
+        gap: 1rem;
+      }
+      .field-col--grow {
+        flex: 1 1 0;
+      }
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    `,
+  ],
 })
 export class ScenarioSlotsComponent implements OnInit {
   readonly scenarioId = input.required<string>();

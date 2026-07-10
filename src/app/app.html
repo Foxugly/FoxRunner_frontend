@@ -7,7 +7,7 @@
     role="alert"
     aria-live="assertive"
   >
-    <i class="pi pi-exclamation-triangle mr-2"></i>
+    <i class="pi pi-exclamation-triangle banner-icon"></i>
     {{ 'chrome.offline.message' | transloco: { count: network.consecutiveErrors() } }}
     <code>http://127.0.0.1:8000</code>.
   </div>
@@ -20,7 +20,7 @@
     role="alert"
     aria-live="assertive"
   >
-    <i class="pi pi-exclamation-triangle mr-2"></i>
+    <i class="pi pi-exclamation-triangle banner-icon"></i>
     <span class="fox-system-banner__title">
       {{
         systemStatus.severity() === 'down'

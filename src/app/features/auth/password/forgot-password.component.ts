@@ -13,22 +13,22 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, InputTextModule, TranslocoPipe],
   template: `
-    <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="auth-shell" style="min-height: 100vh;">
       <div style="width: 100%; max-width: 420px;">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center gap-2 p-4 pb-0">
+            <div class="card-header">
               <i class="pi pi-envelope" style="font-size: 1.75rem; color: var(--accent)"></i>
-              <span class="text-xl fox-brand">{{ 'auth.forgot_title' | transloco }}</span>
+              <span class="brand fox-brand">{{ 'auth.forgot_title' | transloco }}</span>
             </div>
           </ng-template>
 
           @if (!sent()) {
-            <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3">
-              <p class="text-color-secondary text-sm">
+            <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+              <p class="help">
                 {{ 'auth.forgot_help' | transloco }}
               </p>
-              <div class="flex flex-column gap-2">
+              <div class="field">
                 <label for="email">{{ 'auth.email_label' | transloco }}</label>
                 <input
                   id="email"
@@ -43,23 +43,76 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
                 type="submit"
                 [label]="'auth.send_link' | transloco"
                 icon="pi pi-send"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="loading()"
                 [disabled]="form.invalid || loading()"
               />
-              <a routerLink="/login" class="text-sm text-center">{{ 'auth.back_to_login' | transloco }}</a>
+              <a routerLink="/login" class="link-center">{{ 'auth.back_to_login' | transloco }}</a>
             </form>
           } @else {
-            <div class="flex flex-column gap-3 align-items-center text-center">
-              <i class="pi pi-check-circle text-green-500" style="font-size: 3rem"></i>
+            <div class="success">
+              <i class="pi pi-check-circle icon-success" style="font-size: 3rem"></i>
               <p>{{ 'auth.forgot_success' | transloco }}</p>
-              <a routerLink="/login" class="text-sm">{{ 'auth.back_to_login' | transloco }}</a>
+              <a routerLink="/login" class="link-sm">{{ 'auth.back_to_login' | transloco }}</a>
             </div>
           }
         </p-card>
       </div>
     </div>
   `,
+  styles: [
+    `
+      .auth-shell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        padding-bottom: 0;
+      }
+      .brand {
+        font-size: 1.25rem;
+      }
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .help {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .link-center {
+        font-size: 0.875rem;
+        text-align: center;
+      }
+      .success {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        text-align: center;
+      }
+      .icon-success {
+        color: var(--success);
+      }
+      .link-sm {
+        font-size: 0.875rem;
+      }
+      :host ::ng-deep .u-full {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class ForgotPasswordComponent {
   private readonly fb = inject(FormBuilder);

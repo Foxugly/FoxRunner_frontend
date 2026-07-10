@@ -49,11 +49,11 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
       />
     </app-page-header>
 
-    <div class="grid">
-      <div class="col-12 lg:col-4">
+    <div class="cards-grid">
+      <div>
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center justify-content-between p-3">
+            <div class="card-head">
               <strong>{{ 'admin.health.config_title' | transloco }}</strong>
               @if (checks(); as c) {
                 <p-tag [severity]="checksSeverity()" [value]="c.status" />
@@ -61,24 +61,24 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
             </div>
           </ng-template>
           @if (checks(); as c) {
-            <div class="flex flex-column gap-2 text-sm">
+            <div class="stat-list">
               @for (entry of checkEntries(c); track entry.key) {
-                <div class="flex align-items-center justify-content-between gap-2">
+                <div class="kv-row">
                   <code>{{ entry.key }}</code>
-                  <span class="text-color-secondary">{{ entry.value }}</span>
+                  <span class="muted">{{ entry.value }}</span>
                 </div>
               }
             </div>
           } @else {
-            <span class="text-color-secondary">{{ 'admin.common.loading' | transloco }}</span>
+            <span class="muted">{{ 'admin.common.loading' | transloco }}</span>
           }
         </p-card>
       </div>
 
-      <div class="col-12 lg:col-4">
+      <div>
         <p-card [header]="'admin.health.db_title' | transloco">
           @if (db(); as d) {
-            <div class="flex flex-column gap-2 text-sm">
+            <div class="stat-list">
               <div><strong>{{ 'admin.health.db_failed_jobs' | transloco }}</strong> {{ d.failed_jobs }}</div>
               <div>
                 <strong>{{ 'admin.health.db_last_execution' | transloco }}</strong>
@@ -91,29 +91,29 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
               <hr />
               <strong>{{ 'admin.health.db_tables' | transloco }}</strong>
               @for (entry of dbTableEntries(d); track entry.name) {
-                <div class="flex align-items-center justify-content-between">
+                <div class="kv-row-flush">
                   <code>{{ entry.name }}</code>
                   <span>{{ entry.count }}</span>
                 </div>
               }
             </div>
           } @else {
-            <span class="text-color-secondary">{{ 'admin.common.loading' | transloco }}</span>
+            <span class="muted">{{ 'admin.common.loading' | transloco }}</span>
           }
         </p-card>
       </div>
 
-      <div class="col-12 lg:col-4">
+      <div>
         <p-card [header]="'admin.health.monitoring_title' | transloco">
           @if (monitoring(); as m) {
-            <div class="flex flex-column gap-2 text-sm">
+            <div class="stat-list">
               <div><strong>{{ 'admin.health.mon_total' | transloco }}</strong> {{ m.jobs.total }}</div>
               <div><strong>{{ 'admin.health.mon_queued' | transloco }}</strong> {{ m.jobs.queued }}</div>
               <div><strong>{{ 'admin.health.mon_running' | transloco }}</strong> {{ m.jobs.running }}</div>
-              <div class="text-red-500">
+              <div class="danger">
                 <strong>{{ 'admin.health.mon_failed' | transloco }}</strong> {{ m.jobs.failed }}
               </div>
-              <div class="text-orange-500">
+              <div class="warn">
                 <strong>{{ 'admin.health.mon_stuck' | transloco }}</strong> {{ m.jobs.stuck }}
               </div>
               @if (m.jobs.average_duration_seconds !== null && m.jobs.average_duration_seconds !== undefined) {
@@ -130,12 +130,58 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
               </div>
             </div>
           } @else {
-            <span class="text-color-secondary">{{ 'admin.common.loading' | transloco }}</span>
+            <span class="muted">{{ 'admin.common.loading' | transloco }}</span>
           }
         </p-card>
       </div>
     </div>
   `,
+  styles: [
+    `
+      .cards-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 1024px) {
+        .cards-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+      }
+      .stat-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+      .kv-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+      .kv-row-flush {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .danger {
+        color: var(--danger);
+      }
+      .warn {
+        color: var(--warn);
+      }
+    `,
+  ],
 })
 export class AdminHealthComponent implements OnInit {
   private readonly service = inject(AdminService);

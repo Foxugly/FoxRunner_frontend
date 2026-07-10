@@ -35,12 +35,12 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
   template: `
     <p-card>
       <ng-template #header>
-        <div class="flex align-items-center justify-content-between p-3">
-          <div class="flex flex-column gap-1">
-            <span class="font-semibold">
-              <i class="pi pi-bell mr-2"></i>{{ 'profile.pushit.title' | transloco }}
+        <div class="card-head">
+          <div class="head-titles">
+            <span class="card-title">
+              <i class="pi pi-bell"></i>{{ 'profile.pushit.title' | transloco }}
             </span>
-            <small class="text-color-secondary">
+            <small class="muted">
               {{ 'profile.pushit.subtitle_before' | transloco }} <code>notify</code>{{ 'profile.pushit.subtitle_after' | transloco }}
             </small>
           </div>
@@ -66,7 +66,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
             <th>{{ 'profile.pushit.table.token' | transloco }}</th>
             <th>{{ 'profile.pushit.table.title' | transloco }}</th>
             <th>{{ 'profile.pushit.table.default' | transloco }}</th>
-            <th class="text-right">{{ 'profile.pushit.table.actions' | transloco }}</th>
+            <th class="cell-right">{{ 'profile.pushit.table.actions' | transloco }}</th>
           </tr>
         </ng-template>
         <ng-template #body let-t>
@@ -79,7 +79,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
                 <p-tag [value]="'profile.pushit.default_tag' | transloco" severity="success" />
               }
             </td>
-            <td class="text-right white-space-nowrap">
+            <td class="actions-cell">
               <p-button
                 icon="pi pi-send"
                 severity="secondary"
@@ -191,6 +191,37 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
       </ng-template>
     </p-dialog>
   `,
+  styles: [
+    `
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+      }
+      .head-titles {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .card-title {
+        font-weight: 600;
+      }
+      .card-title i {
+        margin-right: 0.5rem;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .cell-right {
+        text-align: right;
+      }
+      .actions-cell {
+        text-align: right;
+        white-space: nowrap;
+      }
+    `,
+  ],
 })
 export class PushItTargetsComponent implements OnInit {
   private readonly service = inject(PushItTargetsService);

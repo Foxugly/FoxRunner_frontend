@@ -71,11 +71,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     >
       <ng-template appCell="key" let-s><code>{{ s.key }}</code></ng-template>
       <ng-template appCell="description" let-s>
-        <span class="text-color-secondary">{{ s.description || '—' }}</span>
+        <span class="muted">{{ s.description || '—' }}</span>
       </ng-template>
       <ng-template appCell="updated_at" let-s>{{ s.updated_at | apiDate: 'medium' }}</ng-template>
       <ng-template appCell="actions" let-s>
-        <div class="flex gap-1">
+        <div class="row-actions">
           <p-button
             icon="pi pi-pencil"
             [rounded]="true"
@@ -137,6 +137,17 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .muted {
+        color: var(--muted);
+      }
+      .row-actions {
+        display: flex;
+        gap: 0.25rem;
+      }
+    `,
+  ],
 })
 export class AdminSettingsComponent implements OnInit {
   private readonly service = inject(AdminService);

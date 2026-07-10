@@ -27,19 +27,19 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     TranslocoPipe,
   ],
   template: `
-    <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="auth-shell" style="min-height: 100vh;">
       <div style="width: 100%; max-width: 420px;">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center gap-2 p-4 pb-0">
+            <div class="card-header">
               <i class="pi pi-bolt" style="font-size: 2rem; color: var(--accent)"></i>
-              <span class="text-2xl fox-brand">FoxRunner</span>
+              <span class="brand fox-brand">FoxRunner</span>
             </div>
           </ng-template>
 
           @if (!magicMode()) {
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
-              <div class="flex flex-column gap-2">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+              <div class="field">
                 <label for="email">{{ 'auth.email_label' | transloco }}</label>
                 <input
                   id="email"
@@ -50,7 +50,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                   required
                 />
               </div>
-              <div class="flex flex-column gap-2">
+              <div class="field">
                 <label for="password">{{ 'auth.password_label' | transloco }}</label>
                 <p-password
                   inputId="password"
@@ -58,27 +58,27 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                   [toggleMask]="true"
                   [feedback]="false"
                   autocomplete="current-password"
-                  styleClass="w-full"
+                  styleClass="u-full"
                   [inputStyle]="{ width: '100%' }"
                   required
                 />
               </div>
               @if (error(); as msg) {
-                <p-message severity="error" [text]="msg" styleClass="w-full" />
+                <p-message severity="error" [text]="msg" styleClass="u-full" />
               }
-              <div class="flex align-items-center gap-2">
+              <div class="check-row">
                 <p-checkbox inputId="remember" formControlName="remember" [binary]="true" />
-                <label for="remember" class="text-sm">{{ 'auth.remember_me' | transloco }}</label>
+                <label for="remember" class="check-label">{{ 'auth.remember_me' | transloco }}</label>
               </div>
               <p-button
                 type="submit"
                 [label]="'auth.sign_in' | transloco"
                 icon="pi pi-sign-in"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="loading()"
                 [disabled]="loading() || form.invalid"
               />
-              <a routerLink="/forgot-password" class="text-sm text-center">
+              <a routerLink="/forgot-password" class="link-center">
                 {{ 'auth.forgot_link' | transloco }}
               </a>
               <p-button
@@ -86,13 +86,13 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                 icon="pi pi-envelope"
                 severity="secondary"
                 [text]="true"
-                styleClass="w-full"
+                styleClass="u-full"
                 (onClick)="enterMagicMode()"
               />
             </form>
           } @else {
-            <form [formGroup]="magicForm" (ngSubmit)="onSendMagic()" class="flex flex-column gap-3">
-              <div class="flex flex-column gap-2">
+            <form [formGroup]="magicForm" (ngSubmit)="onSendMagic()" class="auth-form">
+              <div class="field">
                 <label for="magicEmail">{{ 'auth.email_label' | transloco }}</label>
                 <input
                   id="magicEmail"
@@ -104,7 +104,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                 />
               </div>
               @if (magicSent()) {
-                <p class="text-sm text-center text-color-secondary m-0">
+                <p class="note">
                   {{ 'auth.magic_sent' | transloco }}
                 </p>
               }
@@ -112,7 +112,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                 type="submit"
                 [label]="'auth.send_link' | transloco"
                 icon="pi pi-send"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="magicLoading()"
                 [disabled]="magicLoading() || magicForm.invalid"
               />
@@ -121,7 +121,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                 icon="pi pi-arrow-left"
                 severity="secondary"
                 [text]="true"
-                styleClass="w-full"
+                styleClass="u-full"
                 (onClick)="exitMagicMode()"
               />
             </form>
@@ -130,6 +130,56 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
       </div>
     </div>
   `,
+  styles: [
+    `
+      .auth-shell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        padding-bottom: 0;
+      }
+      .brand {
+        font-size: 1.5rem;
+      }
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .check-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .check-label {
+        font-size: 0.875rem;
+      }
+      .link-center {
+        font-size: 0.875rem;
+        text-align: center;
+      }
+      .note {
+        font-size: 0.875rem;
+        text-align: center;
+        color: var(--muted);
+        margin: 0;
+      }
+      :host ::ng-deep .u-full {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);

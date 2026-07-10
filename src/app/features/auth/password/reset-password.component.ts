@@ -13,35 +13,35 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, PasswordModule, TranslocoPipe],
   template: `
-    <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="auth-shell" style="min-height: 100vh;">
       <div style="width: 100%; max-width: 420px;">
         <p-card>
           <ng-template pTemplate="header">
-            <div class="flex align-items-center gap-2 p-4 pb-0">
+            <div class="card-header">
               <i class="pi pi-key" style="font-size: 1.75rem; color: var(--accent)"></i>
-              <span class="text-xl fox-brand">{{ 'auth.reset_title' | transloco }}</span>
+              <span class="brand fox-brand">{{ 'auth.reset_title' | transloco }}</span>
             </div>
           </ng-template>
 
           @if (!token()) {
-            <div class="text-color-secondary text-sm">
+            <div class="help">
               {{ 'auth.reset_missing_token' | transloco }}
             </div>
           } @else if (done()) {
-            <div class="flex flex-column gap-3 align-items-center text-center">
-              <i class="pi pi-check-circle text-green-500" style="font-size: 3rem"></i>
+            <div class="success">
+              <i class="pi pi-check-circle icon-success" style="font-size: 3rem"></i>
               <p>{{ 'auth.reset_done' | transloco }}</p>
               <a routerLink="/login">{{ 'auth.go_to_login' | transloco }}</a>
             </div>
           } @else {
-            <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3">
-              <div class="flex flex-column gap-2">
+            <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+              <div class="field">
                 <label for="password">{{ 'auth.new_password_label' | transloco }}</label>
                 <p-password
                   inputId="password"
                   formControlName="password"
                   [toggleMask]="true"
-                  styleClass="w-full"
+                  styleClass="u-full"
                   [inputStyle]="{ width: '100%' }"
                   required
                 />
@@ -50,17 +50,67 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
                 type="submit"
                 [label]="'auth.update_button' | transloco"
                 icon="pi pi-check"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="loading()"
                 [disabled]="form.invalid || loading()"
               />
-              <a routerLink="/login" class="text-sm text-center">{{ 'auth.back_to_login' | transloco }}</a>
+              <a routerLink="/login" class="link-center">{{ 'auth.back_to_login' | transloco }}</a>
             </form>
           }
         </p-card>
       </div>
     </div>
   `,
+  styles: [
+    `
+      .auth-shell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.5rem;
+        padding-bottom: 0;
+      }
+      .brand {
+        font-size: 1.25rem;
+      }
+      .help {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .link-center {
+        font-size: 0.875rem;
+        text-align: center;
+      }
+      .success {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        text-align: center;
+      }
+      .icon-success {
+        color: var(--success);
+      }
+      :host ::ng-deep .u-full {
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class ResetPasswordComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

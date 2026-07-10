@@ -46,13 +46,13 @@ const asStepList = (value: unknown): StepLike[] | null =>
   standalone: true,
   imports: [ButtonModule, TranslocoPipe],
   template: `
-    <div class="flex flex-column gap-2">
+    <div class="step-list">
       @for (step of steps(); track $index) {
         <div class="step-row">
-          <div class="flex align-items-start gap-2">
+          <div class="step-row__main">
             <span class="step-index">{{ prefix() }}{{ $index + 1 }}</span>
             <i [class]="'pi ' + iconFor(step) + ' step-icon'" aria-hidden="true"></i>
-            <div class="flex-1 min-w-0">
+            <div class="step-row__body">
               <div class="step-label">{{ label(step) }}</div>
 
               @if (childrenOf(step); as kids) {
@@ -68,7 +68,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
               }
             </div>
             @if (editable() && prefix() === '') {
-              <div class="flex gap-1 flex-shrink-0">
+              <div class="step-row__actions">
                 <p-button
                   icon="pi pi-pencil"
                   [rounded]="true"
@@ -95,6 +95,25 @@ const asStepList = (value: unknown): StepLike[] | null =>
   `,
   styles: [
     `
+      .step-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .step-row__main {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .step-row__body {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .step-row__actions {
+        display: flex;
+        gap: 0.25rem;
+        flex-shrink: 0;
+      }
       .step-row {
         padding: 0.5rem 0.75rem;
         border: 1px solid var(--surface-border, #e5e7eb);

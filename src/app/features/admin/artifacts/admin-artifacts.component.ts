@@ -55,9 +55,9 @@ interface KindOption {
       />
     </app-page-header>
 
-    <div class="flex gap-3 mb-3 flex-wrap align-items-end">
-      <div class="flex flex-column gap-1">
-        <label for="kind" class="text-sm text-color-secondary">{{ 'admin.artifacts.filter_kind' | transloco }}</label>
+    <div class="filter-bar">
+      <div class="filter-field">
+        <label for="kind" class="filter-label">{{ 'admin.artifacts.filter_kind' | transloco }}</label>
         <p-select
           inputId="kind"
           [options]="kindOptions"
@@ -68,8 +68,8 @@ interface KindOption {
           (onChange)="reload()"
         />
       </div>
-      <div class="flex flex-column gap-1">
-        <label for="prune" class="text-sm text-color-secondary">{{ 'admin.artifacts.filter_prune' | transloco }}</label>
+      <div class="filter-field">
+        <label for="prune" class="filter-label">{{ 'admin.artifacts.filter_prune' | transloco }}</label>
         <p-inputnumber
           inputId="prune"
           [(ngModel)]="pruneDays"
@@ -112,7 +112,7 @@ interface KindOption {
       <ng-template pTemplate="body" let-a>
         <tr>
           <td><p-tag [value]="a.kind" severity="secondary" /></td>
-          <td><code class="text-xs">{{ a.name }}</code></td>
+          <td><code class="id-code">{{ a.name }}</code></td>
           <td>{{ formatSize(a.size) }}</td>
           <td>{{ formatDate(a.updated_at) }}</td>
           <td>
@@ -138,6 +138,29 @@ interface KindOption {
       </ng-template>
     </p-table>
   `,
+  styles: [
+    `
+      .filter-bar {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        align-items: flex-end;
+      }
+      .filter-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .filter-label {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .id-code {
+        font-size: 0.75rem;
+      }
+    `,
+  ],
 })
 export class AdminArtifactsComponent implements OnInit {
   private readonly service = inject(ArtifactsService);

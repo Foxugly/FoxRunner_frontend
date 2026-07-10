@@ -149,20 +149,20 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
     @if (scenario(); as s) {
       <p-tabs [(value)]="activeTab">
         <p-tablist>
-          <p-tab value="general"><i class="pi pi-info-circle mr-2"></i>{{ 'scenarios.detail.tab_general' | transloco }}</p-tab>
-          <p-tab value="planning"><i class="pi pi-calendar mr-2"></i>{{ 'scenarios.detail.tab_planning' | transloco }}</p-tab>
-          <p-tab value="steps"><i class="pi pi-code mr-2"></i>{{ 'scenarios.detail.tab_steps' | transloco: { count: totalSteps() } }}</p-tab>
-          <p-tab value="executions"><i class="pi pi-play mr-2"></i>{{ 'scenarios.detail.tab_executions' | transloco }}</p-tab>
+          <p-tab value="general"><i class="pi pi-info-circle ico-gap"></i>{{ 'scenarios.detail.tab_general' | transloco }}</p-tab>
+          <p-tab value="planning"><i class="pi pi-calendar ico-gap"></i>{{ 'scenarios.detail.tab_planning' | transloco }}</p-tab>
+          <p-tab value="steps"><i class="pi pi-code ico-gap"></i>{{ 'scenarios.detail.tab_steps' | transloco: { count: totalSteps() } }}</p-tab>
+          <p-tab value="executions"><i class="pi pi-play ico-gap"></i>{{ 'scenarios.detail.tab_executions' | transloco }}</p-tab>
         </p-tablist>
         <p-tabpanels>
           <!-- Onglet 1 : informations générales -->
           <p-tabpanel value="general">
-            <div class="grid">
-              <div class="col-12 md:col-6">
+            <div class="detail-grid">
+              <div>
                 <p-card>
                   <ng-template pTemplate="header">
-                    <div class="flex align-items-center justify-content-between p-3 pb-0">
-                      <span class="font-semibold">{{ 'scenarios.detail.metadata' | transloco }}</span>
+                    <div class="card-head">
+                      <span class="fw-semibold">{{ 'scenarios.detail.metadata' | transloco }}</span>
                       @if (isWritable() && !editingInfo()) {
                         <p-button
                           icon="pi pi-pencil"
@@ -179,7 +179,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                   </ng-template>
 
                   @if (!editingInfo()) {
-                    <div class="flex flex-column gap-2 text-sm">
+                    <div class="meta-list">
                       <div><strong>{{ 'scenarios.detail.field_id' | transloco }}</strong> {{ s.scenario_id }}</div>
                       <div><strong>{{ 'scenarios.detail.field_owner' | transloco }}</strong> {{ s.owner_user_id }}</div>
                       <div>
@@ -235,28 +235,28 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                   }
                 </p-card>
               </div>
-              <div class="col-12 md:col-6">
+              <div>
                 <p-card [header]="'scenarios.detail.step_count' | transloco">
-                  <div class="grid text-center">
-                    <div class="col-6 md:col-4">
-                      <div class="text-2xl font-semibold">{{ s.before_steps }}</div>
-                      <div class="text-color-secondary text-sm">{{ 'scenarios.step_count.before' | transloco }}</div>
+                  <div class="count-grid">
+                    <div>
+                      <div class="count-num">{{ s.before_steps }}</div>
+                      <div class="count-label">{{ 'scenarios.step_count.before' | transloco }}</div>
                     </div>
-                    <div class="col-6 md:col-4">
-                      <div class="text-2xl font-semibold">{{ s.steps }}</div>
-                      <div class="text-color-secondary text-sm">{{ 'scenarios.step_count.body' | transloco }}</div>
+                    <div>
+                      <div class="count-num">{{ s.steps }}</div>
+                      <div class="count-label">{{ 'scenarios.step_count.body' | transloco }}</div>
                     </div>
-                    <div class="col-6 md:col-4">
-                      <div class="text-2xl font-semibold">{{ s.on_success }}</div>
-                      <div class="text-color-secondary text-sm">{{ 'scenarios.step_count.on_success' | transloco }}</div>
+                    <div>
+                      <div class="count-num">{{ s.on_success }}</div>
+                      <div class="count-label">{{ 'scenarios.step_count.on_success' | transloco }}</div>
                     </div>
-                    <div class="col-6 md:col-4">
-                      <div class="text-2xl font-semibold">{{ s.on_failure }}</div>
-                      <div class="text-color-secondary text-sm">{{ 'scenarios.step_count.on_failure' | transloco }}</div>
+                    <div>
+                      <div class="count-num">{{ s.on_failure }}</div>
+                      <div class="count-label">{{ 'scenarios.step_count.on_failure' | transloco }}</div>
                     </div>
-                    <div class="col-6 md:col-4">
-                      <div class="text-2xl font-semibold">{{ s.finally_steps }}</div>
-                      <div class="text-color-secondary text-sm">{{ 'scenarios.step_count.finally' | transloco }}</div>
+                    <div>
+                      <div class="count-num">{{ s.finally_steps }}</div>
+                      <div class="count-label">{{ 'scenarios.step_count.finally' | transloco }}</div>
                     </div>
                   </div>
                 </p-card>
@@ -280,9 +280,9 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
             } @else {
               @for (col of collections; track col) {
                 @if (stepsFor(col).length > 0 || isWritable()) {
-                  <section class="mb-4">
-                    <div class="flex align-items-center justify-content-between mb-2">
-                      <h3 class="text-sm font-semibold text-color-secondary m-0">
+                  <section class="step-section">
+                    <div class="step-head">
+                      <h3 class="step-title">
                         {{ labelFor(col) }} ({{ stepsFor(col).length }})
                       </h3>
                       @if (isWritable()) {
@@ -303,7 +303,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                         (remove)="askDeleteStep(col, $event)"
                       />
                     } @else {
-                      <p class="text-sm text-color-secondary m-0">{{ 'scenarios.steps.empty_collection' | transloco }}</p>
+                      <p class="step-empty">{{ 'scenarios.steps.empty_collection' | transloco }}</p>
                     }
                   </section>
                 }
@@ -350,6 +350,78 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .ico-gap {
+        margin-right: 0.5rem;
+      }
+      .detail-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 768px) {
+        .detail-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        padding-bottom: 0;
+      }
+      .fw-semibold {
+        font-weight: 600;
+      }
+      .meta-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+      .count-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        text-align: center;
+      }
+      @media (min-width: 768px) {
+        .count-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      .count-num {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      .count-label {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .step-section {
+        margin-bottom: 1.5rem;
+      }
+      .step-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .step-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--muted);
+        margin: 0;
+      }
+      .step-empty {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin: 0;
+      }
+    `,
+  ],
 })
 export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   private readonly route = inject(ActivatedRoute);

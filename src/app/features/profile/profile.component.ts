@@ -34,7 +34,7 @@ import { PushItTargetsComponent } from './pushit-targets.component';
       [title]="'profile.title' | transloco"
     />
 
-    <p-card styleClass="max-w-30rem">
+    <p-card styleClass="profile-card">
       <div class="meta-grid">
         <div class="meta-item">
           <label class="meta-label" for="email">{{ 'profile.email' | transloco }}</label>
@@ -68,7 +68,7 @@ import { PushItTargetsComponent } from './pushit-targets.component';
               [forceSelection]="false"
               [placeholder]="'profile.timezone.placeholder' | transloco"
               appendTo="body"
-              styleClass="w-full"
+              styleClass="u-full"
             />
           </div>
         </div>
@@ -82,8 +82,22 @@ import { PushItTargetsComponent } from './pushit-targets.component';
       />
     </p-card>
 
-    <app-pushit-targets class="block mt-4" />
+    <app-pushit-targets class="pushit-section" />
   `,
+  styles: [
+    `
+      :host ::ng-deep .profile-card {
+        max-width: 30rem;
+      }
+      :host ::ng-deep .u-full {
+        width: 100%;
+      }
+      .pushit-section {
+        display: block;
+        margin-top: 1.5rem;
+      }
+    `,
+  ],
 })
 export class ProfileComponent implements OnInit {
   readonly auth = inject(AuthService);

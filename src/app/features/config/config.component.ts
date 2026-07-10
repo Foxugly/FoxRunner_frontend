@@ -57,7 +57,7 @@ type PushoverEntry = Record<string, unknown>;
 
     @if (loading()) {
       <p-card>
-        <p-skeleton height="2rem" styleClass="mb-2" />
+        <p-skeleton height="2rem" styleClass="skeleton-gap" />
         <p-skeleton height="2rem" width="60%" />
       </p-card>
     } @else {
@@ -92,10 +92,10 @@ type PushoverEntry = Record<string, unknown>;
         </div>
       </p-card>
 
-      <p-card styleClass="mt-3">
+      <p-card styleClass="card-spaced">
         <ng-template pTemplate="header">
-          <div class="flex align-items-center justify-content-between p-3 pb-0">
-            <span class="font-semibold"><i class="pi pi-bell mr-2"></i>{{ 'config.pushovers_title' | transloco }}</span>
+          <div class="card-head">
+            <span class="card-title"><i class="pi pi-bell icon-gap"></i>{{ 'config.pushovers_title' | transloco }}</span>
             <p-button
               [label]="'config.add' | transloco"
               icon="pi pi-plus"
@@ -106,17 +106,15 @@ type PushoverEntry = Record<string, unknown>;
           </div>
         </ng-template>
         @if (pushoverKeys().length === 0) {
-          <p class="text-color-secondary text-sm m-0">{{ 'config.none_configured' | transloco }}</p>
+          <p class="empty-note">{{ 'config.none_configured' | transloco }}</p>
         } @else {
-          <div class="flex flex-column gap-2">
+          <div class="entry-list">
             @for (key of pushoverKeys(); track key) {
-              <div
-                class="flex align-items-center justify-content-between gap-2 p-2 border-1 surface-border border-round"
-              >
-                <div class="min-w-0">
-                  <div class="font-medium">{{ key }}</div>
-                  <div class="text-xs text-color-secondary">
-                    <i class="pi pi-lock mr-1"></i>{{
+              <div class="entry">
+                <div class="entry-main">
+                  <div class="entry-name">{{ key }}</div>
+                  <div class="entry-meta">
+                    <i class="pi pi-lock icon-gap-sm"></i>{{
                       'config.pushover_masked'
                         | transloco
                           : {
@@ -126,7 +124,7 @@ type PushoverEntry = Record<string, unknown>;
                     }}
                   </div>
                 </div>
-                <div class="flex gap-1">
+                <div class="entry-actions">
                   <p-button
                     icon="pi pi-pencil"
                     [text]="true"
@@ -150,8 +148,8 @@ type PushoverEntry = Record<string, unknown>;
         }
       </p-card>
 
-      <p-card styleClass="mt-3" [header]="'config.networks_title' | transloco">
-        <p class="text-color-secondary text-sm mb-2">
+      <p-card styleClass="card-spaced" [header]="'config.networks_title' | transloco">
+        <p class="section-desc">
           {{ 'config.networks_desc' | transloco }}
         </p>
         <app-json-editor
@@ -230,6 +228,70 @@ type PushoverEntry = Record<string, unknown>;
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .skeleton-gap {
+        margin-bottom: 0.5rem;
+      }
+      .card-spaced {
+        margin-top: 1rem;
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+        padding-bottom: 0;
+      }
+      .card-title {
+        font-weight: 600;
+      }
+      .icon-gap {
+        margin-right: 0.5rem;
+      }
+      .icon-gap-sm {
+        margin-right: 0.25rem;
+      }
+      .empty-note {
+        color: var(--muted);
+        font-size: 0.875rem;
+        margin: 0;
+      }
+      .entry-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .entry {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .entry-main {
+        min-width: 0;
+      }
+      .entry-name {
+        font-weight: 500;
+      }
+      .entry-meta {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .entry-actions {
+        display: flex;
+        gap: 0.25rem;
+      }
+      .section-desc {
+        color: var(--muted);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+    `,
+  ],
 })
 export class ConfigComponent implements OnInit, HasUnsavedChanges {
   private readonly service = inject(CatalogConfigService);

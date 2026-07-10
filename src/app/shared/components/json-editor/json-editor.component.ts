@@ -16,19 +16,19 @@ import { ButtonModule } from 'primeng/button';
   standalone: true,
   imports: [FormsModule, ButtonModule],
   template: `
-    <div class="flex flex-column gap-2">
-      <div class="flex align-items-center gap-2">
+    <div class="json-editor">
+      <div class="json-editor__header">
         @if (label) {
-          <span class="font-semibold">{{ label }}</span>
+          <span class="json-editor__label">{{ label }}</span>
         }
-        <span class="flex-1"></span>
+        <span class="json-editor__spacer"></span>
         @if (!valid()) {
-          <span class="text-red-500 text-sm">
-            <i class="pi pi-times-circle mr-1"></i>JSON invalide : {{ errorMessage() }}
+          <span class="json-editor__status json-editor__status--error">
+            <i class="pi pi-times-circle"></i>JSON invalide : {{ errorMessage() }}
           </span>
         } @else {
-          <span class="text-color-secondary text-sm">
-            <i class="pi pi-check mr-1"></i>JSON valide
+          <span class="json-editor__status json-editor__status--ok">
+            <i class="pi pi-check"></i>JSON valide
           </span>
         }
         <p-button
@@ -42,7 +42,6 @@ import { ButtonModule } from 'primeng/button';
         />
       </div>
       <textarea
-        class="w-full font-mono text-sm"
         [rows]="rows"
         [ngModel]="text()"
         (ngModelChange)="onChange($event)"
@@ -54,7 +53,38 @@ import { ButtonModule } from 'primeng/button';
   `,
   styles: [
     `
+      .json-editor {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .json-editor__header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .json-editor__label {
+        font-weight: 600;
+      }
+      .json-editor__spacer {
+        flex: 1 1 0;
+      }
+      .json-editor__status {
+        font-size: 0.875rem;
+      }
+      .json-editor__status i {
+        margin-right: 0.25rem;
+      }
+      .json-editor__status--error {
+        color: var(--danger);
+      }
+      .json-editor__status--ok {
+        color: var(--muted);
+      }
       textarea {
+        width: 100%;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.875rem;
         padding: 0.5rem;
         border: 1px solid var(--p-inputtext-border-color, #d4d4d8);
         border-radius: 0.375rem;

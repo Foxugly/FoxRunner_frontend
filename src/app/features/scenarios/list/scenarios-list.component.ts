@@ -67,13 +67,13 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     </app-page-header>
 
     @if (loading()) {
-      <div class="grid">
+      <div class="scn-grid">
         @for (i of skeletons; track i) {
-          <div class="col-12 md:col-6 lg:col-4">
-            <div class="scn-card scn-card--static border-1 surface-border border-round p-3 flex flex-column gap-3 h-full">
-              <div class="flex align-items-start gap-3">
+          <div>
+            <div class="scn-card scn-card--static">
+              <div class="scn-card__row">
                 <p-skeleton shape="circle" size="2.5rem" />
-                <div class="flex-1 flex flex-column gap-2">
+                <div class="scn-skel-lines">
                   <p-skeleton width="60%" height="1.1rem" />
                   <p-skeleton width="40%" height="0.75rem" />
                 </div>
@@ -100,23 +100,23 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         />
       </app-empty-state>
     } @else {
-      <div class="grid">
+      <div class="scn-grid">
         @for (s of items(); track s.scenario_id) {
-          <div class="col-12 md:col-6 lg:col-4">
+          <div>
             <div
-              class="scn-card border-1 surface-border border-round p-3 flex flex-column gap-3 h-full"
+              class="scn-card"
               role="button"
               tabindex="0"
               (click)="openScenario(s)"
               (keydown.enter)="onCardKey($event, s)"
             >
-              <div class="flex align-items-start gap-3">
+              <div class="scn-card__row">
                 <span class="scn-card__icon">
                   <i class="pi pi-sitemap"></i>
                 </span>
-                <div class="flex-1 min-w-0">
-                  <h3 class="scn-card__title m-0">{{ s.scenario_id }}</h3>
-                  <p class="scn-card__subtitle m-0 mt-1">
+                <div class="scn-card__meta">
+                  <h3 class="scn-card__title">{{ s.scenario_id }}</h3>
+                  <p class="scn-card__subtitle">
                     {{ s.role === 'owner' ? ('scenarios.list.card_owner' | transloco) : ('scenarios.list.card_shared' | transloco) }}
                   </p>
                 </div>
@@ -143,7 +143,14 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       </div>
     }
 
-    <p-menu #cardMenu [popup]="true" [model]="cardMenuItems" appendTo="body" />
+    <p-menu #cardMenu [popup]="true" [model]="cardMenuItems" appendTo="body">
+      <ng-template #item let-menuItem>
+        <div class="scn-menuitem" [class.scn-menuitem--danger]="menuItem.styleClass === 'danger'">
+          <i [class]="menuItem.icon"></i>
+          <span>{{ menuItem.label }}</span>
+        </div>
+      </ng-template>
+    </p-menu>
 
     <p-dialog
       [header]="'scenarios.duplicate.header' | transloco"
@@ -151,7 +158,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       [(visible)]="duplicateOpen"
       [style]="{ width: '420px' }"
     >
-      <div class="flex flex-column gap-3">
+      <div class="dlg-stack">
         <label for="newId">{{ 'scenarios.duplicate.new_id_label' | transloco }}</label>
         <input
           id="newId"
@@ -178,19 +185,19 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       [(visible)]="importOpen"
       [style]="{ width: '40rem' }"
     >
-      <div class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
+      <div class="dlg-stack">
+        <div class="dlg-field">
           <label for="importId">{{ 'scenarios.import.id_label' | transloco }}</label>
           <input id="importId" pInputText [(ngModel)]="importId" [placeholder]="'scenarios.import.id_placeholder' | transloco" />
-          <small class="text-color-secondary">{{ 'scenarios.import.id_hint' | transloco }}</small>
+          <small class="dlg-hint">{{ 'scenarios.import.id_hint' | transloco }}</small>
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="dlg-field">
           <label for="importFile">{{ 'scenarios.import.file_label' | transloco }}</label>
           <input id="importFile" type="file" accept="application/json,.json" (change)="onImportFile($event)" />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="dlg-field">
           <label for="importText">{{ 'scenarios.import.text_label' | transloco }}</label>
-          <textarea id="importText" pInputText [(ngModel)]="importText" rows="10" class="font-mono text-sm"
+          <textarea id="importText" pInputText [(ngModel)]="importText" rows="10" class="dlg-mono"
             placeholder='{ "scenario_id": "...", "description": "...", "definition": { "steps": [] } }'></textarea>
         </div>
       </div>
@@ -204,7 +211,29 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
   `,
   styles: [
     `
+      .scn-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 768px) {
+        .scn-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 1024px) {
+        .scn-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
       .scn-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        height: 100%;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         background: #ffffff;
         color: inherit;
         text-decoration: none;
@@ -213,6 +242,21 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
           transform 0.15s ease,
           box-shadow 0.15s ease,
           border-color 0.15s ease;
+      }
+      .scn-card__row {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .scn-card__meta {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+      .scn-skel-lines {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
       }
       .scn-card:not(.scn-card--static):hover {
         transform: translateY(-2px);
@@ -234,6 +278,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         font-size: 1.15rem;
       }
       .scn-card__title {
+        margin: 0;
         font-size: 1rem;
         font-weight: 600;
         overflow: hidden;
@@ -241,6 +286,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         white-space: nowrap;
       }
       .scn-card__subtitle {
+        margin: 0.25rem 0 0;
         font-size: 0.8rem;
         color: var(--text-color-secondary);
       }
@@ -261,6 +307,31 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       .scn-card:hover .scn-card__arrow {
         opacity: 1;
         transform: translateX(0);
+      }
+      .dlg-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .dlg-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .dlg-hint {
+        color: var(--muted);
+      }
+      .dlg-mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.875rem;
+      }
+      .scn-menuitem {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .scn-menuitem--danger {
+        color: var(--danger);
       }
     `,
   ],
@@ -315,7 +386,7 @@ export class ScenariosListComponent implements OnInit {
     event.stopPropagation();
     this.cardMenuItems = [
       { label: this.transloco.translate('scenarios.list.duplicate'), icon: 'pi pi-copy', command: () => this.askDuplicate(s) },
-      { label: this.transloco.translate('scenarios.common.delete'), icon: 'pi pi-trash', styleClass: 'text-red-500', command: () => this.askDelete(s) },
+      { label: this.transloco.translate('scenarios.common.delete'), icon: 'pi pi-trash', styleClass: 'danger', command: () => this.askDelete(s) },
     ];
     menu.toggle(event);
   }

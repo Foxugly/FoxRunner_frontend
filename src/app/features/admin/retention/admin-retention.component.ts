@@ -36,9 +36,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       />
     </app-page-header>
 
-    <p-card styleClass="max-w-30rem">
-      <form [formGroup]="form" class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
+    <p-card styleClass="card-narrow">
+      <form [formGroup]="form" class="form-stack">
+        <div class="field">
           <label for="jobs">{{ 'admin.retention.label_jobs' | transloco }}</label>
           <p-inputnumber
             inputId="jobs"
@@ -48,7 +48,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [suffix]="'admin.common.day_suffix' | transloco"
           />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field">
           <label for="audit">{{ 'admin.retention.label_audit' | transloco }}</label>
           <p-inputnumber
             inputId="audit"
@@ -58,7 +58,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [suffix]="'admin.common.day_suffix' | transloco"
           />
         </div>
-        <div class="flex flex-column gap-2">
+        <div class="field">
           <label for="graph">{{ 'admin.retention.label_graph' | transloco }}</label>
           <p-inputnumber
             inputId="graph"
@@ -68,7 +68,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [suffix]="'admin.common.day_suffix' | transloco"
           />
         </div>
-        <div class="flex gap-2">
+        <div class="actions">
           <p-button
             [label]="'admin.retention.run_button' | transloco"
             icon="pi pi-trash"
@@ -82,7 +82,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     </p-card>
 
     @if (result(); as r) {
-      <p-card styleClass="mt-3" [header]="'admin.retention.result_title' | transloco">
+      <p-card styleClass="card-spaced" [header]="'admin.retention.result_title' | transloco">
         <ul>
           @for (entry of removedEntries(r); track entry.key) {
             <li>
@@ -96,6 +96,30 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-confirmDialog />
   `,
+  styles: [
+    `
+      .card-narrow {
+        max-width: 30rem;
+      }
+      .form-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .card-spaced {
+        margin-top: 1rem;
+      }
+    `,
+  ],
 })
 export class AdminRetentionComponent {
   private readonly fb = inject(FormBuilder);

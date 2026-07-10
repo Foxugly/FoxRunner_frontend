@@ -15,23 +15,23 @@ type ExchangeState = 'working' | 'expired' | 'invalid';
   standalone: true,
   imports: [RouterLink, ButtonModule, CardModule, ProgressSpinnerModule, TranslocoPipe],
   template: `
-    <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="auth-shell" style="min-height: 100vh;">
       <div style="width: 100%; max-width: 420px;">
         <p-card>
-          <div class="flex flex-column align-items-center gap-3 p-3 text-center">
+          <div class="exchange">
             @switch (state()) {
               @case ('working') {
-                <p-progressSpinner strokeWidth="4" styleClass="w-3rem h-3rem" />
-                <p class="m-0">{{ 'auth.exchange_working' | transloco }}</p>
+                <p-progressSpinner strokeWidth="4" styleClass="u-spinner" />
+                <p class="m0">{{ 'auth.exchange_working' | transloco }}</p>
               }
               @case ('expired') {
                 <i class="pi pi-clock" style="font-size: 2rem; color: var(--p-text-muted-color, #6b7280)"></i>
-                <p class="m-0">{{ 'auth.exchange_expired' | transloco }}</p>
+                <p class="m0">{{ 'auth.exchange_expired' | transloco }}</p>
                 <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
               }
               @case ('invalid') {
                 <i class="pi pi-times-circle" style="font-size: 2rem; color: var(--p-text-muted-color, #6b7280)"></i>
-                <p class="m-0">{{ 'auth.exchange_invalid' | transloco }}</p>
+                <p class="m0">{{ 'auth.exchange_invalid' | transloco }}</p>
                 <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
               }
             }
@@ -40,6 +40,30 @@ type ExchangeState = 'working' | 'expired' | 'invalid';
       </div>
     </div>
   `,
+  styles: [
+    `
+      .auth-shell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .exchange {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        text-align: center;
+      }
+      .m0 {
+        margin: 0;
+      }
+      :host ::ng-deep .u-spinner {
+        width: 3rem;
+        height: 3rem;
+      }
+    `,
+  ],
 })
 export class MagicLinkExchangeComponent implements OnInit {
   private readonly router = inject(Router);

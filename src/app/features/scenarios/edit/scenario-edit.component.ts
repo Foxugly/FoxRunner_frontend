@@ -82,7 +82,7 @@ const EMPTY_DEFINITION = {
           </div>
         </div>
       </form>
-      <p class="text-color-secondary text-sm mt-2 mb-0">
+      <p class="edit-hint">
         {{ 'scenarios.edit.steps_hint' | transloco }}
       </p>
     </p-card>
@@ -95,6 +95,16 @@ const EMPTY_DEFINITION = {
       (cancelled)="onCancel()"
     />
   `,
+  styles: [
+    `
+      .edit-hint {
+        color: var(--muted);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+      }
+    `,
+  ],
 })
 export class ScenarioEditComponent implements OnInit, HasUnsavedChanges {
   private readonly fb = inject(FormBuilder);

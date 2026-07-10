@@ -70,20 +70,20 @@ const STATUS_OPTIONS: Opt[] = [
     TranslocoPipe,
   ],
   template: `
-    <div class="flex align-items-end gap-3 mb-3 flex-wrap">
-      <div class="flex flex-column gap-1">
-        <label for="f-source" class="text-sm text-color-secondary">{{ 'scenarios.executions.source_label' | transloco }}</label>
+    <div class="exec-filters">
+      <div class="exec-field">
+        <label for="f-source" class="exec-label">{{ 'scenarios.executions.source_label' | transloco }}</label>
         <p-select inputId="f-source" [options]="sourceOptions()" [(ngModel)]="source" optionLabel="label" optionValue="value" [style]="{ width: '14rem' }" (onChange)="reload()" />
       </div>
-      <div class="flex flex-column gap-1">
-        <label for="f-status" class="text-sm text-color-secondary">{{ 'scenarios.executions.status_label' | transloco }}</label>
+      <div class="exec-field">
+        <label for="f-status" class="exec-label">{{ 'scenarios.executions.status_label' | transloco }}</label>
         <p-select inputId="f-status" [options]="statusOptions()" [(ngModel)]="status" optionLabel="label" optionValue="value" [style]="{ width: '12rem' }" (onChange)="reload()" />
       </div>
       <p-button icon="pi pi-refresh" severity="secondary" [text]="true" [loading]="loading()" (onClick)="reload()" [pTooltip]="'scenarios.common.refresh' | transloco" />
     </div>
 
     @if (truncatedCount(); as n) {
-      <div class="mb-3 text-sm text-color-secondary flex align-items-center gap-2">
+      <div class="exec-trunc">
         <i class="pi pi-info-circle"></i>
         <span>{{ 'scenarios.executions.truncated' | transloco: { n: n } }}</span>
       </div>
@@ -107,11 +107,11 @@ const STATUS_OPTIONS: Opt[] = [
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
-        <tr class="cursor-pointer" (click)="openRow(r)">
+        <tr class="row-clickable" (click)="openRow(r)">
           <td>
             <app-status-tag [status]="r.status" />
             @if (r.dryRun) {
-              <p-tag class="ml-2" severity="secondary" value="dry-run" />
+              <p-tag class="tag-dry" severity="secondary" value="dry-run" />
             }
           </td>
           <td>
@@ -122,13 +122,13 @@ const STATUS_OPTIONS: Opt[] = [
             }
           </td>
           <td>{{ r.when | apiDate: 'medium' }}</td>
-          <td class="text-right">
+          <td class="cell-right">
             @if (r.source === 'job' && r.status === 'failed') {
-              <span class="text-red-500 text-sm">{{ 'scenarios.executions.see_failure' | transloco }}</span>
+              <span class="exec-hint exec-hint--danger">{{ 'scenarios.executions.see_failure' | transloco }}</span>
             } @else if (r.source === 'job') {
-              <span class="text-primary text-sm">{{ 'scenarios.executions.detail_arrow' | transloco }}</span>
+              <span class="exec-hint exec-hint--primary">{{ 'scenarios.executions.detail_arrow' | transloco }}</span>
             } @else {
-              <span class="text-color-secondary text-sm">{{ 'scenarios.executions.detail' | transloco }}</span>
+              <span class="exec-hint exec-hint--muted">{{ 'scenarios.executions.detail' | transloco }}</span>
             }
           </td>
         </tr>
@@ -145,17 +145,77 @@ const STATUS_OPTIONS: Opt[] = [
     <!-- Scheduled-run detail (no live timeline exists for scheduler runs) -->
     <p-dialog [modal]="true" [(visible)]="detailOpen" [style]="{ width: '34rem' }" [header]="'scenarios.executions.scheduled_detail_header' | transloco">
       @if (detail(); as h) {
-        <div class="flex flex-column gap-2 text-sm">
+        <div class="exec-detail">
           <div><strong>{{ 'scenarios.executions.field_slot' | transloco }}</strong> {{ h.slot_id }}</div>
           <div><strong>{{ 'scenarios.executions.field_status' | transloco }}</strong> <app-status-tag [status]="h.status" /></div>
           <div><strong>{{ 'scenarios.executions.field_executed_at' | transloco }}</strong> {{ h.executed_at | apiDate: 'medium' }}</div>
           <div><strong>{{ 'scenarios.executions.field_step' | transloco }}</strong> {{ h.step || '—' }}</div>
           <div><strong>{{ 'scenarios.executions.field_message' | transloco }}</strong></div>
-          <div class="p-2 border-1 surface-border border-round" [style.white-space]="'pre-wrap'">{{ h.message || '—' }}</div>
+          <div class="exec-msg" [style.white-space]="'pre-wrap'">{{ h.message || '—' }}</div>
         </div>
       }
     </p-dialog>
   `,
+  styles: [
+    `
+      .exec-filters {
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+      .exec-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .exec-label {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .exec-trunc {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .row-clickable {
+        cursor: pointer;
+      }
+      .tag-dry {
+        margin-left: 0.5rem;
+      }
+      .cell-right {
+        text-align: right;
+      }
+      .exec-hint {
+        font-size: 0.875rem;
+      }
+      .exec-hint--danger {
+        color: var(--danger);
+      }
+      .exec-hint--primary {
+        color: var(--accent);
+      }
+      .exec-hint--muted {
+        color: var(--muted);
+      }
+      .exec-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+      }
+      .exec-msg {
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+    `,
+  ],
 })
 export class ScenarioExecutionsComponent implements OnInit {
   /** Scope executions to this scenario. */
