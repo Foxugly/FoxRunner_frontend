@@ -50,4 +50,17 @@ test.describe('FoxRunner smoke', () => {
     await page.getByRole('menuitem', { name: 'Déconnexion' }).click();
     await expect(page).toHaveURL(/\/login$/);
   });
+
+  test('public /features renders without auth', async ({ page }) => {
+    await page.goto('/features');
+    await expect(page).toHaveURL(/\/features$/);
+    await expect(page.getByRole('heading', { name: 'Fonctionnalités', level: 1 })).toBeVisible();
+    await expect(page.getByText('Scénarios planifiés')).toBeVisible();
+  });
+
+  test('public /about renders without auth', async ({ page }) => {
+    await page.goto('/about');
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.getByText('Foxugly SRL')).toBeVisible();
+  });
 });

@@ -1,0 +1,108 @@
+<article class="about">
+  <header class="about__intro">
+    <h1 class="about__title">{{ ui().intro.title }}</h1>
+    <p class="about__lead">{{ ui().intro.lead }}</p>
+    <a
+      [href]="repoUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="about__repo"
+      [attr.aria-label]="ui().intro.view_repo"
+    >
+      <i class="pi pi-github" aria-hidden="true"></i>
+      {{ ui().intro.view_repo }}
+      <i class="pi pi-external-link" aria-hidden="true"></i>
+    </a>
+  </header>
+
+  <p-tabs [(value)]="activeTab">
+    <p-tablist>
+      <p-tab value="company">
+        <i class="pi pi-building about__tab-icon" aria-hidden="true"></i>
+        <span>{{ ui().tabs.company }}</span>
+      </p-tab>
+      <p-tab value="legal">
+        <i class="pi pi-shield about__tab-icon" aria-hidden="true"></i>
+        <span>{{ ui().tabs.legal }}</span>
+      </p-tab>
+      <p-tab value="technical">
+        <i class="pi pi-code about__tab-icon" aria-hidden="true"></i>
+        <span>{{ ui().tabs.technical }}</span>
+      </p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+      <p-tabpanel value="company">
+        <section class="about__panel">
+          <h2 class="about__h2">{{ ui().company.title }}</h2>
+          <p class="about__lead">{{ ui().company.lead }}</p>
+          <dl class="about-dl">
+            @for (row of ui().company.rows; track row.key) {
+              <dt class="about-dl__label">{{ row.label }}</dt>
+              <dd class="about-dl__value">
+                @switch (row.kind) {
+                  @case ('text') {
+                    <span>{{ row.value }}</span>
+                  }
+                  @case ('multiline') {
+                    @for (line of row.lines; track $index) {
+                      <span class="about-dl__line">{{ line }}</span>
+                    }
+                  }
+                  @case ('email') {
+                    <span class="about-dl__email">{{ emailDisplay }}</span>
+                    <button type="button" class="about-copy" (click)="copyEmail()">
+                      <i class="pi" [class.pi-copy]="!copied()" [class.pi-check]="copied()" aria-hidden="true"></i>
+                      <span>{{ ui().company.email_cta }}</span>
+                    </button>
+                  }
+                  @case ('phone') {
+                    <span>{{ phoneDisplay }}</span>
+                  }
+                  @case ('website') {
+                    <a [href]="websiteUrl" target="_blank" rel="noopener noreferrer">{{ websiteDisplay }}</a>
+                  }
+                }
+              </dd>
+            }
+          </dl>
+        </section>
+      </p-tabpanel>
+
+      <p-tabpanel value="legal">
+        <section class="about__panel">
+          <h2 class="about__h2">{{ ui().legal.title }}</h2>
+          <p class="about__lead">{{ ui().legal.lead }}</p>
+          @for (sec of ui().legal.sections; track sec.slug) {
+            <section class="about-sub">
+              <h3 class="about-sub__title">{{ sec.title }}</h3>
+              <ul class="about-sub__list">
+                @for (item of sec.items; track $index) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+            </section>
+          }
+        </section>
+      </p-tabpanel>
+
+      <p-tabpanel value="technical">
+        <section class="about__panel">
+          <h2 class="about__h2">{{ ui().technical.title }}</h2>
+          <p class="about__lead">{{ ui().technical.lead }}</p>
+          @for (sec of ui().technical.sections; track sec.slug) {
+            <section class="about-sub">
+              <h3 class="about-sub__title">{{ sec.title }}</h3>
+              <p class="about-sub__intro">{{ sec.intro }}</p>
+              <ul class="about-sub__list">
+                @for (item of sec.items; track $index) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+            </section>
+          }
+        </section>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</article>

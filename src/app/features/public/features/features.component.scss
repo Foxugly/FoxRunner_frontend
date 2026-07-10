@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding-block: 1.5rem 3rem;
+}
+
+/* ── Intro centrée ───────────────────────────────────────────────────────── */
+.features__intro {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.features__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.features__subtitle {
+  margin: 0.75rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ── Grille de cartes ────────────────────────────────────────────────────── */
+.features-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.features-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  }
+}
+
+.features-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radius);
+  font-size: 1.25rem;
+  background: var(--tone-bg);
+  color: var(--tone-fg);
+
+  &--emerald { --tone-bg: #d1fae5; --tone-fg: #047857; }
+  &--sky { --tone-bg: #e0f2fe; --tone-fg: #0369a1; }
+  &--amber { --tone-bg: #fef3c7; --tone-fg: #b45309; }
+  &--violet { --tone-bg: #ede9fe; --tone-fg: #6d28d9; }
+  &--rose { --tone-bg: #ffe4e6; --tone-fg: #be123c; }
+  &--teal { --tone-bg: #ccfbf1; --tone-fg: #0f766e; }
+}
+
+.features-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.features-card__desc {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ── CTA centré ──────────────────────────────────────────────────────────── */
+.features__cta {
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Thème sombre : tons atténués pour rester lisibles ───────────────────── */
+:host-context(.dark-mode) {
+  .features-card__icon {
+    &--emerald { --tone-bg: rgba(16, 185, 129, 0.18); --tone-fg: #6ee7b7; }
+    &--sky { --tone-bg: rgba(14, 165, 233, 0.18); --tone-fg: #7dd3fc; }
+    &--amber { --tone-bg: rgba(245, 158, 11, 0.18); --tone-fg: #fcd34d; }
+    &--violet { --tone-bg: rgba(139, 92, 246, 0.20); --tone-fg: #c4b5fd; }
+    &--rose { --tone-bg: rgba(244, 63, 94, 0.18); --tone-fg: #fda4af; }
+    &--teal { --tone-bg: rgba(20, 184, 166, 0.18); --tone-fg: #5eead4; }
+  }
+}

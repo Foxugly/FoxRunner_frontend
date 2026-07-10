@@ -1,0 +1,31 @@
+<section class="features">
+  <header class="features__intro">
+    <h1 class="features__title">{{ text().title }}</h1>
+    <p class="features__subtitle">{{ text().subtitle }}</p>
+  </header>
+
+  <div class="features-grid">
+    @for (card of cards; track card.key) {
+      <article class="features-card">
+        <span
+          class="features-card__icon"
+          [class]="'features-card__icon--' + card.tone"
+          aria-hidden="true"
+        >
+          <i class="pi" [class]="card.icon"></i>
+        </span>
+        <h2 class="features-card__title">{{ text().cards[card.key].title }}</h2>
+        <p class="features-card__desc">{{ text().cards[card.key].description }}</p>
+      </article>
+    }
+  </div>
+
+  <div class="features__cta">
+    <p-button
+      [routerLink]="['/login']"
+      [label]="text().cta"
+      icon="pi pi-arrow-right"
+      iconPos="right"
+    />
+  </div>
+</section>

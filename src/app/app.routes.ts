@@ -3,6 +3,7 @@ import { authGuard } from './core/auth/auth.guard';
 import { superuserGuard } from './core/auth/superuser.guard';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { PublicLayoutComponent } from './core/layout/public-layout/public-layout.component';
 
 export const routes: Routes = [
   {
@@ -151,6 +152,22 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+    ],
+  },
+  {
+    path: '',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: 'features',
+        loadComponent: () =>
+          import('./features/public/features/features.component').then((m) => m.FeaturesComponent),
+      },
+      {
+        path: 'about',
+        loadComponent: () =>
+          import('./features/public/about/about.component').then((m) => m.AboutComponent),
       },
     ],
   },
