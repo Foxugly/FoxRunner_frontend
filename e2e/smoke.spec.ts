@@ -13,10 +13,15 @@ function collectConsoleErrors(page: Page): string[] {
 }
 
 test.describe('FoxRunner smoke', () => {
-  test('unauth visit redirects to /login', async ({ page }) => {
+  test('unauth visit lands on the public home with public nav', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByText('FoxRunner')).toBeVisible();
+    await expect(page).toHaveURL(/\/home$/);
+    await expect(page.getByRole('link', { name: /FoxRunner/ })).toBeVisible();
+    for (const label of ['Accueil', 'Fonctionnalités', 'Soutenir', 'À propos']) {
+      await expect(page.getByRole('link', { name: label })).toBeVisible();
+    }
+    // The topmenu (banner) sign-in button — the home hero also has one, so scope it.
+    await expect(page.getByRole('banner').getByRole('button', { name: /Se connecter/ })).toBeVisible();
   });
 
   test('login flow lands on dashboard and topbar shows feature entries', async ({ page }) => {

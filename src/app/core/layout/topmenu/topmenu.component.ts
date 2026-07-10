@@ -35,11 +35,21 @@ export class TopmenuComponent {
   readonly theme = inject(ThemeService);
   readonly menuOpen = signal(false);
 
-  /** Fleet-standard chrome mode; the nav only renders when authenticated. */
+  /** Fleet-standard chrome mode; drives which nav (public vs app) is shown. */
   readonly mode = input<'public' | 'authenticated'>('authenticated');
 
+  /** Brand target: the public home for guests, the dashboard for the app. */
+  readonly brandLink = computed(() => (this.mode() === 'public' ? '/home' : '/'));
+
   readonly links = computed<NavLink[]>(() => {
-    if (this.mode() !== 'authenticated') return [];
+    if (this.mode() === 'public') {
+      return [
+        { label: 'chrome.nav.home', icon: 'pi pi-home', link: '/home', exact: true },
+        { label: 'chrome.nav.features', icon: 'pi pi-star', link: '/features' },
+        { label: 'chrome.nav.soutenir', icon: 'pi pi-heart', link: '/soutenir' },
+        { label: 'chrome.nav.about', icon: 'pi pi-info-circle', link: '/about' },
+      ];
+    }
     const base: NavLink[] = [
       { label: 'chrome.nav.dashboard', icon: 'pi pi-home', link: '/', exact: true },
       { label: 'chrome.nav.scenarios', icon: 'pi pi-sitemap', link: '/scenarios' },

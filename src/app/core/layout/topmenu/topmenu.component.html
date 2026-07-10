@@ -1,6 +1,6 @@
 <header class="topbar">
   <div class="topbar__inner">
-    <a routerLink="/" class="topbar__brand" (click)="closeMenu()">
+    <a [routerLink]="brandLink()" class="topbar__brand" (click)="closeMenu()">
       <i class="pi pi-bolt topbar__brand-icon"></i>
       <span class="topbar__brand-name">FoxRunner</span>
     </a>

@@ -289,7 +289,11 @@
       "scenarios": "Scenario's",
       "admin": "Beheer",
       "aria_main": "Hoofdnavigatie",
-      "aria_mobile": "Mobiele navigatie"
+      "aria_mobile": "Mobiele navigatie",
+      "home": "Home",
+      "features": "Functies",
+      "soutenir": "Steunen",
+      "about": "Over"
     },
     "user": {
       "profile": "Profiel",

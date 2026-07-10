@@ -160,9 +160,19 @@ export const routes: Routes = [
     component: PublicLayoutComponent,
     children: [
       {
+        path: 'home',
+        loadComponent: () =>
+          import('./features/public/home/home.component').then((m) => m.HomeComponent),
+      },
+      {
         path: 'features',
         loadComponent: () =>
           import('./features/public/features/features.component').then((m) => m.FeaturesComponent),
+      },
+      {
+        path: 'soutenir',
+        loadComponent: () =>
+          import('./features/public/soutenir/soutenir.component').then((m) => m.SoutenirComponent),
       },
       {
         path: 'about',

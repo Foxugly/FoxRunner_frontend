@@ -289,7 +289,11 @@
       "scenarios": "Scenari",
       "admin": "Amministrazione",
       "aria_main": "Navigazione principale",
-      "aria_mobile": "Navigazione mobile"
+      "aria_mobile": "Navigazione mobile",
+      "home": "Home",
+      "features": "Funzionalità",
+      "soutenir": "Sostieni",
+      "about": "Info"
     },
     "user": {
       "profile": "Profilo",

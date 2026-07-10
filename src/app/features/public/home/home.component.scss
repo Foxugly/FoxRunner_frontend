@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding-block: 1.5rem 3rem;
+}
+
+/* ── Hero centré ─────────────────────────────────────────────────────────── */
+.home__hero {
+  max-width: 46rem;
+  margin: 0 auto;
+  text-align: center;
+  padding-block: 1.5rem;
+}
+
+.home__title {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.home__lead {
+  margin: 1rem auto 0;
+  max-width: 40rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.home__cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+/* ── Points forts ────────────────────────────────────────────────────────── */
+.home__h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+}
+
+.home-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+  }
+}
+
+.home-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radius);
+  font-size: 1.25rem;
+  background: var(--tone-bg);
+  color: var(--tone-fg);
+
+  &--emerald { --tone-bg: #d1fae5; --tone-fg: #047857; }
+  &--sky { --tone-bg: #e0f2fe; --tone-fg: #0369a1; }
+  &--amber { --tone-bg: #fef3c7; --tone-fg: #b45309; }
+  &--rose { --tone-bg: #ffe4e6; --tone-fg: #be123c; }
+}
+
+.home-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.home-card__desc {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ── Thème sombre : tons atténués pour rester lisibles ───────────────────── */
+:host-context(.dark-mode) {
+  .home-card__icon {
+    &--emerald { --tone-bg: rgba(16, 185, 129, 0.18); --tone-fg: #6ee7b7; }
+    &--sky { --tone-bg: rgba(14, 165, 233, 0.18); --tone-fg: #7dd3fc; }
+    &--amber { --tone-bg: rgba(245, 158, 11, 0.18); --tone-fg: #fcd34d; }
+    &--rose { --tone-bg: rgba(244, 63, 94, 0.18); --tone-fg: #fda4af; }
+  }
+}
