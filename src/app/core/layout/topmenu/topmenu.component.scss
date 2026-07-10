@@ -19,10 +19,10 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 0 0.85rem;
-  max-width: 1400px;
+  max-width: var(--content-max);
   margin: 0 auto;
   min-height: 60px;
-  padding: 0.4rem 1.1rem;
+  padding: 0.4rem var(--content-pad);
 }
 
 .topbar__brand {
@@ -35,7 +35,7 @@
 
 .topbar__brand-icon {
   font-size: 1.4rem;
-  color: #34d399;
+  color: var(--accent);
 }
 
 .topbar__brand-name {
@@ -127,7 +127,7 @@
   }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .topbar__nav {
     display: none;
   }

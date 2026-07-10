@@ -42,8 +42,9 @@
 
 @if (auth.isLoggedIn()) {
   <div class="fox-shell">
+    <a href="#main-content" class="fox-skip-link">Aller au contenu</a>
     <app-topmenu />
-    <main class="fox-main">
+    <main id="main-content" tabindex="-1" class="main-container">
       <router-outlet />
     </main>
     <app-footer />

@@ -1,6 +1,6 @@
 .footer {
-  border-top: 1px solid var(--p-content-border-color, #e5e7eb);
-  background: var(--p-content-background, #ffffff);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .footer__inner {
@@ -8,11 +8,11 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem 0.85rem;
-  max-width: 1400px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem var(--content-pad);
   font-size: 0.85rem;
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--muted);
 }
 
 .footer__brand {
