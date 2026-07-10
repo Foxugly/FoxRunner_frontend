@@ -6,6 +6,7 @@ import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../auth/auth.service';
 import { ThemeService } from '../../theme/theme.service';
+import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
 
 interface NavLink {
   label: string;
@@ -17,7 +18,14 @@ interface NavLink {
 @Component({
   selector: 'app-topmenu',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, ButtonModule, MenuModule, TooltipModule],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    ButtonModule,
+    MenuModule,
+    TooltipModule,
+    LanguageSwitcherComponent,
+  ],
   templateUrl: './topmenu.component.html',
   styleUrl: './topmenu.component.scss',
 })
