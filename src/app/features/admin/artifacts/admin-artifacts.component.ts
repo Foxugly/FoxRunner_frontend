@@ -102,11 +102,11 @@ interface KindOption {
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 7rem">{{ 'admin.artifacts.col_kind' | transloco }}</th>
+          <th class="col--kind">{{ 'admin.artifacts.col_kind' | transloco }}</th>
           <th>{{ 'admin.artifacts.col_name' | transloco }}</th>
-          <th style="width: 8rem">{{ 'admin.artifacts.col_size' | transloco }}</th>
-          <th style="width: 14rem">{{ 'admin.artifacts.col_modified' | transloco }}</th>
-          <th style="width: 8rem">{{ 'admin.artifacts.col_actions' | transloco }}</th>
+          <th class="col--size">{{ 'admin.artifacts.col_size' | transloco }}</th>
+          <th class="col--modified">{{ 'admin.artifacts.col_modified' | transloco }}</th>
+          <th class="col--actions">{{ 'admin.artifacts.col_actions' | transloco }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-a>
@@ -138,29 +138,7 @@ interface KindOption {
       </ng-template>
     </p-table>
   `,
-  styles: [
-    `
-      .filter-bar {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-        align-items: flex-end;
-      }
-      .filter-field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-      .filter-label {
-        font-size: 0.875rem;
-        color: var(--muted);
-      }
-      .id-code {
-        font-size: 0.75rem;
-      }
-    `,
-  ],
+  styleUrl: './admin-artifacts.component.scss',
 })
 export class AdminArtifactsComponent implements OnInit {
   private readonly service = inject(ArtifactsService);

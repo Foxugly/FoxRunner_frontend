@@ -34,16 +34,7 @@ import { LanguageService } from '../../../core/i18n/language.service';
       />
     </div>
   `,
-  styles: [
-    `
-      .footer-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-      }
-    `,
-  ],
+  styleUrl: './form-footer.component.scss',
 })
 export class FormFooterComponent {
   private readonly i18n = inject(TranslocoService);

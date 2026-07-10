@@ -105,7 +105,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 12rem">{{ 'admin.audit.col_when' | transloco }}</th>
+          <th class="col--when">{{ 'admin.audit.col_when' | transloco }}</th>
           <th>{{ 'admin.audit.col_actor' | transloco }}</th>
           <th>{{ 'admin.audit.col_action' | transloco }}</th>
           <th>{{ 'admin.audit.col_target' | transloco }}</th>
@@ -125,7 +125,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </td>
           <td
             class="diff-cell"
-            [style.max-width.rem]="30"
             [pTooltip]="diff(a)"
             tooltipPosition="left"
           >
@@ -146,43 +145,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </ng-template>
     </p-table>
   `,
-  styles: [
-    `
-      .filter-bar {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-      }
-      .filter-field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-      .filter-label {
-        font-size: 0.875rem;
-        color: var(--muted);
-      }
-      .filter-actions {
-        display: flex;
-        align-items: flex-end;
-      }
-      .target-cell {
-        font-size: 0.875rem;
-      }
-      .id-code {
-        font-size: 0.75rem;
-      }
-      .diff-cell {
-        font-size: 0.75rem;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        color: var(--muted);
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-    `,
-  ],
+  styleUrl: './admin-audit.component.scss',
 })
 export class AdminAuditComponent implements OnInit {
   private readonly service = inject(AdminService);

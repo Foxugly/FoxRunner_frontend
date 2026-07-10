@@ -40,20 +40,7 @@ import { LanguageService } from '../../i18n/language.service';
       />
     }
   `,
-  styles: [
-    `
-      .user-menu__trigger ::ng-deep .p-button-label {
-        max-width: 14rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      @media (max-width: 1024px) {
-        .user-menu__trigger ::ng-deep .p-button-label {
-          display: none;
-        }
-      }
-    `,
-  ],
+  styleUrl: './user-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserMenuComponent {

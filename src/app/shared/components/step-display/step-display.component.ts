@@ -93,60 +93,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
       }
     </div>
   `,
-  styles: [
-    `
-      .step-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .step-row__main {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-      }
-      .step-row__body {
-        flex: 1 1 0;
-        min-width: 0;
-      }
-      .step-row__actions {
-        display: flex;
-        gap: 0.25rem;
-        flex-shrink: 0;
-      }
-      .step-row {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--surface-border, #e5e7eb);
-        border-radius: 6px;
-        background: var(--surface-card, #fff);
-      }
-      .step-index {
-        min-width: 2rem;
-        font-variant-numeric: tabular-nums;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--accent);
-      }
-      .step-icon {
-        margin-top: 0.15rem;
-        font-size: 0.85rem;
-        color: var(--text-color-secondary, #6b7280);
-      }
-      .step-label {
-        line-height: 1.35;
-      }
-      .step-children {
-        margin-top: 0.5rem;
-        padding-left: 0.75rem;
-        border-left: 2px solid var(--surface-border, #e5e7eb);
-      }
-      .step-caption {
-        font-size: 0.75rem;
-        color: var(--text-color-secondary, #6b7280);
-        margin-bottom: 0.35rem;
-      }
-    `,
-  ],
+  styleUrl: './step-display.component.scss',
 })
 export class StepDisplayComponent {
   readonly steps = input.required<StepLike[]>();

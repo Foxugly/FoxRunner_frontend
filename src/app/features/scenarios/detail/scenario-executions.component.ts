@@ -100,10 +100,10 @@ const STATUS_OPTIONS: Opt[] = [
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 8rem">{{ 'scenarios.executions.col_status' | transloco }}</th>
-          <th style="width: 10rem">{{ 'scenarios.executions.col_source' | transloco }}</th>
-          <th style="width: 13rem">{{ 'scenarios.executions.col_when' | transloco }}</th>
-          <th style="width: 9rem"></th>
+          <th class="col--status">{{ 'scenarios.executions.col_status' | transloco }}</th>
+          <th class="col--source">{{ 'scenarios.executions.col_source' | transloco }}</th>
+          <th class="col--when">{{ 'scenarios.executions.col_when' | transloco }}</th>
+          <th class="col--actions"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
@@ -151,71 +151,12 @@ const STATUS_OPTIONS: Opt[] = [
           <div><strong>{{ 'scenarios.executions.field_executed_at' | transloco }}</strong> {{ h.executed_at | apiDate: 'medium' }}</div>
           <div><strong>{{ 'scenarios.executions.field_step' | transloco }}</strong> {{ h.step || '—' }}</div>
           <div><strong>{{ 'scenarios.executions.field_message' | transloco }}</strong></div>
-          <div class="exec-msg" [style.white-space]="'pre-wrap'">{{ h.message || '—' }}</div>
+          <div class="exec-msg">{{ h.message || '—' }}</div>
         </div>
       }
     </p-dialog>
   `,
-  styles: [
-    `
-      .exec-filters {
-        display: flex;
-        align-items: flex-end;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-      }
-      .exec-field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-      .exec-label {
-        font-size: 0.875rem;
-        color: var(--muted);
-      }
-      .exec-trunc {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-        font-size: 0.875rem;
-        color: var(--muted);
-      }
-      .row-clickable {
-        cursor: pointer;
-      }
-      .tag-dry {
-        margin-left: 0.5rem;
-      }
-      .cell-right {
-        text-align: right;
-      }
-      .exec-hint {
-        font-size: 0.875rem;
-      }
-      .exec-hint--danger {
-        color: var(--danger);
-      }
-      .exec-hint--primary {
-        color: var(--accent);
-      }
-      .exec-hint--muted {
-        color: var(--muted);
-      }
-      .exec-detail {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-      }
-      .exec-msg {
-        padding: 0.5rem;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-      }
-    `,
-  ],
+  styleUrl: './scenario-executions.component.scss',
 })
 export class ScenarioExecutionsComponent implements OnInit {
   /** Scope executions to this scenario. */

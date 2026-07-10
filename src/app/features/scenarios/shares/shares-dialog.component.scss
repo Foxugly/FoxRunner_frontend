@@ -1,0 +1,19 @@
+.shares-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.shares-add {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.shares-add__input {
+  flex: 1 1 0;
+}
+
+// Remove-button column of the shares table
+.col--actions {
+  width: 5rem;
+}

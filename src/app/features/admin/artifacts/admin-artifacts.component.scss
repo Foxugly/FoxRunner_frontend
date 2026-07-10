@@ -1,0 +1,38 @@
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-label {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.id-code {
+  font-size: 0.75rem;
+}
+
+.col--kind {
+  width: 7rem;
+}
+
+.col--size {
+  width: 8rem;
+}
+
+.col--modified {
+  width: 14rem;
+}
+
+.col--actions {
+  width: 8rem;
+}

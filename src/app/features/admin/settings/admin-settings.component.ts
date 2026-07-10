@@ -137,17 +137,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-confirmDialog />
   `,
-  styles: [
-    `
-      .muted {
-        color: var(--muted);
-      }
-      .row-actions {
-        display: flex;
-        gap: 0.25rem;
-      }
-    `,
-  ],
+  styleUrl: './admin-settings.component.scss',
 })
 export class AdminSettingsComponent implements OnInit {
   private readonly service = inject(AdminService);

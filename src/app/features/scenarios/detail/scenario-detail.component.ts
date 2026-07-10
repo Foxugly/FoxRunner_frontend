@@ -350,78 +350,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
 
     <p-confirmDialog />
   `,
-  styles: [
-    `
-      .ico-gap {
-        margin-right: 0.5rem;
-      }
-      .detail-grid {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: 1fr;
-      }
-      @media (min-width: 768px) {
-        .detail-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      .card-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem;
-        padding-bottom: 0;
-      }
-      .fw-semibold {
-        font-weight: 600;
-      }
-      .meta-list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-      }
-      .count-grid {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(2, 1fr);
-        text-align: center;
-      }
-      @media (min-width: 768px) {
-        .count-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-      .count-num {
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
-      .count-label {
-        color: var(--muted);
-        font-size: 0.875rem;
-      }
-      .step-section {
-        margin-bottom: 1.5rem;
-      }
-      .step-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-      }
-      .step-title {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--muted);
-        margin: 0;
-      }
-      .step-empty {
-        font-size: 0.875rem;
-        color: var(--muted);
-        margin: 0;
-      }
-    `,
-  ],
+  styleUrl: './scenario-detail.component.scss',
 })
 export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   private readonly route = inject(ActivatedRoute);

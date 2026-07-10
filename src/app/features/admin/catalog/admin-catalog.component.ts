@@ -109,59 +109,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </div>
     </div>
   `,
-  styles: [
-    `
-      .cards-grid {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: 1fr;
-      }
-      @media (min-width: 1024px) {
-        .cards-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      .muted {
-        color: var(--muted);
-      }
-      .btn-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-      }
-      .export-note {
-        margin-top: 1rem;
-        font-size: 0.875rem;
-        color: var(--muted);
-      }
-      .toggle-row {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-      .btn-row-lg {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-      .result-block {
-        margin-top: 1rem;
-        font-size: 0.875rem;
-      }
-      .icon-info {
-        color: var(--muted);
-        margin-right: 0.25rem;
-      }
-      .icon-ok {
-        color: var(--success);
-        margin-right: 0.25rem;
-      }
-      .result-counts {
-        margin-top: 0.25rem;
-      }
-    `,
-  ],
+  styleUrl: './admin-catalog.component.scss',
 })
 export class AdminCatalogComponent {
   private readonly service = inject(AdminService);

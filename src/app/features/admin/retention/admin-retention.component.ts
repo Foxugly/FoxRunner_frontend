@@ -96,30 +96,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-confirmDialog />
   `,
-  styles: [
-    `
-      .card-narrow {
-        max-width: 30rem;
-      }
-      .form-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .actions {
-        display: flex;
-        gap: 0.5rem;
-      }
-      .card-spaced {
-        margin-top: 1rem;
-      }
-    `,
-  ],
+  styleUrl: './admin-retention.component.scss',
 })
 export class AdminRetentionComponent {
   private readonly fb = inject(FormBuilder);

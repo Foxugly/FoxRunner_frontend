@@ -1,0 +1,44 @@
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-label {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.filter-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.col--when {
+  width: 12rem;
+}
+
+.target-cell {
+  font-size: 0.875rem;
+}
+
+.id-code {
+  font-size: 0.75rem;
+}
+
+.diff-cell {
+  max-width: 30rem;
+  font-size: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

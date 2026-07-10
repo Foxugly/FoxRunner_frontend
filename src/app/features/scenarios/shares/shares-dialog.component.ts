@@ -62,7 +62,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
             <ng-template pTemplate="header">
               <tr>
                 <th>{{ 'scenarios.shares.col_user' | transloco }}</th>
-                <th style="width: 5rem"></th>
+                <th class="col--actions"></th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-u>
@@ -95,22 +95,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 
     <p-confirmDialog />
   `,
-  styles: [
-    `
-      .shares-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .shares-add {
-        display: flex;
-        gap: 0.5rem;
-      }
-      .shares-add__input {
-        flex: 1 1 0;
-      }
-    `,
-  ],
+  styleUrl: './shares-dialog.component.scss',
 })
 export class SharesDialogComponent {
   private readonly service = inject(ScenariosService);

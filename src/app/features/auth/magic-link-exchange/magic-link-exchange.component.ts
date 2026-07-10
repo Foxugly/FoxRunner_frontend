@@ -15,8 +15,8 @@ type ExchangeState = 'working' | 'expired' | 'invalid';
   standalone: true,
   imports: [RouterLink, ButtonModule, CardModule, ProgressSpinnerModule, TranslocoPipe],
   template: `
-    <div class="auth-shell" style="min-height: 100vh;">
-      <div style="width: 100%; max-width: 420px;">
+    <div class="auth-shell">
+      <div class="auth-card">
         <p-card>
           <div class="exchange">
             @switch (state()) {
@@ -25,12 +25,12 @@ type ExchangeState = 'working' | 'expired' | 'invalid';
                 <p class="m0">{{ 'auth.exchange_working' | transloco }}</p>
               }
               @case ('expired') {
-                <i class="pi pi-clock" style="font-size: 2rem; color: var(--p-text-muted-color, #6b7280)"></i>
+                <i class="pi pi-clock exchange-icon"></i>
                 <p class="m0">{{ 'auth.exchange_expired' | transloco }}</p>
                 <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
               }
               @case ('invalid') {
-                <i class="pi pi-times-circle" style="font-size: 2rem; color: var(--p-text-muted-color, #6b7280)"></i>
+                <i class="pi pi-times-circle exchange-icon"></i>
                 <p class="m0">{{ 'auth.exchange_invalid' | transloco }}</p>
                 <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
               }
@@ -40,30 +40,7 @@ type ExchangeState = 'working' | 'expired' | 'invalid';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .auth-shell {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .exchange {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        text-align: center;
-      }
-      .m0 {
-        margin: 0;
-      }
-      :host ::ng-deep .u-spinner {
-        width: 3rem;
-        height: 3rem;
-      }
-    `,
-  ],
+  styleUrl: './magic-link-exchange.component.scss',
 })
 export class MagicLinkExchangeComponent implements OnInit {
   private readonly router = inject(Router);

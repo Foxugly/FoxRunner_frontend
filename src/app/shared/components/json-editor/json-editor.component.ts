@@ -51,54 +51,7 @@ import { ButtonModule } from 'primeng/button';
       ></textarea>
     </div>
   `,
-  styles: [
-    `
-      .json-editor {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .json-editor__header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .json-editor__label {
-        font-weight: 600;
-      }
-      .json-editor__spacer {
-        flex: 1 1 0;
-      }
-      .json-editor__status {
-        font-size: 0.875rem;
-      }
-      .json-editor__status i {
-        margin-right: 0.25rem;
-      }
-      .json-editor__status--error {
-        color: var(--danger);
-      }
-      .json-editor__status--ok {
-        color: var(--muted);
-      }
-      textarea {
-        width: 100%;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 0.875rem;
-        padding: 0.5rem;
-        border: 1px solid var(--p-inputtext-border-color, #d4d4d8);
-        border-radius: 0.375rem;
-        background: var(--p-inputtext-background, #fff);
-        color: var(--p-inputtext-color, inherit);
-        resize: vertical;
-        min-height: 8rem;
-      }
-      textarea:focus {
-        outline: 2px solid var(--p-primary-color, #d97706);
-        outline-offset: -2px;
-      }
-    `,
-  ],
+  styleUrl: './json-editor.component.scss',
 })
 export class JsonEditorComponent implements OnChanges {
   @Input() label?: string;

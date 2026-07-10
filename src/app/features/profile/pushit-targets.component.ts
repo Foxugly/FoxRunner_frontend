@@ -191,37 +191,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
       </ng-template>
     </p-dialog>
   `,
-  styles: [
-    `
-      .card-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem;
-      }
-      .head-titles {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-      .card-title {
-        font-weight: 600;
-      }
-      .card-title i {
-        margin-right: 0.5rem;
-      }
-      .muted {
-        color: var(--muted);
-      }
-      .cell-right {
-        text-align: right;
-      }
-      .actions-cell {
-        text-align: right;
-        white-space: nowrap;
-      }
-    `,
-  ],
+  styleUrl: './pushit-targets.component.scss',
 })
 export class PushItTargetsComponent implements OnInit {
   private readonly service = inject(PushItTargetsService);

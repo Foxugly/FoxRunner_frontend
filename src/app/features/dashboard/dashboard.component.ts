@@ -69,7 +69,7 @@ interface HealthRow {
               @for (row of healthRows(); track row.key) {
                 <div class="health-row">
                   <span class="inline-2">
-                    <i [class]="'pi ' + iconFor(row.status)" [style.color]="colorFor(row.status)"></i>
+                    <i [class]="'pi ' + iconFor(row.status) + ' ' + iconClass(row.status)"></i>
                     {{ row.label }}
                   </span>
                   <span class="status-text">{{ statusText(row.status) }}</span>
@@ -105,7 +105,7 @@ interface HealthRow {
           </ng-template>
           @if (plan(); as p) {
             <div class="stat-body">
-              <div class="next-value" style="color: var(--accent)">{{ countdown() }}</div>
+              <div class="next-value">{{ countdown() }}</div>
               <a
                 [routerLink]="['/scenarios', p.scenario_id]"
                 class="scenario-link"
@@ -134,7 +134,7 @@ interface HealthRow {
             </div>
           </ng-template>
           <div class="stat-body">
-            <div class="scenario-count" style="color: var(--accent)">{{ scenarioCount() }}</div>
+            <div class="scenario-count">{{ scenarioCount() }}</div>
             <div class="status-text">
               {{ (scenarioCount() > 1 ? 'dashboard.scenarios.count_plural' : 'dashboard.scenarios.count_singular') | transloco }}
             </div>
@@ -191,156 +191,7 @@ interface HealthRow {
       </div>
     </div>
   `,
-  styles: [
-    `
-      .dash-grid {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: 1fr;
-      }
-      @media (min-width: 1024px) {
-        .dash-grid {
-          grid-template-columns: repeat(12, 1fr);
-        }
-        .dash-col-6 {
-          grid-column: span 6;
-        }
-        .dash-col-4 {
-          grid-column: span 4;
-        }
-        .dash-col-8 {
-          grid-column: span 8;
-        }
-      }
-
-      .card-head {
-        padding: 1rem;
-        padding-bottom: 0;
-      }
-      .health-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 1rem;
-        padding-bottom: 0;
-      }
-      .recent-head {
-        display: flex;
-        align-items: center;
-        padding: 1rem;
-        padding-bottom: 0;
-      }
-
-      .card-title {
-        font-weight: 600;
-      }
-      .card-title i {
-        margin-right: 0.5rem;
-      }
-
-      .stack-2 {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .inline-2 {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .inline-3 {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .health-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-      }
-      .status-text {
-        color: var(--muted);
-        font-size: 0.875rem;
-      }
-      .cmd-row {
-        font-size: 0.75rem;
-        margin-left: 1.5rem;
-        margin-top: -0.25rem;
-      }
-      .muted {
-        color: var(--muted);
-      }
-      .small {
-        font-size: 0.875rem;
-      }
-      .medium {
-        font-weight: 500;
-      }
-      .danger-text {
-        color: var(--danger);
-        font-size: 0.875rem;
-      }
-      .icon-2xl {
-        font-size: 1.5rem;
-      }
-
-      .stat-body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 0.5rem;
-        padding-block: 0.5rem;
-      }
-      .next-value {
-        font-size: 1.75rem;
-        font-weight: 700;
-      }
-      .scenario-count {
-        font-size: 2rem;
-        font-weight: 700;
-      }
-      .scenario-link {
-        font-size: 1.125rem;
-        font-weight: 600;
-        text-decoration: none;
-        color: var(--ink);
-      }
-      .date-line {
-        color: var(--muted);
-        font-size: 0.875rem;
-      }
-      .date-line i {
-        margin-right: 0.25rem;
-      }
-      .next-empty {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 0.5rem;
-        padding-block: 1rem;
-        color: var(--muted);
-      }
-      .stat-action {
-        margin-top: 0.5rem;
-      }
-
-      .recent-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        padding: 0.5rem;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        text-decoration: none;
-        color: var(--ink);
-      }
-    `,
-  ],
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
@@ -474,10 +325,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return 'pi-times-circle';
   }
 
-  colorFor(status: string): string {
-    if (status === 'ok') return 'var(--p-green-500, #22c55e)';
-    if (status === 'disabled') return 'var(--p-surface-400, #9ca3af)';
-    return 'var(--p-red-500, #ef4444)';
+  iconClass(status: string): string {
+    if (status === 'ok') return 'health-icon--ok';
+    if (status === 'disabled') return 'health-icon--disabled';
+    return 'health-icon--down';
   }
 
   statusText(status: string): string {

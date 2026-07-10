@@ -1,0 +1,11 @@
+.user-menu__trigger ::ng-deep .p-button-label {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1024px) {
+  .user-menu__trigger ::ng-deep .p-button-label {
+    display: none;
+  }
+}

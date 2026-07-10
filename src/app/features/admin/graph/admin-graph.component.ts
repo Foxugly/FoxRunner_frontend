@@ -91,9 +91,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
               <tr>
                 <th>{{ 'admin.graph.col_id' | transloco }}</th>
                 <th>{{ 'admin.graph.col_resource' | transloco }}</th>
-                <th style="width: 9rem">{{ 'admin.graph.col_type' | transloco }}</th>
-                <th style="width: 14rem">{{ 'admin.graph.col_expires' | transloco }}</th>
-                <th style="width: 9rem">{{ 'admin.graph.col_actions' | transloco }}</th>
+                <th class="col--type">{{ 'admin.graph.col_type' | transloco }}</th>
+                <th class="col--expires">{{ 'admin.graph.col_expires' | transloco }}</th>
+                <th class="col--actions">{{ 'admin.graph.col_actions' | transloco }}</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-s>
@@ -169,9 +169,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           >
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 14rem">{{ 'admin.graph.col_received' | transloco }}</th>
+                <th class="col--received">{{ 'admin.graph.col_received' | transloco }}</th>
                 <th>{{ 'admin.graph.col_subscription' | transloco }}</th>
-                <th style="width: 9rem">{{ 'admin.graph.col_change' | transloco }}</th>
+                <th class="col--change">{{ 'admin.graph.col_change' | transloco }}</th>
                 <th>{{ 'admin.graph.col_resource' | transloco }}</th>
                 <th>{{ 'admin.graph.col_lifecycle' | transloco }}</th>
               </tr>
@@ -307,44 +307,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-confirmDialog />
   `,
-  styles: [
-    `
-      .toolbar {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 0.5rem;
-        gap: 0.5rem;
-      }
-      .toolbar-single {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 0.5rem;
-      }
-      .id-code {
-        font-size: 0.75rem;
-      }
-      .res-cell {
-        font-size: 0.75rem;
-      }
-      .row-actions {
-        display: flex;
-        gap: 0.25rem;
-      }
-      .form-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .muted {
-        color: var(--muted);
-      }
-    `,
-  ],
+  styleUrl: './admin-graph.component.scss',
 })
 export class AdminGraphComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

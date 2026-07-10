@@ -27,12 +27,12 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     TranslocoPipe,
   ],
   template: `
-    <div class="auth-shell" style="min-height: 100vh;">
-      <div style="width: 100%; max-width: 420px;">
+    <div class="auth-shell">
+      <div class="auth-card">
         <p-card>
           <ng-template pTemplate="header">
             <div class="card-header">
-              <i class="pi pi-bolt" style="font-size: 2rem; color: var(--accent)"></i>
+              <i class="pi pi-bolt auth-brand-icon"></i>
               <span class="brand fox-brand">FoxRunner</span>
             </div>
           </ng-template>
@@ -130,56 +130,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
       </div>
     </div>
   `,
-  styles: [
-    `
-      .auth-shell {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .card-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 1.5rem;
-        padding-bottom: 0;
-      }
-      .brand {
-        font-size: 1.5rem;
-      }
-      .auth-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-      .check-row {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-      .check-label {
-        font-size: 0.875rem;
-      }
-      .link-center {
-        font-size: 0.875rem;
-        text-align: center;
-      }
-      .note {
-        font-size: 0.875rem;
-        text-align: center;
-        color: var(--muted);
-        margin: 0;
-      }
-      :host ::ng-deep .u-full {
-        width: 100%;
-      }
-    `,
-  ],
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);

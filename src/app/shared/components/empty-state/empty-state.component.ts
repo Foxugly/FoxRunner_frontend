@@ -22,53 +22,7 @@ type EmptyTone = 'emerald' | 'rose' | 'gray';
       <ng-content />
     </div>
   `,
-  styles: [
-    `
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding-block: 5rem;
-        padding-inline: 1.5rem;
-        text-align: center;
-      }
-      .empty-state__title {
-        margin-top: 1rem;
-        margin-bottom: 0.25rem;
-        font-size: 1.125rem;
-        font-weight: 500;
-      }
-      .empty-state__subtitle {
-        margin: 0;
-        margin-bottom: 1rem;
-        color: var(--muted);
-      }
-      .empty-pill {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 4rem;
-        height: 4rem;
-        border-radius: 9999px;
-      }
-      .empty-pill i {
-        font-size: 1.75rem;
-      }
-      .empty-pill--emerald {
-        background: rgba(16, 185, 129, 0.12);
-        color: #059669;
-      }
-      .empty-pill--rose {
-        background: rgba(244, 63, 94, 0.12);
-        color: #e11d48;
-      }
-      .empty-pill--gray {
-        background: rgba(107, 114, 128, 0.12);
-        color: #6b7280;
-      }
-    `,
-  ],
+  styleUrl: './empty-state.component.scss',
 })
 export class EmptyStateComponent {
   @Input({ required: true }) title = '';

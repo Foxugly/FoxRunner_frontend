@@ -90,14 +90,6 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </div>
     </div>
   `,
-  styles: [
-    `
-      .cards-grid {
-        display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-      }
-    `,
-  ],
+  styleUrl: './admin-home.component.scss',
 })
 export class AdminHomeComponent {}

@@ -91,23 +91,7 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
       </ng-template>
     </app-data-table>
   `,
-  styles: [
-    `
-      .id-code {
-        font-size: 0.75rem;
-      }
-      .table-toolbar {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.75rem;
-      }
-      .table-toolbar label {
-        cursor: pointer;
-        color: var(--ink-soft);
-      }
-    `,
-  ],
+  styleUrl: './admin-users.component.scss',
 })
 export class AdminUsersComponent implements OnInit {
   private readonly service = inject(AdminService);

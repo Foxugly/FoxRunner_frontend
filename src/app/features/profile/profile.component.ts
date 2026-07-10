@@ -84,20 +84,7 @@ import { PushItTargetsComponent } from './pushit-targets.component';
 
     <app-pushit-targets class="pushit-section" />
   `,
-  styles: [
-    `
-      :host ::ng-deep .profile-card {
-        max-width: 30rem;
-      }
-      :host ::ng-deep .u-full {
-        width: 100%;
-      }
-      .pushit-section {
-        display: block;
-        margin-top: 1.5rem;
-      }
-    `,
-  ],
+  styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
   readonly auth = inject(AuthService);
