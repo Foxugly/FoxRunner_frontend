@@ -211,7 +211,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       }
       .scn-card:not(.scn-card--static):hover {
         transform: translateY(-2px);
-        border-color: var(--fox-primary);
+        border-color: var(--accent);
         box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
       }
       .scn-card__icon {
@@ -223,7 +223,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         height: 2.5rem;
         border-radius: 9999px;
         background: rgba(16, 185, 129, 0.12);
-        color: var(--fox-primary);
+        color: var(--accent);
       }
       .scn-card__icon i {
         font-size: 1.15rem;
@@ -246,7 +246,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         margin-top: auto;
       }
       .scn-card__arrow {
-        color: var(--fox-primary);
+        color: var(--accent);
         opacity: 0;
         transform: translateX(-4px);
         transition:

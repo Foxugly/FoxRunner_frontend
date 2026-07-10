@@ -23,7 +23,7 @@ import { ButtonModule } from 'primeng/button';
 
       <div class="flex align-items-center justify-content-center gap-2 text-center flex-1 min-w-0">
         @if (icon) {
-          <i [class]="'pi ' + icon" style="font-size: 1.5rem; color: var(--fox-primary)"></i>
+          <i [class]="'pi ' + icon" style="font-size: 1.5rem; color: var(--accent)"></i>
         }
         <h1 class="m-0 text-2xl font-semibold">{{ title }}</h1>
       </div>

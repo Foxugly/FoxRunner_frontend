@@ -105,7 +105,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
         font-variant-numeric: tabular-nums;
         font-size: 0.8rem;
         font-weight: 600;
-        color: var(--fox-primary);
+        color: var(--accent);
       }
       .step-icon {
         margin-top: 0.15rem;

@@ -1,10 +1,7 @@
 @use 'primeicons/primeicons.css';
-@use 'primeflex/primeflex.css';
+@use 'primeflex/primeflex.css'; // legacy — à retirer progressivement (voir BACKLOG-layout.md)
+@use 'styles/tokens'; // design tokens de la flotte (:root + .dark-mode)
 @use 'styles/forms-meta';
-
-:root {
-  --fox-primary: #10b981;
-}
 
 html,
 body {
@@ -16,12 +13,12 @@ body {
     'Segoe UI',
     Roboto,
     sans-serif;
-  background: var(--p-content-background, #ffffff);
-  color: var(--p-text-color, #1f2937);
+  background: var(--surface-2);
+  color: var(--ink);
 }
 
 .fox-brand {
-  color: var(--fox-primary);
+  color: var(--accent);
   font-weight: 700;
 }
 
@@ -30,18 +27,18 @@ body {
    block/card links (e.g. the scenarios grid) don't underline on hover. Chrome
    (topbar/footer) sets its own colours. */
 a {
-  color: var(--fox-primary);
+  color: var(--accent);
   text-decoration: none;
 }
 a:hover {
-  color: #059669;
+  color: var(--accent-strong);
 }
 
 /* Topbar (dark): make PrimeNG secondary text-buttons legible on the dark bar. */
 .topbar .p-button.p-button-secondary.p-button-text {
-  color: #e2e8f0;
+  color: var(--chrome-ink);
 }
 .topbar .p-button.p-button-secondary.p-button-text:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: var(--chrome-ink-strong);
 }

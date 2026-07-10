@@ -71,7 +71,7 @@ export const appConfig: ApplicationConfig = {
         preset: FoxAura,
         options: {
           prefix: 'p',
-          darkModeSelector: '.fox-dark',
+          darkModeSelector: '.dark-mode',
           cssLayer: false,
         },
       },

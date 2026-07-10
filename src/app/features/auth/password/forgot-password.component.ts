@@ -17,7 +17,7 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
         <p-card>
           <ng-template pTemplate="header">
             <div class="flex align-items-center gap-2 p-4 pb-0">
-              <i class="pi pi-envelope" style="font-size: 1.75rem; color: var(--fox-primary)"></i>
+              <i class="pi pi-envelope" style="font-size: 1.75rem; color: var(--accent)"></i>
               <span class="text-xl fox-brand">Mot de passe oublié</span>
             </div>
           </ng-template>

@@ -103,7 +103,7 @@ interface HealthRow {
           </ng-template>
           @if (plan(); as p) {
             <div class="flex flex-column align-items-center text-center gap-2 py-2">
-              <div class="text-3xl font-bold" style="color: var(--fox-primary)">{{ countdown() }}</div>
+              <div class="text-3xl font-bold" style="color: var(--accent)">{{ countdown() }}</div>
               <a
                 [routerLink]="['/scenarios', p.scenario_id]"
                 class="text-lg font-semibold no-underline text-color"
@@ -132,7 +132,7 @@ interface HealthRow {
             </div>
           </ng-template>
           <div class="flex flex-column align-items-center text-center gap-2 py-2">
-            <div class="text-4xl font-bold" style="color: var(--fox-primary)">{{ scenarioCount() }}</div>
+            <div class="text-4xl font-bold" style="color: var(--accent)">{{ scenarioCount() }}</div>
             <div class="text-color-secondary text-sm">
               {{ scenarioCount() > 1 ? 'scénarios enregistrés' : 'scénario enregistré' }}
             </div>

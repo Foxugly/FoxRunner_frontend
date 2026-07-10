@@ -30,7 +30,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
         <p-card>
           <ng-template pTemplate="header">
             <div class="flex align-items-center gap-2 p-4 pb-0">
-              <i class="pi pi-bolt" style="font-size: 2rem; color: var(--fox-primary)"></i>
+              <i class="pi pi-bolt" style="font-size: 2rem; color: var(--accent)"></i>
               <span class="text-2xl fox-brand">FoxRunner</span>
             </div>
           </ng-template>
