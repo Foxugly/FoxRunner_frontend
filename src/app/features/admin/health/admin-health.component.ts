@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -21,6 +22,7 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
   imports: [
     DecimalPipe,
     RouterLink,
+    TranslocoPipe,
     CardModule,
     ButtonModule,
     TagModule,
@@ -28,11 +30,11 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi-heart" title="Santé du système">
+    <app-page-header icon="pi-heart" [title]="'admin.health.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -52,7 +54,7 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
         <p-card>
           <ng-template pTemplate="header">
             <div class="flex align-items-center justify-content-between p-3">
-              <strong>Validation configuration</strong>
+              <strong>{{ 'admin.health.config_title' | transloco }}</strong>
               @if (checks(); as c) {
                 <p-tag [severity]="checksSeverity()" [value]="c.status" />
               }
@@ -68,26 +70,26 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
               }
             </div>
           } @else {
-            <span class="text-color-secondary">Chargement…</span>
+            <span class="text-color-secondary">{{ 'admin.common.loading' | transloco }}</span>
           }
         </p-card>
       </div>
 
       <div class="col-12 lg:col-4">
-        <p-card header="Base de données">
+        <p-card [header]="'admin.health.db_title' | transloco">
           @if (db(); as d) {
             <div class="flex flex-column gap-2 text-sm">
-              <div><strong>Jobs en échec :</strong> {{ d.failed_jobs }}</div>
+              <div><strong>{{ 'admin.health.db_failed_jobs' | transloco }}</strong> {{ d.failed_jobs }}</div>
               <div>
-                <strong>Dernière exécution :</strong>
+                <strong>{{ 'admin.health.db_last_execution' | transloco }}</strong>
                 {{ d.last_execution_at | apiDate: 'medium' }}
               </div>
               <div>
-                <strong>Abonnements Graph expirant :</strong>
+                <strong>{{ 'admin.health.db_graph_expiring' | transloco }}</strong>
                 {{ d.graph_subscriptions_expiring }}
               </div>
               <hr />
-              <strong>Tables</strong>
+              <strong>{{ 'admin.health.db_tables' | transloco }}</strong>
               @for (entry of dbTableEntries(d); track entry.name) {
                 <div class="flex align-items-center justify-content-between">
                   <code>{{ entry.name }}</code>
@@ -96,38 +98,39 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
               }
             </div>
           } @else {
-            <span class="text-color-secondary">Chargement…</span>
+            <span class="text-color-secondary">{{ 'admin.common.loading' | transloco }}</span>
           }
         </p-card>
       </div>
 
       <div class="col-12 lg:col-4">
-        <p-card header="Monitoring jobs">
+        <p-card [header]="'admin.health.monitoring_title' | transloco">
           @if (monitoring(); as m) {
             <div class="flex flex-column gap-2 text-sm">
-              <div><strong>Total :</strong> {{ m.jobs.total }}</div>
-              <div><strong>En file :</strong> {{ m.jobs.queued }}</div>
-              <div><strong>En cours :</strong> {{ m.jobs.running }}</div>
+              <div><strong>{{ 'admin.health.mon_total' | transloco }}</strong> {{ m.jobs.total }}</div>
+              <div><strong>{{ 'admin.health.mon_queued' | transloco }}</strong> {{ m.jobs.queued }}</div>
+              <div><strong>{{ 'admin.health.mon_running' | transloco }}</strong> {{ m.jobs.running }}</div>
               <div class="text-red-500">
-                <strong>Échoués :</strong> {{ m.jobs.failed }}
+                <strong>{{ 'admin.health.mon_failed' | transloco }}</strong> {{ m.jobs.failed }}
               </div>
               <div class="text-orange-500">
-                <strong>Bloqués :</strong> {{ m.jobs.stuck }}
+                <strong>{{ 'admin.health.mon_stuck' | transloco }}</strong> {{ m.jobs.stuck }}
               </div>
               @if (m.jobs.average_duration_seconds !== null && m.jobs.average_duration_seconds !== undefined) {
                 <div>
-                  <strong>Durée moyenne :</strong>
+                  <strong>{{ 'admin.health.mon_avg_duration' | transloco }}</strong>
                   {{ m.jobs.average_duration_seconds | number: '1.0-2' }}s
                 </div>
               }
               <hr />
               <div>
-                <strong>Graph expirant bientôt :</strong>
-                {{ m.graph.subscriptions_expiring }} (&lt; {{ m.graph.expiring_within_hours }} h)
+                <strong>{{ 'admin.health.mon_graph_expiring' | transloco }}</strong>
+                {{ m.graph.subscriptions_expiring }}
+                {{ 'admin.health.mon_within_hours' | transloco: { hours: m.graph.expiring_within_hours } }}
               </div>
             </div>
           } @else {
-            <span class="text-color-secondary">Chargement…</span>
+            <span class="text-color-secondary">{{ 'admin.common.loading' | transloco }}</span>
           }
         </p-card>
       </div>

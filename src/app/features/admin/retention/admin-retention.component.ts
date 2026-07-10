@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -16,6 +17,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    TranslocoPipe,
     CardModule,
     ButtonModule,
     InputNumberModule,
@@ -23,11 +25,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi-trash" title="Rétention">
+    <app-page-header icon="pi-trash" [title]="'admin.retention.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -37,38 +39,38 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <p-card styleClass="max-w-30rem">
       <form [formGroup]="form" class="flex flex-column gap-3">
         <div class="flex flex-column gap-2">
-          <label for="jobs">Jobs plus anciens que (jours)</label>
+          <label for="jobs">{{ 'admin.retention.label_jobs' | transloco }}</label>
           <p-inputnumber
             inputId="jobs"
             formControlName="jobs_days"
             [min]="0"
             [max]="3650"
-            suffix=" j"
+            [suffix]="'admin.common.day_suffix' | transloco"
           />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="audit">Audit plus ancien que (jours)</label>
+          <label for="audit">{{ 'admin.retention.label_audit' | transloco }}</label>
           <p-inputnumber
             inputId="audit"
             formControlName="audit_days"
             [min]="0"
             [max]="3650"
-            suffix=" j"
+            [suffix]="'admin.common.day_suffix' | transloco"
           />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="graph">Notifications Graph plus anciennes que (jours)</label>
+          <label for="graph">{{ 'admin.retention.label_graph' | transloco }}</label>
           <p-inputnumber
             inputId="graph"
             formControlName="graph_notifications_days"
             [min]="0"
             [max]="3650"
-            suffix=" j"
+            [suffix]="'admin.common.day_suffix' | transloco"
           />
         </div>
         <div class="flex gap-2">
           <p-button
-            label="Exécuter la purge"
+            [label]="'admin.retention.run_button' | transloco"
             icon="pi pi-trash"
             severity="danger"
             [loading]="running()"
@@ -80,11 +82,12 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     </p-card>
 
     @if (result(); as r) {
-      <p-card styleClass="mt-3" header="Résultat de la dernière purge">
+      <p-card styleClass="mt-3" [header]="'admin.retention.result_title' | transloco">
         <ul>
           @for (entry of removedEntries(r); track entry.key) {
             <li>
-              <strong>{{ entry.key }} :</strong> {{ entry.count }} lignes supprimées
+              <strong>{{ entry.key }} :</strong>
+              {{ 'admin.retention.rows_removed' | transloco: { count: entry.count } }}
             </li>
           }
         </ul>
@@ -99,6 +102,7 @@ export class AdminRetentionComponent {
   private readonly service = inject(AdminService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly running = signal(false);
   readonly result = signal<RetentionResult | null>(null);
@@ -118,12 +122,11 @@ export class AdminRetentionComponent {
 
   askRun(): void {
     this.confirm.confirm({
-      header: 'Confirmer la purge',
-      message:
-        'Cette action supprime définitivement les lignes correspondantes. Continuer ?',
+      header: this.i18n.translate('admin.retention.confirm_header'),
+      message: this.i18n.translate('admin.retention.confirm_message'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Purger',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.i18n.translate('admin.retention.confirm_accept'),
+      rejectLabel: this.i18n.translate('admin.common.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: () => this.run(),
     });
@@ -141,8 +144,8 @@ export class AdminRetentionComponent {
       this.result.set(r);
       this.messages.add({
         severity: 'success',
-        summary: 'Purge effectuée',
-        detail: 'Voir le résultat ci-dessous.',
+        summary: this.i18n.translate('admin.retention.toast_done'),
+        detail: this.i18n.translate('admin.retention.toast_detail'),
         life: 3000,
       });
     } catch {

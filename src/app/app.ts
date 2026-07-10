@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from './core/auth/auth.service';
 import { NetworkHealthService } from './core/http/network-health.service';
 import { SystemStatusService } from './core/api/system-status.service';
@@ -15,6 +16,7 @@ import { FooterComponent } from './core/layout/footer/footer.component';
     RouterOutlet,
     ToastModule,
     ConfirmDialogModule,
+    TranslocoPipe,
     TopmenuComponent,
     FooterComponent,
   ],

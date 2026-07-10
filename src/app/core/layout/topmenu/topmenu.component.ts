@@ -4,8 +4,10 @@ import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../auth/auth.service';
 import { ThemeService } from '../../theme/theme.service';
+import { LanguageService } from '../../i18n/language.service';
 import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
 
 interface NavLink {
@@ -24,6 +26,7 @@ interface NavLink {
     ButtonModule,
     MenuModule,
     TooltipModule,
+    TranslocoPipe,
     LanguageSwitcherComponent,
   ],
   templateUrl: './topmenu.component.html',
@@ -32,23 +35,32 @@ interface NavLink {
 export class TopmenuComponent {
   readonly auth = inject(AuthService);
   readonly theme = inject(ThemeService);
+  private readonly i18n = inject(TranslocoService);
+  private readonly lang = inject(LanguageService);
   readonly menuOpen = signal(false);
 
   readonly links = computed<NavLink[]>(() => {
     const base: NavLink[] = [
-      { label: 'Tableau de bord', icon: 'pi pi-home', link: '/', exact: true },
-      { label: 'Scénarios', icon: 'pi pi-sitemap', link: '/scenarios' },
+      { label: 'chrome.nav.dashboard', icon: 'pi pi-home', link: '/', exact: true },
+      { label: 'chrome.nav.scenarios', icon: 'pi pi-sitemap', link: '/scenarios' },
     ];
     if (this.auth.isSuperuser()) {
-      base.push({ label: 'Admin', icon: 'pi pi-cog', link: '/admin' });
+      base.push({ label: 'chrome.nav.admin', icon: 'pi pi-cog', link: '/admin' });
     }
     return base;
   });
 
-  readonly userMenu = computed<MenuItem[]>(() => [
-    { label: 'Profil', icon: 'pi pi-user', routerLink: '/profile' },
-    { label: 'Déconnexion', icon: 'pi pi-sign-out', command: () => void this.logout() },
-  ]);
+  readonly userMenu = computed<MenuItem[]>(() => {
+    this.lang.activeLang();
+    return [
+      { label: this.i18n.translate('chrome.user.profile'), icon: 'pi pi-user', routerLink: '/profile' },
+      {
+        label: this.i18n.translate('chrome.user.logout'),
+        icon: 'pi pi-sign-out',
+        command: () => void this.logout(),
+      },
+    ];
+  });
 
   toggleMenu(): void {
     this.menuOpen.update((v) => !v);

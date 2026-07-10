@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
@@ -18,6 +19,7 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
   imports: [
     FormsModule,
     RouterLink,
+    TranslocoPipe,
     ButtonModule,
     TooltipModule,
     ToggleSwitchModule,
@@ -26,11 +28,11 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
     CellTemplateDirective,
   ],
   template: `
-    <app-page-header icon="pi-users" title="Utilisateurs">
+    <app-page-header icon="pi-users" [title]="'admin.users.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -51,28 +53,28 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
       [loading]="loading()"
       dataKey="id"
       emptyIcon="pi-users"
-      emptyTitle="Aucun utilisateur"
+      [emptyTitle]="'admin.users.empty_title' | transloco"
     >
       <ng-template appCell="id" let-u><code class="text-xs">{{ u.id }}</code></ng-template>
       <ng-template appCell="is_active" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_active"
           (onChange)="updateFlag(u, 'is_active', u.is_active)"
-          [ariaLabel]="'Actif — ' + u.email"
+          [ariaLabel]="'admin.users.aria_active' | transloco: { email: u.email }"
         />
       </ng-template>
       <ng-template appCell="is_superuser" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_superuser"
           (onChange)="updateFlag(u, 'is_superuser', u.is_superuser)"
-          [ariaLabel]="'Superuser — ' + u.email"
+          [ariaLabel]="'admin.users.aria_superuser' | transloco: { email: u.email }"
         />
       </ng-template>
       <ng-template appCell="is_verified" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_verified"
           (onChange)="updateFlag(u, 'is_verified', u.is_verified)"
-          [ariaLabel]="'Vérifié — ' + u.email"
+          [ariaLabel]="'admin.users.aria_verified' | transloco: { email: u.email }"
         />
       </ng-template>
     </app-data-table>
@@ -81,17 +83,18 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
 export class AdminUsersComponent implements OnInit {
   private readonly service = inject(AdminService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly items = signal<UserSummary[]>([]);
   readonly loading = signal(false);
 
   readonly columns: DataTableColumn[] = [
-    { field: 'email', header: 'Email', sortable: true },
-    { field: 'id', header: 'UUID', width: '18rem', searchable: false },
-    { field: 'timezone_name', header: 'Fuseau', sortable: true },
-    { field: 'is_active', header: 'Actif', width: '6rem', searchable: false },
-    { field: 'is_superuser', header: 'Superuser', width: '8rem', searchable: false },
-    { field: 'is_verified', header: 'Vérifié', width: '7rem', searchable: false },
+    { field: 'email', header: this.i18n.translate('admin.users.col_email'), sortable: true },
+    { field: 'id', header: this.i18n.translate('admin.users.col_uuid'), width: '18rem', searchable: false },
+    { field: 'timezone_name', header: this.i18n.translate('admin.users.col_timezone'), sortable: true },
+    { field: 'is_active', header: this.i18n.translate('admin.users.col_active'), width: '6rem', searchable: false },
+    { field: 'is_superuser', header: this.i18n.translate('admin.users.col_superuser'), width: '8rem', searchable: false },
+    { field: 'is_verified', header: this.i18n.translate('admin.users.col_verified'), width: '7rem', searchable: false },
   ];
 
   ngOnInit(): void {
@@ -127,7 +130,7 @@ export class AdminUsersComponent implements OnInit {
       await this.service.updateUser(user.id, { [field]: value });
       this.messages.add({
         severity: 'success',
-        summary: 'Utilisateur mis à jour',
+        summary: this.i18n.translate('admin.users.toast_updated'),
         detail: `${user.email} · ${field}=${value}`,
         life: 2500,
       });

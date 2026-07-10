@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../core/auth/auth.service';
 import { TimezonesService } from '../../core/api/timezones.service';
 import { FormFooterComponent } from '../../shared/components/form-footer/form-footer.component';
@@ -25,17 +26,18 @@ import { PushItTargetsComponent } from './pushit-targets.component';
     FormFooterComponent,
     PageHeaderComponent,
     PushItTargetsComponent,
+    TranslocoPipe,
   ],
   template: `
     <app-page-header
       icon="pi-user"
-      title="Profil"
+      [title]="'profile.title' | transloco"
     />
 
     <p-card styleClass="max-w-30rem">
       <div class="meta-grid">
         <div class="meta-item">
-          <label class="meta-label" for="email">Email</label>
+          <label class="meta-label" for="email">{{ 'profile.email' | transloco }}</label>
           <div class="meta-value">
             <input
               id="email"
@@ -49,10 +51,10 @@ import { PushItTargetsComponent } from './pushit-targets.component';
 
         <div class="meta-item">
           <label class="meta-label" for="tz">
-            Fuseau horaire (IANA)
+            {{ 'profile.timezone.label' | transloco }}
             <i
               class="pi pi-info-circle"
-              pTooltip="Les horodatages de l'API sont affichés dans ce fuseau. Les horaires de slots (08:00, etc.) restent exprimés en heure locale métier."
+              [pTooltip]="'profile.timezone.tooltip' | transloco"
               tooltipPosition="top"
             ></i>
           </label>
@@ -64,7 +66,7 @@ import { PushItTargetsComponent } from './pushit-targets.component';
               (completeMethod)="onSearch($event)"
               [dropdown]="true"
               [forceSelection]="false"
-              placeholder="Europe/Brussels"
+              [placeholder]="'profile.timezone.placeholder' | transloco"
               appendTo="body"
               styleClass="w-full"
             />
@@ -87,6 +89,7 @@ export class ProfileComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly tzService = inject(TimezonesService);
   private readonly messages = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly selectedTimezone = signal<string>('');
   readonly saving = signal(false);
@@ -126,8 +129,8 @@ export class ProfileComponent implements OnInit {
       await this.auth.updateTimezone(tz);
       this.messages.add({
         severity: 'success',
-        summary: 'Profil mis à jour',
-        detail: `Fuseau horaire : ${tz}`,
+        summary: this.transloco.translate('profile.toast.updated.summary'),
+        detail: this.transloco.translate('profile.toast.updated.detail', { tz }),
         life: 3000,
       });
     } catch {

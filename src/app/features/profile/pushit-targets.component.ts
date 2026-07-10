@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { PushItTargetsService } from '../../core/api/pushit-targets.service';
 import type { PushItTarget } from '../../core/api/types';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -29,6 +30,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
     TooltipModule,
     EmptyStateComponent,
     FormFooterComponent,
+    TranslocoPipe,
   ],
   template: `
     <p-card>
@@ -36,15 +38,14 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
         <div class="flex align-items-center justify-content-between p-3">
           <div class="flex flex-column gap-1">
             <span class="font-semibold">
-              <i class="pi pi-bell mr-2"></i>Applications PushIT
+              <i class="pi pi-bell mr-2"></i>{{ 'profile.pushit.title' | transloco }}
             </span>
             <small class="text-color-secondary">
-              Vos notifications (alertes du scheduleur + étapes <code>notify</code>) passent par
-              ces apps. La configuration est personnelle : personne d'autre ne la voit.
+              {{ 'profile.pushit.subtitle_before' | transloco }} <code>notify</code>{{ 'profile.pushit.subtitle_after' | transloco }}
             </small>
           </div>
           <p-button
-            label="Ajouter"
+            [label]="'profile.pushit.add' | transloco"
             icon="pi pi-plus"
             severity="success"
             size="small"
@@ -61,11 +62,11 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
       >
         <ng-template #header>
           <tr>
-            <th>Nom</th>
-            <th>Token</th>
-            <th>Titre</th>
-            <th>Défaut</th>
-            <th class="text-right">Actions</th>
+            <th>{{ 'profile.pushit.table.name' | transloco }}</th>
+            <th>{{ 'profile.pushit.table.token' | transloco }}</th>
+            <th>{{ 'profile.pushit.table.title' | transloco }}</th>
+            <th>{{ 'profile.pushit.table.default' | transloco }}</th>
+            <th class="text-right">{{ 'profile.pushit.table.actions' | transloco }}</th>
           </tr>
         </ng-template>
         <ng-template #body let-t>
@@ -75,7 +76,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
             <td>{{ t.title }}</td>
             <td>
               @if (t.is_default) {
-                <p-tag value="défaut" severity="success" />
+                <p-tag [value]="'profile.pushit.default_tag' | transloco" severity="success" />
               }
             </td>
             <td class="text-right white-space-nowrap">
@@ -84,7 +85,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
                 severity="secondary"
                 [text]="true"
                 size="small"
-                pTooltip="Tester"
+                [pTooltip]="'profile.pushit.test' | transloco"
                 [loading]="testingId() === t.id"
                 (onClick)="test(t)"
               />
@@ -109,11 +110,11 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
       } @else {
         <app-empty-state
           icon="pi-bell"
-          title="Aucune application PushIT"
-          subtitle="Ajoutez une application pour recevoir vos notifications (alertes du scheduleur et étapes notify)."
+          [title]="'profile.pushit.empty.title' | transloco"
+          [subtitle]="'profile.pushit.empty.subtitle' | transloco"
         >
           <p-button
-            label="Ajouter"
+            [label]="'profile.pushit.add' | transloco"
             icon="pi pi-plus"
             severity="success"
             size="small"
@@ -134,31 +135,31 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
       <form [formGroup]="form" (ngSubmit)="save()">
         <div class="meta-grid">
           <div class="meta-item">
-            <label class="meta-label" for="pit-name">Nom</label>
+            <label class="meta-label" for="pit-name">{{ 'profile.pushit.form.name' | transloco }}</label>
             <div class="meta-value">
-              <input id="pit-name" pInputText formControlName="name" placeholder="Mon téléphone" />
+              <input id="pit-name" pInputText formControlName="name" [placeholder]="'profile.pushit.form.name_placeholder' | transloco" />
             </div>
           </div>
           <div class="meta-item">
-            <label class="meta-label" for="pit-token">Token de l'app (X-App-Token)</label>
+            <label class="meta-label" for="pit-token">{{ 'profile.pushit.form.token' | transloco }}</label>
             <div class="meta-value">
-              <input id="pit-token" pInputText formControlName="app_token" placeholder="apt_…" />
+              <input id="pit-token" pInputText formControlName="app_token" [placeholder]="'profile.pushit.form.token_placeholder' | transloco" />
             </div>
           </div>
           <div class="meta-item">
-            <label class="meta-label" for="pit-base">URL de base de l'API</label>
+            <label class="meta-label" for="pit-base">{{ 'profile.pushit.form.base_url' | transloco }}</label>
             <div class="meta-value">
               <input id="pit-base" pInputText formControlName="base_url" />
             </div>
           </div>
           <div class="meta-item">
-            <label class="meta-label" for="pit-title">Titre des notifications</label>
+            <label class="meta-label" for="pit-title">{{ 'profile.pushit.form.title' | transloco }}</label>
             <div class="meta-value">
               <input id="pit-title" pInputText formControlName="title" />
             </div>
           </div>
           <div class="meta-item">
-            <span class="meta-label">Application par défaut</span>
+            <span class="meta-label">{{ 'profile.pushit.form.default' | transloco }}</span>
             <div class="meta-value">
               <p-checkbox inputId="pit-default" formControlName="is_default" [binary]="true" />
             </div>
@@ -181,12 +182,12 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
       (visibleChange)="$event || confirmId.set(null)"
       [modal]="true"
       [style]="{ width: '26rem' }"
-      header="Supprimer l'application ?"
+      [header]="'profile.pushit.delete.title' | transloco"
     >
-      <p>Cette action est définitive.</p>
+      <p>{{ 'profile.pushit.delete.body' | transloco }}</p>
       <ng-template #footer>
-        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="confirmId.set(null)" />
-        <p-button label="Supprimer" icon="pi pi-trash" severity="danger" (onClick)="remove()" />
+        <p-button [label]="'profile.pushit.delete.cancel' | transloco" severity="secondary" [text]="true" (onClick)="confirmId.set(null)" />
+        <p-button [label]="'profile.pushit.delete.confirm' | transloco" icon="pi pi-trash" severity="danger" (onClick)="remove()" />
       </ng-template>
     </p-dialog>
   `,
@@ -195,6 +196,7 @@ export class PushItTargetsComponent implements OnInit {
   private readonly service = inject(PushItTargetsService);
   private readonly messages = inject(MessageService);
   private readonly fb = inject(FormBuilder);
+  private readonly transloco = inject(TranslocoService);
 
   readonly targets = signal<PushItTarget[]>([]);
   readonly loading = signal(false);
@@ -217,7 +219,9 @@ export class PushItTargetsComponent implements OnInit {
   }
 
   dialogHeader(): string {
-    return this.editingId() === null ? 'Nouvelle application PushIT' : "Modifier l'application";
+    return this.transloco.translate(
+      this.editingId() === null ? 'profile.pushit.dialog.create' : 'profile.pushit.dialog.edit',
+    );
   }
 
   mask(token: string): string {
@@ -276,10 +280,10 @@ export class PushItTargetsComponent implements OnInit {
     try {
       if (id === null) {
         await this.service.create(dto);
-        this.messages.add({ severity: 'success', summary: 'Application créée', life: 3000 });
+        this.messages.add({ severity: 'success', summary: this.transloco.translate('profile.pushit.toast.created'), life: 3000 });
       } else {
         await this.service.update(id, dto);
-        this.messages.add({ severity: 'success', summary: 'Application mise à jour', life: 3000 });
+        this.messages.add({ severity: 'success', summary: this.transloco.translate('profile.pushit.toast.updated'), life: 3000 });
       }
       this.dialogOpen.set(false);
       await this.reload();
@@ -295,7 +299,7 @@ export class PushItTargetsComponent implements OnInit {
     if (id === null) return;
     try {
       await this.service.remove(id);
-      this.messages.add({ severity: 'success', summary: 'Application supprimée', life: 3000 });
+      this.messages.add({ severity: 'success', summary: this.transloco.translate('profile.pushit.toast.deleted'), life: 3000 });
       await this.reload();
     } catch {
       /* interceptor toasts */
@@ -310,8 +314,13 @@ export class PushItTargetsComponent implements OnInit {
       const result = await this.service.test(t.id);
       this.messages.add(
         result.sent
-          ? { severity: 'success', summary: 'Notification envoyée', detail: t.name, life: 3000 }
-          : { severity: 'warn', summary: 'Échec de l\'envoi', detail: 'Vérifiez le token.', life: 4000 },
+          ? { severity: 'success', summary: this.transloco.translate('profile.pushit.toast.test_sent'), detail: t.name, life: 3000 }
+          : {
+              severity: 'warn',
+              summary: this.transloco.translate('profile.pushit.toast.test_failed'),
+              detail: this.transloco.translate('profile.pushit.toast.test_failed_detail'),
+              life: 4000,
+            },
       );
     } catch {
       /* interceptor toasts */

@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { stepLabel, type StepLike } from '../../../core/api/step-label';
 
 /** PrimeIcon per step type, so a step reads at a glance. */
@@ -43,7 +44,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
 @Component({
   selector: 'app-step-display',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [ButtonModule, TranslocoPipe],
   template: `
     <div class="flex flex-column gap-2">
       @for (step of steps(); track $index) {
@@ -61,7 +62,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
               }
               @if (catchOf(step); as kids) {
                 <div class="step-children">
-                  <div class="step-caption">En cas d'erreur :</div>
+                  <div class="step-caption">{{ 'common.step.on_error' | transloco }}</div>
                   <app-step-display [steps]="kids" [prefix]="prefix() + ($index + 1) + '.e'" />
                 </div>
               }
@@ -73,7 +74,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
                   [rounded]="true"
                   [text]="true"
                   size="small"
-                  ariaLabel="Éditer l'étape"
+                  [ariaLabel]="'common.step.edit_aria' | transloco"
                   (onClick)="edit.emit($index)"
                 />
                 <p-button
@@ -82,7 +83,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
                   [text]="true"
                   size="small"
                   severity="danger"
-                  ariaLabel="Supprimer l'étape"
+                  [ariaLabel]="'common.step.delete_aria' | transloco"
                   (onClick)="remove.emit($index)"
                 />
               </div>

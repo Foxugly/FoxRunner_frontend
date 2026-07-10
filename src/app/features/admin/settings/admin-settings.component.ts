@@ -1,6 +1,7 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -24,6 +25,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     RouterLink,
+    TranslocoPipe,
     ButtonModule,
     DialogModule,
     InputTextModule,
@@ -38,11 +40,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi-sliders-h" title="Paramètres applicatifs">
+    <app-page-header icon="pi-sliders-h" [title]="'admin.settings.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -55,7 +57,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         [loading]="loading()"
         (onClick)="reload()"
       />
-      <p-button slot="right" label="Nouveau" icon="pi pi-plus" (onClick)="openCreate()" />
+      <p-button slot="right" [label]="'admin.common.new' | transloco" icon="pi pi-plus" (onClick)="openCreate()" />
     </app-page-header>
 
     <app-data-table
@@ -64,8 +66,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       [loading]="loading()"
       dataKey="key"
       emptyIcon="pi-sliders-h"
-      emptyTitle="Aucun paramètre"
-      emptyMessage="Crée un paramètre pour le voir ici."
+      [emptyTitle]="'admin.settings.empty_title' | transloco"
+      [emptyMessage]="'admin.settings.empty_message' | transloco"
     >
       <ng-template appCell="key" let-s><code>{{ s.key }}</code></ng-template>
       <ng-template appCell="description" let-s>
@@ -96,26 +98,26 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <p-dialog
       [modal]="true"
       [(visible)]="dialogOpen"
-      [header]="dialogHeader()"
+      [header]="(editing() ? 'admin.settings.dialog_edit' : 'admin.settings.dialog_new') | transloco"
       [style]="{ width: '640px' }"
       [closable]="!saving()"
     >
       <div class="meta-grid">
         <div class="meta-item">
-          <label class="meta-label" for="key">Clé</label>
+          <label class="meta-label" for="key">{{ 'admin.settings.label_key' | transloco }}</label>
           <div class="meta-value">
             <input id="key" pInputText [(ngModel)]="draftKey" [disabled]="editing()" />
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="desc">Description</label>
+          <label class="meta-label" for="desc">{{ 'admin.settings.label_description' | transloco }}</label>
           <div class="meta-value">
             <textarea id="desc" pTextarea rows="2" [(ngModel)]="draftDesc"></textarea>
           </div>
         </div>
         <div class="meta-item meta-item--full">
           <app-json-editor
-            label="Valeur (JSON)"
+            [label]="'admin.settings.label_value' | transloco"
             [value]="draftValue()"
             (valueChange)="onValueChange($event)"
             (validChange)="draftValid.set($event)"
@@ -140,23 +142,21 @@ export class AdminSettingsComponent implements OnInit {
   private readonly service = inject(AdminService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly items = signal<AppSetting[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
 
   readonly columns: DataTableColumn[] = [
-    { field: 'key', header: 'Clé', sortable: true },
-    { field: 'description', header: 'Description', sortable: true },
-    { field: 'updated_at', header: 'Modifié le', sortable: true, width: '12rem' },
-    { field: 'actions', header: 'Actions', width: '9rem', searchable: false },
+    { field: 'key', header: this.i18n.translate('admin.settings.col_key'), sortable: true },
+    { field: 'description', header: this.i18n.translate('admin.settings.col_description'), sortable: true },
+    { field: 'updated_at', header: this.i18n.translate('admin.settings.col_updated'), sortable: true, width: '12rem' },
+    { field: 'actions', header: this.i18n.translate('admin.settings.col_actions'), width: '9rem', searchable: false },
   ];
 
   dialogOpen = false;
   readonly editing = signal(false);
-  readonly dialogHeader = computed(() =>
-    this.editing() ? 'Modifier le paramètre' : 'Nouveau paramètre',
-  );
   draftKey = '';
   draftDesc = '';
   readonly draftValue = signal<Record<string, unknown>>({});
@@ -225,7 +225,9 @@ export class AdminSettingsComponent implements OnInit {
       });
       this.messages.add({
         severity: 'success',
-        summary: this.editing() ? 'Paramètre mis à jour' : 'Paramètre créé',
+        summary: this.i18n.translate(
+          this.editing() ? 'admin.settings.toast_updated' : 'admin.settings.toast_created',
+        ),
         detail: this.draftKey,
         life: 2500,
       });
@@ -240,18 +242,18 @@ export class AdminSettingsComponent implements OnInit {
 
   askDelete(s: AppSetting): void {
     this.confirm.confirm({
-      header: `Supprimer « ${s.key} » ?`,
-      message: 'Cette action est irréversible.',
+      header: this.i18n.translate('admin.settings.delete_header', { key: s.key }),
+      message: this.i18n.translate('admin.settings.delete_message'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.i18n.translate('admin.common.delete'),
+      rejectLabel: this.i18n.translate('admin.common.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         try {
           await this.service.deleteSetting(s.key);
           this.messages.add({
             severity: 'success',
-            summary: 'Paramètre supprimé',
+            summary: this.i18n.translate('admin.settings.toast_deleted'),
             detail: s.key,
             life: 2500,
           });

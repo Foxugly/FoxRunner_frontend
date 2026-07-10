@@ -5,7 +5,7 @@
       <span class="topbar__brand-name">FoxRunner</span>
     </a>
 
-    <nav class="topbar__nav" aria-label="Navigation principale">
+    <nav class="topbar__nav" [attr.aria-label]="'chrome.nav.aria_main' | transloco">
       @for (item of links(); track item.link) {
         <a
           [routerLink]="item.link"
@@ -14,7 +14,7 @@
           class="topbar__link"
         >
           <i [class]="item.icon"></i>
-          <span>{{ item.label }}</span>
+          <span>{{ item.label | transloco }}</span>
         </a>
       }
     </nav>
@@ -26,8 +26,8 @@
         severity="secondary"
         [text]="true"
         (onClick)="theme.toggle()"
-        pTooltip="Basculer thème"
-        ariaLabel="Basculer thème"
+        [pTooltip]="'chrome.theme.toggle' | transloco"
+        [ariaLabel]="'chrome.theme.toggle' | transloco"
       />
       <app-language-switcher />
       <p-menu #userMenuPopup [model]="userMenu()" [popup]="true" appendTo="body" />
@@ -37,7 +37,7 @@
         severity="secondary"
         [text]="true"
         (onClick)="userMenuPopup.toggle($event)"
-        ariaLabel="Menu utilisateur"
+        [ariaLabel]="'chrome.user.menu_aria' | transloco"
         aria-haspopup="true"
         class="topbar__user"
       />
@@ -45,7 +45,7 @@
         type="button"
         class="topbar__toggle"
         [attr.aria-expanded]="menuOpen()"
-        [attr.aria-label]="menuOpen() ? 'Fermer le menu' : 'Ouvrir le menu'"
+        [attr.aria-label]="menuOpen() ? ('chrome.menu.close' | transloco) : ('chrome.menu.open' | transloco)"
         (click)="toggleMenu()"
       >
         <i class="pi" [class.pi-bars]="!menuOpen()" [class.pi-times]="menuOpen()"></i>
@@ -54,7 +54,7 @@
   </div>
 
   @if (menuOpen()) {
-    <nav class="topbar__drawer" aria-label="Navigation mobile">
+    <nav class="topbar__drawer" [attr.aria-label]="'chrome.nav.aria_mobile' | transloco">
       @for (item of links(); track item.link) {
         <a
           [routerLink]="item.link"
@@ -64,7 +64,7 @@
           (click)="closeMenu()"
         >
           <i [class]="item.icon"></i>
-          <span>{{ item.label }}</span>
+          <span>{{ item.label | transloco }}</span>
         </a>
       }
     </nav>

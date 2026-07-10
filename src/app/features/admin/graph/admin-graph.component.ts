@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -25,6 +26,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     FormsModule,
     ReactiveFormsModule,
     RouterLink,
+    TranslocoPipe,
     TableModule,
     TabsModule,
     CardModule,
@@ -40,11 +42,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi-cloud" title="Microsoft Graph">
+    <app-page-header icon="pi-cloud" [title]="'admin.graph.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -53,8 +55,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <p-tabs value="subs">
       <p-tablist>
-        <p-tab value="subs">Abonnements ({{ subsTotal() }})</p-tab>
-        <p-tab value="notifs">Notifications ({{ notifsTotal() }})</p-tab>
+        <p-tab value="subs">{{ 'admin.graph.tab_subs' | transloco: { count: subsTotal() } }}</p-tab>
+        <p-tab value="notifs">{{ 'admin.graph.tab_notifs' | transloco: { count: notifsTotal() } }}</p-tab>
       </p-tablist>
       <p-tabpanels>
         <p-tabpanel value="subs">
@@ -67,7 +69,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
               (onClick)="reloadSubs()"
             />
             <p-button
-              label="Créer un abonnement"
+              [label]="'admin.graph.create_button' | transloco"
               icon="pi pi-plus"
               (onClick)="openCreate()"
             />
@@ -87,11 +89,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           >
             <ng-template pTemplate="header">
               <tr>
-                <th>ID</th>
-                <th>Ressource</th>
-                <th style="width: 9rem">Type</th>
-                <th style="width: 14rem">Expire le</th>
-                <th style="width: 9rem">Actions</th>
+                <th>{{ 'admin.graph.col_id' | transloco }}</th>
+                <th>{{ 'admin.graph.col_resource' | transloco }}</th>
+                <th style="width: 9rem">{{ 'admin.graph.col_type' | transloco }}</th>
+                <th style="width: 14rem">{{ 'admin.graph.col_expires' | transloco }}</th>
+                <th style="width: 9rem">{{ 'admin.graph.col_actions' | transloco }}</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-s>
@@ -102,7 +104,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
                 <td>
                   <div>{{ s.expiration_datetime | apiDate: 'medium' }}</div>
                   @if (isExpiringSoon(s)) {
-                    <p-tag severity="warn" value="Expire bientôt" />
+                    <p-tag severity="warn" [value]="'admin.graph.expiring_soon' | transloco" />
                   }
                 </td>
                 <td>
@@ -112,7 +114,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
                       [rounded]="true"
                       [text]="true"
                       size="small"
-                      pTooltip="Renouveler"
+                      [pTooltip]="'admin.graph.tooltip_renew' | transloco"
                       (onClick)="openRenew(s)"
                     />
                     <p-button
@@ -121,7 +123,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
                       [text]="true"
                       size="small"
                       severity="danger"
-                      pTooltip="Supprimer"
+                      [pTooltip]="'admin.graph.tooltip_delete' | transloco"
                       (onClick)="askDelete(s)"
                     />
                   </div>
@@ -133,8 +135,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
                 <td colspan="5">
                   <app-empty-state
                     icon="pi-cloud"
-                    title="Aucun abonnement"
-                    message="Crée un abonnement Graph pour recevoir des notifications."
+                    [title]="'admin.graph.subs_empty_title' | transloco"
+                    [message]="'admin.graph.subs_empty_message' | transloco"
                   />
                 </td>
               </tr>
@@ -167,11 +169,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           >
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 14rem">Reçu</th>
-                <th>Subscription</th>
-                <th style="width: 9rem">Change</th>
-                <th>Ressource</th>
-                <th>Lifecycle</th>
+                <th style="width: 14rem">{{ 'admin.graph.col_received' | transloco }}</th>
+                <th>{{ 'admin.graph.col_subscription' | transloco }}</th>
+                <th style="width: 9rem">{{ 'admin.graph.col_change' | transloco }}</th>
+                <th>{{ 'admin.graph.col_resource' | transloco }}</th>
+                <th>{{ 'admin.graph.col_lifecycle' | transloco }}</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-n>
@@ -186,7 +188,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             <ng-template pTemplate="emptymessage">
               <tr>
                 <td colspan="5">
-                  <app-empty-state icon="pi-inbox" title="Aucune notification" />
+                  <app-empty-state icon="pi-inbox" [title]="'admin.graph.notifs_empty_title' | transloco" />
                 </td>
               </tr>
             </ng-template>
@@ -198,13 +200,13 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <p-dialog
       [modal]="true"
       [(visible)]="createOpen"
-      header="Créer un abonnement Graph"
+      [header]="'admin.graph.create_dialog_title' | transloco"
       [style]="{ width: '600px' }"
       [closable]="!saving()"
     >
       <form [formGroup]="createForm" class="flex flex-column gap-3">
         <div class="flex flex-column gap-2">
-          <label for="resource">Ressource</label>
+          <label for="resource">{{ 'admin.graph.label_resource' | transloco }}</label>
           <input
             id="resource"
             pInputText
@@ -213,7 +215,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="change_type">Change type</label>
+          <label for="change_type">{{ 'admin.graph.label_change_type' | transloco }}</label>
           <input
             id="change_type"
             pInputText
@@ -222,7 +224,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="notification_url">Notification URL</label>
+          <label for="notification_url">{{ 'admin.graph.label_notification_url' | transloco }}</label>
           <input
             id="notification_url"
             pInputText
@@ -231,7 +233,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="lifecycle_url">Lifecycle URL (optionnel)</label>
+          <label for="lifecycle_url">{{ 'admin.graph.label_lifecycle_url' | transloco }}</label>
           <input
             id="lifecycle_url"
             pInputText
@@ -240,7 +242,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="expires">Expire le</label>
+          <label for="expires">{{ 'admin.graph.label_expires' | transloco }}</label>
           <p-datepicker
             inputId="expires"
             formControlName="expiration_datetime"
@@ -252,14 +254,14 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </form>
       <ng-template pTemplate="footer">
         <p-button
-          label="Annuler"
+          [label]="'admin.common.cancel' | transloco"
           severity="secondary"
           [text]="true"
           (onClick)="createOpen = false"
           [disabled]="saving()"
         />
         <p-button
-          label="Créer"
+          [label]="'admin.graph.create_submit' | transloco"
           icon="pi pi-plus"
           [loading]="saving()"
           [disabled]="createForm.invalid || saving()"
@@ -271,12 +273,12 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <p-dialog
       [modal]="true"
       [(visible)]="renewOpen"
-      header="Renouveler l'abonnement"
+      [header]="'admin.graph.renew_dialog_title' | transloco"
       [style]="{ width: '460px' }"
     >
       <div class="flex flex-column gap-3">
         <div class="text-color-secondary">
-          Nouvelle date d'expiration pour
+          {{ 'admin.graph.renew_text' | transloco }}
           <code>{{ renewTarget()?.subscription_id }}</code>.
         </div>
         <p-datepicker
@@ -288,13 +290,13 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </div>
       <ng-template pTemplate="footer">
         <p-button
-          label="Annuler"
+          [label]="'admin.common.cancel' | transloco"
           severity="secondary"
           [text]="true"
           (onClick)="renewOpen = false"
         />
         <p-button
-          label="Renouveler"
+          [label]="'admin.graph.renew_submit' | transloco"
           icon="pi pi-refresh"
           [loading]="saving()"
           [disabled]="!renewDate || saving()"
@@ -311,6 +313,7 @@ export class AdminGraphComponent implements OnInit {
   private readonly service = inject(GraphService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly subs = signal<GraphSubscription[]>([]);
   readonly subsTotal = signal(0);
@@ -426,7 +429,7 @@ export class AdminGraphComponent implements OnInit {
       });
       this.messages.add({
         severity: 'success',
-        summary: 'Abonnement créé',
+        summary: this.i18n.translate('admin.graph.toast_created'),
         life: 2500,
       });
       this.createOpen = false;
@@ -456,7 +459,7 @@ export class AdminGraphComponent implements OnInit {
       });
       this.messages.add({
         severity: 'success',
-        summary: 'Abonnement renouvelé',
+        summary: this.i18n.translate('admin.graph.toast_renewed'),
         life: 2500,
       });
       this.renewOpen = false;
@@ -470,18 +473,18 @@ export class AdminGraphComponent implements OnInit {
 
   askDelete(s: GraphSubscription): void {
     this.confirm.confirm({
-      header: `Supprimer l'abonnement ?`,
-      message: `${s.subscription_id} ne recevra plus de notifications.`,
+      header: this.i18n.translate('admin.graph.delete_header'),
+      message: this.i18n.translate('admin.graph.delete_message', { id: s.subscription_id }),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.i18n.translate('admin.common.delete'),
+      rejectLabel: this.i18n.translate('admin.common.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         try {
           await this.service.deleteSubscription(s.subscription_id);
           this.messages.add({
             severity: 'success',
-            summary: 'Abonnement supprimé',
+            summary: this.i18n.translate('admin.graph.toast_deleted'),
             life: 2500,
           });
           this.reloadSubs();

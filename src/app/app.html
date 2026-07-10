@@ -8,8 +8,7 @@
     aria-live="assertive"
   >
     <i class="pi pi-exclamation-triangle mr-2"></i>
-    Le backend semble injoignable ({{ network.consecutiveErrors() }} erreurs consécutives).
-    Vérifie que l'API tourne sur
+    {{ 'chrome.offline.message' | transloco: { count: network.consecutiveErrors() } }}
     <code>http://127.0.0.1:8000</code>.
   </div>
 }
@@ -23,7 +22,11 @@
   >
     <i class="pi pi-exclamation-triangle mr-2"></i>
     <span class="fox-system-banner__title">
-      {{ systemStatus.severity() === 'down' ? 'Incident système' : 'Service dégradé' }}
+      {{
+        systemStatus.severity() === 'down'
+          ? ('chrome.system.incident' | transloco)
+          : ('chrome.system.degraded' | transloco)
+      }}
     </span>
     <ul class="fox-system-banner__list">
       @for (item of systemStatus.items(); track item.label) {
@@ -31,7 +34,7 @@
           {{ item.label }}
           @if (item.command) {
             <span class="fox-system-banner__fix">
-              — à relancer : <code>{{ item.command }}</code>
+              — {{ 'chrome.system.restart' | transloco }} <code>{{ item.command }}</code>
             </span>
           }
         </li>
@@ -42,7 +45,7 @@
 
 @if (auth.isLoggedIn()) {
   <div class="fox-shell">
-    <a href="#main-content" class="fox-skip-link">Aller au contenu</a>
+    <a href="#main-content" class="fox-skip-link">{{ 'chrome.skip_link' | transloco }}</a>
     <app-topmenu />
     <main id="main-content" tabindex="-1" class="main-container">
       <router-outlet />

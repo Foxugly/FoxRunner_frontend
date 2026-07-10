@@ -6,6 +6,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
@@ -20,13 +21,14 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     TableModule,
     ConfirmDialogModule,
     EmptyStateComponent,
+    TranslocoPipe,
   ],
   template: `
     <p-dialog
       [modal]="true"
       [visible]="visible"
       (visibleChange)="visibleChange.emit($event)"
-      header="Partages du scénario"
+      [header]="'scenarios.shares.header' | transloco"
       [style]="{ width: '560px' }"
       (onShow)="load()"
     >
@@ -35,12 +37,12 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
           <input
             pInputText
             [(ngModel)]="newUserId"
-            placeholder="email ou UUID à ajouter"
+            [placeholder]="'scenarios.shares.add_placeholder' | transloco"
             class="flex-1"
             [disabled]="saving()"
           />
           <p-button
-            label="Ajouter"
+            [label]="'scenarios.shares.add' | transloco"
             icon="pi pi-plus"
             severity="success"
             [loading]="saving()"
@@ -52,14 +54,14 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         @if (userIds().length === 0 && !loading()) {
           <app-empty-state
             icon="pi-share-alt"
-            title="Aucun partage"
-            message="Ajoute un utilisateur pour lui donner un accès lecture."
+            [title]="'scenarios.shares.empty_title' | transloco"
+            [message]="'scenarios.shares.empty_message' | transloco"
           />
         } @else {
           <p-table [value]="userIds()" [loading]="loading()" styleClass="p-datatable-sm">
             <ng-template pTemplate="header">
               <tr>
-                <th>Utilisateur</th>
+                <th>{{ 'scenarios.shares.col_user' | transloco }}</th>
                 <th style="width: 5rem"></th>
               </tr>
             </ng-template>
@@ -83,7 +85,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       </div>
       <ng-template pTemplate="footer">
         <p-button
-          label="Fermer"
+          [label]="'scenarios.common.close' | transloco"
           severity="secondary"
           [text]="true"
           (onClick)="visibleChange.emit(false)"
@@ -98,6 +100,7 @@ export class SharesDialogComponent {
   private readonly service = inject(ScenariosService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   @Input({ required: true }) scenarioId = '';
   @Input() visible = false;
@@ -129,7 +132,7 @@ export class SharesDialogComponent {
       await this.service.addShare(this.scenarioId, { user_id: target });
       this.messages.add({
         severity: 'success',
-        summary: 'Partage ajouté',
+        summary: this.transloco.translate('scenarios.shares.toast_added'),
         detail: target,
         life: 2500,
       });
@@ -144,18 +147,18 @@ export class SharesDialogComponent {
 
   askRemove(userId: string): void {
     this.confirm.confirm({
-      header: `Retirer « ${userId} » ?`,
-      message: 'Cet utilisateur perdra immédiatement accès au scénario.',
+      header: this.transloco.translate('scenarios.shares.confirm_remove_header', { id: userId }),
+      message: this.transloco.translate('scenarios.shares.confirm_remove_message'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Retirer',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.transloco.translate('scenarios.shares.remove_accept'),
+      rejectLabel: this.transloco.translate('scenarios.common.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         try {
           await this.service.removeShare(this.scenarioId, userId);
           this.messages.add({
             severity: 'success',
-            summary: 'Partage retiré',
+            summary: this.transloco.translate('scenarios.shares.toast_removed'),
             detail: userId,
             life: 2500,
           });

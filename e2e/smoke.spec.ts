@@ -19,7 +19,7 @@ test.describe('FoxRunner smoke', () => {
     await expect(page.getByText('FoxRunner')).toBeVisible();
   });
 
-  test('login flow lands on dashboard and menubar shows feature entries', async ({ page }) => {
+  test('login flow lands on dashboard and topbar shows feature entries', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.goto('/login');
 
@@ -30,8 +30,9 @@ test.describe('FoxRunner smoke', () => {
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
 
-    for (const label of ['Scénarios', 'Exécutions', 'Plan']) {
-      await expect(page.getByRole('menuitem', { name: label })).toBeVisible();
+    // Topbar nav (custom links, not a PrimeNG menubar): dashboard, scenarios, admin.
+    for (const label of ['Tableau de bord', 'Scénarios', 'Admin']) {
+      await expect(page.getByRole('link', { name: label })).toBeVisible();
     }
 
     expect(errors).toEqual([]);
@@ -44,7 +45,9 @@ test.describe('FoxRunner smoke', () => {
     await page.getByRole('button', { name: /Se connecter/ }).click();
     await expect(page).toHaveURL(/\/$/);
 
-    await page.getByRole('button', { name: 'Déconnexion' }).click();
+    // Logout lives in the user dropdown: open it from the user button first.
+    await page.locator('.topbar__user').click();
+    await page.getByRole('menuitem', { name: 'Déconnexion' }).click();
     await expect(page).toHaveURL(/\/login$/);
   });
 });

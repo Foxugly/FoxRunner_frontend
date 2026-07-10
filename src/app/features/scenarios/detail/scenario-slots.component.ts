@@ -11,6 +11,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { SlotsService } from '../../../core/api/slots.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
 import type { Slot, SlotSummary } from '../../../core/api/types';
@@ -18,17 +19,17 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 
 interface DayOption {
   value: number;
-  label: string;
+  key: string;
 }
 
 const DAYS: readonly DayOption[] = [
-  { value: 0, label: 'Lu' },
-  { value: 1, label: 'Ma' },
-  { value: 2, label: 'Me' },
-  { value: 3, label: 'Je' },
-  { value: 4, label: 'Ve' },
-  { value: 5, label: 'Sa' },
-  { value: 6, label: 'Di' },
+  { value: 0, key: 'mon' },
+  { value: 1, key: 'tue' },
+  { value: 2, key: 'wed' },
+  { value: 3, key: 'thu' },
+  { value: 4, key: 'fri' },
+  { value: 5, key: 'sat' },
+  { value: 6, key: 'sun' },
 ] as const;
 
 /**
@@ -54,12 +55,13 @@ const DAYS: readonly DayOption[] = [
     CheckboxModule,
     SkeletonModule,
     EmptyStateComponent,
+    TranslocoPipe,
   ],
   template: `
     <div class="flex align-items-center justify-content-between mb-3">
-      <span class="font-semibold"><i class="pi pi-calendar mr-2"></i>Planification</span>
+      <span class="font-semibold"><i class="pi pi-calendar mr-2"></i>{{ 'scenarios.slots.heading' | transloco }}</span>
       @if (canEdit()) {
-        <p-button label="Créneau" icon="pi pi-plus" severity="success" size="small" (onClick)="openCreate()" />
+        <p-button [label]="'scenarios.slots.new_button' | transloco" icon="pi pi-plus" severity="success" size="small" (onClick)="openCreate()" />
       }
     </div>
 
@@ -72,8 +74,8 @@ const DAYS: readonly DayOption[] = [
     } @else if (slots().length === 0) {
       <app-empty-state
         icon="pi-calendar"
-        title="Aucun créneau planifié"
-        message="Ce scénario n'a pas encore de créneau planifié."
+        [title]="'scenarios.slots.empty_title' | transloco"
+        [message]="'scenarios.slots.empty_message' | transloco"
       />
     } @else {
       <div class="flex flex-column gap-2">
@@ -82,7 +84,7 @@ const DAYS: readonly DayOption[] = [
             <div class="flex align-items-center gap-3 flex-wrap">
               <div class="flex gap-1">
                 @for (d of days; track d.value) {
-                  <p-tag [severity]="s.days.includes(d.value) ? 'success' : 'secondary'" [value]="d.label" />
+                  <p-tag [severity]="s.days.includes(d.value) ? 'success' : 'secondary'" [value]="'scenarios.slots.day.' + d.key | transloco" />
                 }
               </div>
               <span class="font-medium">{{ s.start }} → {{ s.end }}</span>
@@ -93,11 +95,11 @@ const DAYS: readonly DayOption[] = [
                 [(ngModel)]="s.enabled"
                 [disabled]="!canEdit()"
                 (onChange)="toggleEnabled(s)"
-                [ariaLabel]="'Actif — créneau ' + s.slot_id"
+                [ariaLabel]="'scenarios.slots.enabled_aria' | transloco: { id: s.slot_id }"
               />
               @if (canEdit()) {
-                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" size="small" severity="secondary" (onClick)="openEdit(s)" pTooltip="Modifier" />
-                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" size="small" severity="danger" (onClick)="askDelete(s)" pTooltip="Supprimer" />
+                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" size="small" severity="secondary" (onClick)="openEdit(s)" [pTooltip]="'scenarios.common.edit' | transloco" />
+                <p-button icon="pi pi-trash" [rounded]="true" [text]="true" size="small" severity="danger" (onClick)="askDelete(s)" [pTooltip]="'scenarios.common.delete' | transloco" />
               }
             </div>
           </div>
@@ -108,46 +110,46 @@ const DAYS: readonly DayOption[] = [
     <p-dialog
       [modal]="true"
       [(visible)]="dialogOpen"
-      [header]="editingId() ? 'Modifier le créneau' : 'Nouveau créneau'"
+      [header]="(editingId() ? 'scenarios.slots.edit_header' : 'scenarios.slots.new_header') | transloco"
       [style]="{ width: '460px' }"
       [closable]="!saving()"
     >
       <form [formGroup]="form" class="flex flex-column gap-3">
         <div class="flex flex-column gap-2">
-          <label for="ss-slot-id">Identifiant du créneau</label>
+          <label for="ss-slot-id">{{ 'scenarios.slots.id_label' | transloco }}</label>
           <input id="ss-slot-id" pInputText formControlName="slot_id" placeholder="morning_check" />
         </div>
         <div class="flex flex-column gap-2">
-          <label for="ss-days">Jours</label>
+          <label for="ss-days">{{ 'scenarios.slots.days_label' | transloco }}</label>
           <p-multiselect
             inputId="ss-days"
-            [options]="daysOptions"
+            [options]="dayOptions()"
             optionLabel="label"
             optionValue="value"
             formControlName="days"
-            placeholder="Lundi à vendredi"
+            [placeholder]="'scenarios.slots.days_placeholder' | transloco"
             display="chip"
             appendTo="body"
           />
         </div>
         <div class="flex gap-3">
           <div class="flex flex-column gap-2 flex-1">
-            <label for="ss-start">Début (HH:MM)</label>
+            <label for="ss-start">{{ 'scenarios.slots.start_label' | transloco }}</label>
             <p-inputmask inputId="ss-start" mask="99:99" formControlName="start" placeholder="08:00" slotChar="_" />
           </div>
           <div class="flex flex-column gap-2 flex-1">
-            <label for="ss-end">Fin (HH:MM)</label>
+            <label for="ss-end">{{ 'scenarios.slots.end_label' | transloco }}</label>
             <p-inputmask inputId="ss-end" mask="99:99" formControlName="end" placeholder="08:15" slotChar="_" />
           </div>
         </div>
         <div class="flex align-items-center gap-2">
           <p-checkbox inputId="ss-enabled" [binary]="true" formControlName="enabled" />
-          <label for="ss-enabled">Activé</label>
+          <label for="ss-enabled">{{ 'scenarios.slots.enabled_label' | transloco }}</label>
         </div>
       </form>
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="closeDialog()" [disabled]="saving()" />
-        <p-button label="Enregistrer" icon="pi pi-save" [loading]="saving()" [disabled]="form.invalid || saving()" (onClick)="save()" />
+        <p-button [label]="'scenarios.common.cancel' | transloco" severity="secondary" [text]="true" (onClick)="closeDialog()" [disabled]="saving()" />
+        <p-button [label]="'scenarios.common.save' | transloco" icon="pi pi-save" [loading]="saving()" [disabled]="form.invalid || saving()" (onClick)="save()" />
       </ng-template>
     </p-dialog>
   `,
@@ -161,13 +163,21 @@ export class ScenarioSlotsComponent implements OnInit {
   private readonly slotsService = inject(SlotsService);
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly slots = signal<SlotSummary[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
 
   readonly days = DAYS;
-  readonly daysOptions = [...DAYS];
+
+  /** Multiselect options with day labels translated in the active language. */
+  dayOptions(): { value: number; label: string }[] {
+    return DAYS.map((d) => ({
+      value: d.value,
+      label: this.transloco.translate('scenarios.slots.day.' + d.key),
+    }));
+  }
 
   dialogOpen = false;
   readonly editingId = signal<string | null>(null);
@@ -246,7 +256,7 @@ export class ScenarioSlotsComponent implements OnInit {
           end: values.end,
           enabled: values.enabled,
         });
-        this.messages.add({ severity: 'success', summary: 'Créneau mis à jour', detail: values.slot_id, life: 3000 });
+        this.messages.add({ severity: 'success', summary: this.transloco.translate('scenarios.slots.toast_updated'), detail: values.slot_id, life: 3000 });
       } else {
         const dto: Slot = {
           slot_id: values.slot_id,
@@ -257,7 +267,7 @@ export class ScenarioSlotsComponent implements OnInit {
           enabled: values.enabled,
         };
         await this.slotsService.create(dto, this.idempotencyKey);
-        this.messages.add({ severity: 'success', summary: 'Créneau créé', detail: values.slot_id, life: 3000 });
+        this.messages.add({ severity: 'success', summary: this.transloco.translate('scenarios.slots.toast_created'), detail: values.slot_id, life: 3000 });
       }
       this.closeDialog();
       await this.load();
@@ -273,7 +283,7 @@ export class ScenarioSlotsComponent implements OnInit {
       await this.slotsService.patch(s.slot_id, { enabled: s.enabled });
       this.messages.add({
         severity: 'success',
-        summary: s.enabled ? 'Créneau activé' : 'Créneau désactivé',
+        summary: this.transloco.translate(s.enabled ? 'scenarios.slots.toast_enabled' : 'scenarios.slots.toast_disabled'),
         detail: s.slot_id,
         life: 2000,
       });
@@ -284,16 +294,16 @@ export class ScenarioSlotsComponent implements OnInit {
 
   askDelete(s: SlotSummary): void {
     this.confirm.confirm({
-      header: `Supprimer « ${s.slot_id} » ?`,
-      message: 'Cette action est irréversible.',
+      header: this.transloco.translate('scenarios.slots.confirm_delete_header', { id: s.slot_id }),
+      message: this.transloco.translate('scenarios.slots.confirm_delete_message'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.transloco.translate('scenarios.common.delete'),
+      rejectLabel: this.transloco.translate('scenarios.common.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         try {
           await this.slotsService.remove(s.slot_id);
-          this.messages.add({ severity: 'success', summary: 'Créneau supprimé', detail: s.slot_id, life: 3000 });
+          this.messages.add({ severity: 'success', summary: this.transloco.translate('scenarios.slots.toast_deleted'), detail: s.slot_id, life: 3000 });
           await this.load();
         } catch {
           /* toast */

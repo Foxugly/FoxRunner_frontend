@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -16,6 +17,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     RouterLink,
+    TranslocoPipe,
     CardModule,
     ButtonModule,
     ToggleSwitchModule,
@@ -23,11 +25,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     JsonEditorComponent,
   ],
   template: `
-    <app-page-header icon="pi-file-export" title="Catalogue">
+    <app-page-header icon="pi-file-export" [title]="'admin.catalog.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -36,21 +38,20 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <div class="grid">
       <div class="col-12 lg:col-6">
-        <p-card header="Export">
+        <p-card [header]="'admin.catalog.export_title' | transloco">
           <p class="text-color-secondary">
-            Récupère l'ensemble des scénarios et slots persistés au format JSON pour sauvegarde
-            ou audit.
+            {{ 'admin.catalog.export_desc' | transloco }}
           </p>
           <div class="flex gap-2 mt-2">
             <p-button
-              label="Charger l'export"
+              [label]="'admin.catalog.load_export' | transloco"
               icon="pi pi-download"
               [loading]="exporting()"
               (onClick)="loadExport()"
             />
             @if (exportData()) {
               <p-button
-                label="Télécharger .json"
+                [label]="'admin.catalog.download_json' | transloco"
                 icon="pi pi-save"
                 severity="secondary"
                 (onClick)="downloadExport()"
@@ -59,20 +60,20 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </div>
           @if (exportData(); as e) {
             <div class="mt-3 text-sm text-color-secondary">
-              {{ countKeys(e.scenarios) }} scénarios, {{ countKeys(e.slots) }} slots chargés.
+              {{ 'admin.catalog.export_loaded' | transloco: { scenarios: countKeys(e.scenarios), slots: countKeys(e.slots) } }}
             </div>
           }
         </p-card>
       </div>
 
       <div class="col-12 lg:col-6">
-        <p-card header="Import">
+        <p-card [header]="'admin.catalog.import_title' | transloco">
           <p class="text-color-secondary">
-            Colle le JSON d'un export précédent. Le mode <em>dry-run</em> simule l'import sans
-            écrire en base.
+            {{ 'admin.catalog.import_desc_before' | transloco }} <em>dry-run</em>
+            {{ 'admin.catalog.import_desc_after' | transloco }}
           </p>
           <app-json-editor
-            label="Payload JSON"
+            [label]="'admin.catalog.import_label' | transloco"
             [value]="importDraft()"
             (valueChange)="onImportChange($event)"
             (validChange)="importValid.set($event)"
@@ -80,11 +81,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           />
           <div class="flex align-items-center gap-3 mt-3">
             <p-toggleswitch inputId="dry" [(ngModel)]="dryRun" />
-            <label for="dry">Dry-run</label>
+            <label for="dry">{{ 'admin.catalog.dryrun_label' | transloco }}</label>
           </div>
           <div class="flex gap-2 mt-3">
             <p-button
-              label="Lancer l'import"
+              [label]="'admin.catalog.run_import' | transloco"
               icon="pi pi-upload"
               [severity]="dryRun ? 'secondary' : 'warn'"
               [loading]="importing()"
@@ -95,12 +96,12 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           @if (importResult(); as r) {
             <div class="mt-3 text-sm">
               @if (r.dry_run) {
-                <i class="pi pi-info-circle text-color-secondary mr-1"></i>Simulation uniquement.
+                <i class="pi pi-info-circle text-color-secondary mr-1"></i>{{ 'admin.catalog.result_dryrun' | transloco }}
               } @else {
-                <i class="pi pi-check text-green-500 mr-1"></i>Import effectué.
+                <i class="pi pi-check text-green-500 mr-1"></i>{{ 'admin.catalog.result_done' | transloco }}
               }
               <div class="mt-1">
-                Scénarios : {{ r.scenarios ?? '—' }} · Slots : {{ r.slots ?? '—' }}
+                {{ 'admin.catalog.result_counts' | transloco: { scenarios: r.scenarios ?? '—', slots: r.slots ?? '—' } }}
               </div>
             </div>
           }
@@ -112,6 +113,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 export class AdminCatalogComponent {
   private readonly service = inject(AdminService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly exporting = signal(false);
   readonly importing = signal(false);
@@ -137,8 +139,11 @@ export class AdminCatalogComponent {
       this.exportData.set(data);
       this.messages.add({
         severity: 'success',
-        summary: 'Export chargé',
-        detail: `${this.countKeys(data.scenarios)} scénarios, ${this.countKeys(data.slots)} slots`,
+        summary: this.i18n.translate('admin.catalog.toast_export_loaded'),
+        detail: this.i18n.translate('admin.catalog.toast_export_detail', {
+          scenarios: this.countKeys(data.scenarios),
+          slots: this.countKeys(data.slots),
+        }),
         life: 2500,
       });
     } catch {
@@ -169,8 +174,13 @@ export class AdminCatalogComponent {
       this.importResult.set(r);
       this.messages.add({
         severity: 'success',
-        summary: r.dry_run ? 'Dry-run terminé' : 'Import effectué',
-        detail: `Scénarios : ${r.scenarios ?? '—'} · Slots : ${r.slots ?? '—'}`,
+        summary: this.i18n.translate(
+          r.dry_run ? 'admin.catalog.toast_dryrun_done' : 'admin.catalog.toast_import_done',
+        ),
+        detail: this.i18n.translate('admin.catalog.result_counts', {
+          scenarios: r.scenarios ?? '—',
+          slots: r.slots ?? '—',
+        }),
         life: 3500,
       });
     } catch {

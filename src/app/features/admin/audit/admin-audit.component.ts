@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
@@ -18,6 +19,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   imports: [
     FormsModule,
     RouterLink,
+    TranslocoPipe,
     TableModule,
     ButtonModule,
     InputTextModule,
@@ -28,11 +30,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi-list" title="Audit">
+    <app-page-header icon="pi-list" [title]="'admin.audit.title' | transloco">
       <p-button
         slot="left"
         icon="pi pi-arrow-left"
-        label="Retour"
+        [label]="'admin.common.back' | transloco"
         [outlined]="true"
         severity="secondary"
         routerLink="/admin"
@@ -49,27 +51,27 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <div class="flex gap-3 mb-3 flex-wrap">
       <div class="flex flex-column gap-1">
-        <label for="actor" class="text-sm text-color-secondary">Acteur</label>
+        <label for="actor" class="text-sm text-color-secondary">{{ 'admin.audit.filter_actor' | transloco }}</label>
         <input
           id="actor"
           pInputText
           [(ngModel)]="filterActor"
-          placeholder="email ou UUID"
+          [placeholder]="'admin.audit.filter_actor_ph' | transloco"
           (keyup.enter)="reload()"
         />
       </div>
       <div class="flex flex-column gap-1">
-        <label for="tgt-type" class="text-sm text-color-secondary">Type cible</label>
+        <label for="tgt-type" class="text-sm text-color-secondary">{{ 'admin.audit.filter_target_type' | transloco }}</label>
         <input
           id="tgt-type"
           pInputText
           [(ngModel)]="filterTargetType"
-          placeholder="scenario, slot, user, setting…"
+          [placeholder]="'admin.audit.filter_target_type_ph' | transloco"
           (keyup.enter)="reload()"
         />
       </div>
       <div class="flex flex-column gap-1">
-        <label for="tgt-id" class="text-sm text-color-secondary">ID cible</label>
+        <label for="tgt-id" class="text-sm text-color-secondary">{{ 'admin.audit.filter_target_id' | transloco }}</label>
         <input
           id="tgt-id"
           pInputText
@@ -79,7 +81,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       </div>
       <div class="flex align-items-end">
         <p-button
-          label="Appliquer"
+          [label]="'admin.common.apply' | transloco"
           icon="pi pi-filter"
           severity="secondary"
           [text]="true"
@@ -103,11 +105,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 12rem">Quand</th>
-          <th>Acteur</th>
-          <th>Action</th>
-          <th>Cible</th>
-          <th>Détails</th>
+          <th style="width: 12rem">{{ 'admin.audit.col_when' | transloco }}</th>
+          <th>{{ 'admin.audit.col_actor' | transloco }}</th>
+          <th>{{ 'admin.audit.col_action' | transloco }}</th>
+          <th>{{ 'admin.audit.col_target' | transloco }}</th>
+          <th>{{ 'admin.audit.col_details' | transloco }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-a>
@@ -136,8 +138,8 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           <td colspan="5">
             <app-empty-state
               icon="pi-list"
-              title="Aucune entrée"
-              message="Le journal est vide pour ces filtres."
+              [title]="'admin.audit.empty_title' | transloco"
+              [message]="'admin.audit.empty_message' | transloco"
             />
           </td>
         </tr>
