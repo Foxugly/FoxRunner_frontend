@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -60,6 +60,7 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
   selector: 'app-job-detail',
   standalone: true,
   imports: [
+    RouterLink,
     CardModule,
     ButtonModule,
     TagModule,
@@ -72,13 +73,18 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
     StatusTagComponent,
   ],
   template: `
-    <app-page-header
-      icon="pi-play"
-      [title]="'Job ' + (jobIdShort() || '…')"
-      [backLink]="job()?.target_id ? ['/scenarios', job()!.target_id] : '/scenarios'"
-      [backQueryParams]="{ tab: 'executions' }"
-    >
+    <app-page-header icon="pi-play" [title]="'Job ' + (jobIdShort() || '…')">
       <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        [routerLink]="job()?.target_id ? ['/scenarios', job()!.target_id] : '/scenarios'"
+        [queryParams]="{ tab: 'executions' }"
+      />
+      <p-button
+        slot="right"
         icon="pi pi-refresh"
         severity="secondary"
         [text]="true"
@@ -87,6 +93,7 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
       />
       @if (job()?.status === 'queued' || job()?.status === 'running') {
         <p-button
+          slot="right"
           label="Annuler"
           icon="pi pi-times"
           severity="danger"
@@ -96,6 +103,7 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
       }
       @if (job()?.status === 'failed' || job()?.status === 'cancelled') {
         <p-button
+          slot="right"
           label="Relancer"
           icon="pi pi-refresh"
           severity="secondary"

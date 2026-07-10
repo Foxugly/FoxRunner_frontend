@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -28,6 +29,7 @@ const KIND_OPTIONS: KindOption[] = [
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
     TableModule,
     ButtonModule,
     SelectModule,
@@ -38,12 +40,17 @@ const KIND_OPTIONS: KindOption[] = [
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header
-      icon="pi-image"
-      title="Artefacts"
-      [backLink]="'/admin'"
-    >
+    <app-page-header icon="pi-image" title="Artefacts">
       <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        routerLink="/admin"
+      />
+      <p-button
+        slot="right"
         icon="pi pi-refresh"
         severity="secondary"
         [text]="true"

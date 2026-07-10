@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -40,6 +40,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     ButtonModule,
     CardModule,
     TabsModule,
@@ -62,9 +63,17 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
     <app-page-header
       icon="pi-sitemap"
       [title]="scenario()?.scenario_id ?? 'Scénario'"
-      [backLink]="['/scenarios']"
     >
       <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        [routerLink]="['/scenarios']"
+      />
+      <p-button
+        slot="right"
         [rounded]="true"
         [outlined]="true"
         severity="secondary"
@@ -77,6 +86,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
         (onClick)="triggerRun(true)"
       />
       <p-button
+        slot="right"
         [rounded]="true"
         [outlined]="true"
         severity="warn"
@@ -89,6 +99,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
         (onClick)="confirmRealRun()"
       />
       <p-button
+        slot="right"
         [rounded]="true"
         [outlined]="true"
         severity="secondary"
@@ -101,6 +112,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       />
       @if (isOwner()) {
         <p-button
+          slot="right"
           [rounded]="true"
           [outlined]="true"
           severity="secondary"
@@ -113,6 +125,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       }
       @if (isOwner()) {
         <p-button
+          slot="right"
           [rounded]="true"
           [outlined]="true"
           severity="danger"

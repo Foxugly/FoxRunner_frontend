@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -19,6 +20,7 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
   standalone: true,
   imports: [
     DecimalPipe,
+    RouterLink,
     CardModule,
     ButtonModule,
     TagModule,
@@ -26,12 +28,17 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header
-      icon="pi-heart"
-      title="Santé du système"
-      [backLink]="'/admin'"
-    >
+    <app-page-header icon="pi-heart" title="Santé du système">
       <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        routerLink="/admin"
+      />
+      <p-button
+        slot="right"
         icon="pi pi-refresh"
         severity="secondary"
         [text]="true"

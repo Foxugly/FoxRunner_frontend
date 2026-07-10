@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -27,6 +28,7 @@ type PushoverEntry = Record<string, unknown>;
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
     ButtonModule,
     CardModule,
     ConfirmDialogModule,
@@ -40,7 +42,16 @@ type PushoverEntry = Record<string, unknown>;
     JsonEditorComponent,
   ],
   template: `
-    <app-page-header icon="pi-server" title="Configuration du catalogue" [backLink]="'/admin'" />
+    <app-page-header icon="pi-server" title="Configuration du catalogue">
+      <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        routerLink="/admin"
+      />
+    </app-page-header>
 
     @if (loading()) {
       <p-card>

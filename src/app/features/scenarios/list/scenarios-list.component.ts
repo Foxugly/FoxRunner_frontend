@@ -40,6 +40,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       title="Scénarios"
     >
       <p-button
+        slot="right"
         icon="pi pi-refresh"
         severity="secondary"
         [text]="true"
@@ -48,12 +49,14 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
         pTooltip="Rafraîchir"
       />
       <p-button
+        slot="right"
         label="Importer"
         icon="pi pi-upload"
         severity="secondary"
         (onClick)="openImport()"
       />
       <p-button
+        slot="right"
         label="Nouveau"
         icon="pi pi-plus"
         severity="success"

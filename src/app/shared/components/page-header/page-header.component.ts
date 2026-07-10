@@ -1,50 +1,94 @@
-import { Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+/**
+ * Three-column page header: optional left slot (back button / breadcrumbs),
+ * centered <h1> title with an optional [slot=title-after] (status badge), and
+ * an optional right slot (actions). Mirrors the fleet standard (QuizOnline /
+ * TrainingManager). Actions and back buttons are projected by the caller.
+ */
 @Component({
   selector: 'app-page-header',
   standalone: true,
-  imports: [RouterLink, ButtonModule],
   template: `
-    <header class="flex align-items-center justify-content-between mb-4 gap-3">
-      <div class="ph-side flex align-items-center">
-        @if (backLink) {
-          <p-button
-            label="Retour"
-            icon="pi pi-arrow-left"
-            [outlined]="true"
-            severity="secondary"
-            [routerLink]="backLink"
-            [queryParams]="backQueryParams"
-          />
-        }
+    <header class="page-header">
+      <div class="page-header__slot page-header__slot--left">
+        <ng-content select="[slot=left]" />
       </div>
-
-      <div class="flex align-items-center justify-content-center gap-2 text-center flex-1 min-w-0">
-        @if (icon) {
-          <i [class]="'pi ' + icon" style="font-size: 1.5rem; color: var(--accent)"></i>
+      <div class="page-header__title-row">
+        @if (icon()) {
+          <i [class]="'pi ' + icon()" class="page-header__icon"></i>
         }
-        <h1 class="m-0 text-2xl font-semibold">{{ title }}</h1>
+        <h1 class="page-header__title">{{ title() }}</h1>
+        <ng-content select="[slot=title-after]" />
       </div>
-
-      <div class="ph-side flex align-items-center justify-content-end gap-2 flex-wrap">
-        <ng-content />
+      <div class="page-header__slot page-header__slot--right">
+        <ng-content select="[slot=right]" />
       </div>
     </header>
   `,
   styles: [
     `
-      .ph-side {
-        flex: 1 1 0;
+      :host {
+        display: block;
+      }
+      .page-header {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+      }
+      .page-header__title-row {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        justify-self: center;
         min-width: 0;
+      }
+      .page-header__icon {
+        font-size: 1.5rem;
+        color: var(--accent);
+      }
+      .page-header__title {
+        margin: 0;
+        text-align: center;
+        min-width: 0;
+        font-size: 1.5rem;
+        line-height: 1.2;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .page-header__slot {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .page-header__slot--left {
+        justify-self: start;
+      }
+      .page-header__slot--right {
+        justify-self: end;
+      }
+      @media (max-width: 640px) {
+        .page-header {
+          grid-template-columns: 1fr;
+          row-gap: 0.6rem;
+        }
+        .page-header__slot--left,
+        .page-header__slot--right {
+          justify-self: stretch;
+          justify-content: flex-start;
+        }
+        .page-header__slot--right {
+          justify-content: flex-end;
+        }
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageHeaderComponent {
-  @Input({ required: true }) title = '';
-  @Input() icon?: string;
-  @Input() backLink?: string | (string | number)[];
-  @Input() backQueryParams?: Record<string, unknown>;
+  readonly title = input.required<string>();
+  readonly icon = input<string>();
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -22,6 +23,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
     ButtonModule,
     DialogModule,
     InputTextModule,
@@ -36,15 +38,24 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header icon="pi-sliders-h" title="Paramètres applicatifs" [backLink]="'/admin'">
+    <app-page-header icon="pi-sliders-h" title="Paramètres applicatifs">
       <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        routerLink="/admin"
+      />
+      <p-button
+        slot="right"
         icon="pi pi-refresh"
         severity="secondary"
         [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
       />
-      <p-button label="Nouveau" icon="pi pi-plus" (onClick)="openCreate()" />
+      <p-button slot="right" label="Nouveau" icon="pi pi-plus" (onClick)="openCreate()" />
     </app-page-header>
 
     <app-data-table

@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
@@ -16,6 +17,7 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
     ButtonModule,
     TooltipModule,
     ToggleSwitchModule,
@@ -24,8 +26,17 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
     CellTemplateDirective,
   ],
   template: `
-    <app-page-header icon="pi-users" title="Utilisateurs" [backLink]="'/admin'">
+    <app-page-header icon="pi-users" title="Utilisateurs">
       <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        label="Retour"
+        [outlined]="true"
+        severity="secondary"
+        routerLink="/admin"
+      />
+      <p-button
+        slot="right"
         icon="pi pi-refresh"
         severity="secondary"
         [text]="true"
