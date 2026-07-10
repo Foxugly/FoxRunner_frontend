@@ -1,9 +1,10 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { AdminService } from '../../../core/api/admin.service';
@@ -21,6 +22,7 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
     RouterLink,
     TranslocoPipe,
     ButtonModule,
+    CheckboxModule,
     TooltipModule,
     ToggleSwitchModule,
     PageHeaderComponent,
@@ -47,8 +49,18 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
       />
     </app-page-header>
 
+    <div class="table-toolbar">
+      <p-checkbox
+        inputId="incInactive"
+        [binary]="true"
+        [ngModel]="includeInactive()"
+        (ngModelChange)="includeInactive.set($event)"
+      />
+      <label for="incInactive">{{ 'admin.users.include_inactive' | transloco }}</label>
+    </div>
+
     <app-data-table
-      [value]="items()"
+      [value]="visibleItems()"
       [columns]="columns"
       [loading]="loading()"
       dataKey="id"
@@ -84,6 +96,16 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
       .id-code {
         font-size: 0.75rem;
       }
+      .table-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .table-toolbar label {
+        cursor: pointer;
+        color: var(--ink-soft);
+      }
     `,
   ],
 })
@@ -94,6 +116,12 @@ export class AdminUsersComponent implements OnInit {
 
   readonly items = signal<UserSummary[]>([]);
   readonly loading = signal(false);
+
+  /** §218: inactive (deactivated) users are hidden until this is checked. */
+  readonly includeInactive = signal(false);
+  readonly visibleItems = computed(() =>
+    this.includeInactive() ? this.items() : this.items().filter((u) => u.is_active),
+  );
 
   readonly columns: DataTableColumn[] = [
     { field: 'email', header: this.i18n.translate('admin.users.col_email'), sortable: true },

@@ -75,7 +75,8 @@
       "aria_active": "Actief — {{email}}",
       "aria_superuser": "Superuser — {{email}}",
       "aria_verified": "Geverifieerd — {{email}}",
-      "toast_updated": "Gebruiker bijgewerkt"
+      "toast_updated": "Gebruiker bijgewerkt",
+      "include_inactive": "Inactieve opnemen"
     },
     "settings": {
       "title": "Applicatie-instellingen",

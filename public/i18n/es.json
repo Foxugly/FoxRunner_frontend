@@ -75,7 +75,8 @@
       "aria_active": "Activo — {{email}}",
       "aria_superuser": "Superuser — {{email}}",
       "aria_verified": "Verificado — {{email}}",
-      "toast_updated": "Usuario actualizado"
+      "toast_updated": "Usuario actualizado",
+      "include_inactive": "Incluir inactivos"
     },
     "settings": {
       "title": "Ajustes de la aplicación",

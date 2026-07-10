@@ -75,7 +75,8 @@
       "aria_active": "Actif — {{email}}",
       "aria_superuser": "Superuser — {{email}}",
       "aria_verified": "Vérifié — {{email}}",
-      "toast_updated": "Utilisateur mis à jour"
+      "toast_updated": "Utilisateur mis à jour",
+      "include_inactive": "Inclure les inactifs"
     },
     "settings": {
       "title": "Paramètres applicatifs",
