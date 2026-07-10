@@ -46,7 +46,7 @@ test.describe('FoxRunner smoke', () => {
     await expect(page).toHaveURL(/\/$/);
 
     // Logout lives in the user dropdown: open it from the user button first.
-    await page.locator('.topbar__user').click();
+    await page.locator('.user-menu__trigger').click();
     await page.getByRole('menuitem', { name: 'Déconnexion' }).click();
     await expect(page).toHaveURL(/\/login$/);
   });

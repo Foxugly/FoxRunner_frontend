@@ -85,12 +85,6 @@
   gap: 0.25rem;
 }
 
-.topbar__user ::ng-deep .p-button-label {
-  max-width: 14rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .topbar__toggle {
   display: none;
   background: transparent;
@@ -129,9 +123,6 @@
 
 @media (max-width: 1024px) {
   .topbar__nav {
-    display: none;
-  }
-  .topbar__user ::ng-deep .p-button-label {
     display: none;
   }
   .topbar__toggle {

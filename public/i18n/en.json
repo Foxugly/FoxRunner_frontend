@@ -19,7 +19,8 @@
       "on_error": "On error:",
       "edit_aria": "Edit step",
       "delete_aria": "Delete step"
-    }
+    },
+    "skip_to_content": "Skip to content"
   },
   "admin": {
     "common": {
@@ -292,7 +293,8 @@
     "user": {
       "profile": "Profile",
       "logout": "Log out",
-      "menu_aria": "User menu"
+      "menu_aria": "User menu",
+      "sign_in": "Sign in"
     },
     "theme": {
       "toggle": "Toggle theme"
@@ -300,11 +302,6 @@
     "menu": {
       "open": "Open menu",
       "close": "Close menu"
-    },
-    "skip_link": "Skip to content",
-    "footer": {
-      "tagline": "Automation engine",
-      "version": "Version {{version}}"
     },
     "offline": {
       "message": "The backend seems unreachable ({{count}} consecutive errors). Check that the API is running at"
@@ -669,5 +666,14 @@
       "on_failure": "On failure (on_failure)",
       "finally_steps": "Finally (finally_steps)"
     }
+  },
+  "app": {
+    "tagline": "Automation engine",
+    "title": "FoxRunner"
+  },
+  "footer": {
+    "version_label": "Version {{version}}",
+    "author": "Foxugly",
+    "rights": "All rights reserved"
   }
 }

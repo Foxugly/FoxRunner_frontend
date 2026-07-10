@@ -30,17 +30,7 @@
         [ariaLabel]="'chrome.theme.toggle' | transloco"
       />
       <app-language-switcher />
-      <p-menu #userMenuPopup [model]="userMenu()" [popup]="true" appendTo="body" />
-      <p-button
-        icon="pi pi-user"
-        [label]="auth.currentUser()?.email ?? ''"
-        severity="secondary"
-        [text]="true"
-        (onClick)="userMenuPopup.toggle($event)"
-        [ariaLabel]="'chrome.user.menu_aria' | transloco"
-        aria-haspopup="true"
-        class="topbar__user"
-      />
+      <app-user-menu />
       <button
         type="button"
         class="topbar__toggle"

@@ -214,17 +214,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       .scn-grid {
         display: grid;
         gap: 1rem;
-        grid-template-columns: 1fr;
-      }
-      @media (min-width: 768px) {
-        .scn-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-      @media (min-width: 1024px) {
-        .scn-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
       }
       .scn-card {
         display: flex;

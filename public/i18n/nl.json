@@ -19,7 +19,8 @@
       "on_error": "Bij een fout:",
       "edit_aria": "Stap bewerken",
       "delete_aria": "Stap verwijderen"
-    }
+    },
+    "skip_to_content": "Naar de inhoud"
   },
   "admin": {
     "common": {
@@ -292,7 +293,8 @@
     "user": {
       "profile": "Profiel",
       "logout": "Afmelden",
-      "menu_aria": "Gebruikersmenu"
+      "menu_aria": "Gebruikersmenu",
+      "sign_in": "Inloggen"
     },
     "theme": {
       "toggle": "Thema wisselen"
@@ -300,11 +302,6 @@
     "menu": {
       "open": "Menu openen",
       "close": "Menu sluiten"
-    },
-    "skip_link": "Naar de inhoud",
-    "footer": {
-      "tagline": "Automatiseringsengine",
-      "version": "Versie {{version}}"
     },
     "offline": {
       "message": "De backend lijkt onbereikbaar ({{count}} opeenvolgende fouten). Controleer of de API draait op"
@@ -669,5 +666,14 @@
       "on_failure": "Bij fout (on_failure)",
       "finally_steps": "Ten slotte (finally_steps)"
     }
+  },
+  "app": {
+    "tagline": "Automatiseringsengine",
+    "title": "FoxRunner"
+  },
+  "footer": {
+    "version_label": "Versie {{version}}",
+    "author": "Foxugly",
+    "rights": "Alle rechten voorbehouden"
   }
 }

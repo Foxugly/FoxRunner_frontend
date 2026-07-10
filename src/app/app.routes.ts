@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { superuserGuard } from './core/auth/superuser.guard';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
+import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,7 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
+    component: MainLayoutComponent,
     children: [
       {
         path: '',

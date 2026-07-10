@@ -1,14 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../auth/auth.service';
 import { ThemeService } from '../../theme/theme.service';
-import { LanguageService } from '../../i18n/language.service';
 import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
+import { UserMenuComponent } from '../user-menu/user-menu.component';
 
 interface NavLink {
   label: string;
@@ -24,10 +22,10 @@ interface NavLink {
     RouterLink,
     RouterLinkActive,
     ButtonModule,
-    MenuModule,
     TooltipModule,
     TranslocoPipe,
     LanguageSwitcherComponent,
+    UserMenuComponent,
   ],
   templateUrl: './topmenu.component.html',
   styleUrl: './topmenu.component.scss',
@@ -35,11 +33,13 @@ interface NavLink {
 export class TopmenuComponent {
   readonly auth = inject(AuthService);
   readonly theme = inject(ThemeService);
-  private readonly i18n = inject(TranslocoService);
-  private readonly lang = inject(LanguageService);
   readonly menuOpen = signal(false);
 
+  /** Fleet-standard chrome mode; the nav only renders when authenticated. */
+  readonly mode = input<'public' | 'authenticated'>('authenticated');
+
   readonly links = computed<NavLink[]>(() => {
+    if (this.mode() !== 'authenticated') return [];
     const base: NavLink[] = [
       { label: 'chrome.nav.dashboard', icon: 'pi pi-home', link: '/', exact: true },
       { label: 'chrome.nav.scenarios', icon: 'pi pi-sitemap', link: '/scenarios' },
@@ -50,28 +50,11 @@ export class TopmenuComponent {
     return base;
   });
 
-  readonly userMenu = computed<MenuItem[]>(() => {
-    this.lang.activeLang();
-    return [
-      { label: this.i18n.translate('chrome.user.profile'), icon: 'pi pi-user', routerLink: '/profile' },
-      {
-        label: this.i18n.translate('chrome.user.logout'),
-        icon: 'pi pi-sign-out',
-        command: () => void this.logout(),
-      },
-    ];
-  });
-
   toggleMenu(): void {
     this.menuOpen.update((v) => !v);
   }
 
   closeMenu(): void {
     this.menuOpen.set(false);
-  }
-
-  async logout(): Promise<void> {
-    this.closeMenu();
-    await this.auth.logout();
   }
 }

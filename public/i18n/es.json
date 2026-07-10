@@ -19,7 +19,8 @@
       "on_error": "En caso de error:",
       "edit_aria": "Editar paso",
       "delete_aria": "Eliminar paso"
-    }
+    },
+    "skip_to_content": "Ir al contenido"
   },
   "admin": {
     "common": {
@@ -292,7 +293,8 @@
     "user": {
       "profile": "Perfil",
       "logout": "Cerrar sesión",
-      "menu_aria": "Menú de usuario"
+      "menu_aria": "Menú de usuario",
+      "sign_in": "Iniciar sesión"
     },
     "theme": {
       "toggle": "Cambiar tema"
@@ -300,11 +302,6 @@
     "menu": {
       "open": "Abrir menú",
       "close": "Cerrar menú"
-    },
-    "skip_link": "Ir al contenido",
-    "footer": {
-      "tagline": "Motor de automatización",
-      "version": "Versión {{version}}"
     },
     "offline": {
       "message": "El backend parece inaccesible ({{count}} errores consecutivos). Comprueba que la API esté en ejecución en"
@@ -669,5 +666,14 @@
       "on_failure": "En caso de error (on_failure)",
       "finally_steps": "Finalmente (finally_steps)"
     }
+  },
+  "app": {
+    "tagline": "Motor de automatización",
+    "title": "FoxRunner"
+  },
+  "footer": {
+    "version_label": "Versión {{version}}",
+    "author": "Foxugly",
+    "rights": "Todos los derechos reservados"
   }
 }
