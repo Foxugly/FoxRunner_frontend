@@ -1,6 +1,6 @@
 .footer {
   border-top: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--surface-2); // #f8fafc en clair, adapté en .dark-mode via les tokens
 }
 
 .footer__inner {
@@ -10,8 +10,8 @@
   gap: 0.5rem 0.85rem;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0.85rem var(--content-pad);
-  font-size: 0.85rem;
+  padding: 0.5rem var(--content-pad);
+  font-size: 0.8rem;
   color: var(--muted);
 }
 

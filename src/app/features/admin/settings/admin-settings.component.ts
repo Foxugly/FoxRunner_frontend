@@ -121,7 +121,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [value]="draftValue()"
             (valueChange)="onValueChange($event)"
             (validChange)="draftValid.set($event)"
-            [rows]="14"
+            [rows]="20"
           />
         </div>
       </div>

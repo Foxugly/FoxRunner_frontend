@@ -77,7 +77,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [value]="importDraft()"
             (valueChange)="onImportChange($event)"
             (validChange)="importValid.set($event)"
-            [rows]="14"
+            [rows]="20"
           />
           <div class="toggle-row">
             <p-toggleswitch inputId="dry" [(ngModel)]="dryRun" />
