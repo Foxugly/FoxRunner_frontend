@@ -38,7 +38,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
     AuthCardComponent,
   ],
   template: `
-    <app-auth-card icon="pi pi-bolt" [title]="'FoxRunner'">
+    <app-auth-card icon="pi pi-bolt" [title]="'app.title' | transloco">
         @if (success()) {
           <div class="auth-form">
             <p-message

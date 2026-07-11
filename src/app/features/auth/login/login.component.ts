@@ -27,7 +27,7 @@ import { AuthCardComponent } from '../../../shared/components/auth-card/auth-car
     AuthCardComponent,
   ],
   template: `
-    <app-auth-card icon="pi pi-bolt" [title]="'FoxRunner'">
+    <app-auth-card icon="pi pi-bolt" [title]="'app.title' | transloco">
           @if (!magicMode()) {
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
               <div class="field">
