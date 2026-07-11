@@ -256,6 +256,18 @@
     "toast_saved": "Configuration saved"
   },
   "auth": {
+    "no_account": "No account yet?",
+    "create_account": "Create an account",
+    "register": {
+      "title": "Create an account",
+      "password_label": "Password",
+      "confirm_label": "Confirm password",
+      "submit": "Create an account",
+      "success": "Account created. Check your email to activate it, then sign in.",
+      "error": "Registration failed. This email may already be in use, or the password is invalid (min. 8 characters).",
+      "have_account": "Already have an account?",
+      "back_to_login": "Sign in"
+    },
     "email_label": "Email",
     "password_label": "Password",
     "remember_me": "Remember me",
@@ -282,7 +294,8 @@
     "toast_password_updated": "Password updated",
     "exchange_working": "Signing in…",
     "exchange_expired": "This link has expired (valid for 15 minutes). Request a new one from the sign-in page.",
-    "exchange_invalid": "Invalid link."
+    "exchange_invalid": "Invalid link.",
+    "or": "or"
   },
   "chrome": {
     "nav": {

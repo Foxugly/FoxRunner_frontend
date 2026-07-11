@@ -42,7 +42,7 @@ function resolveVersion(): string {
             </a>
           </span>
           <span class="footer__sep" aria-hidden="true">·</span>
-          <a routerLink="/about" class="footer__link">{{ 'footer.privacy' | transloco }}</a>
+          <a routerLink="/about" class="footer__privacy">{{ 'footer.privacy' | transloco }}</a>
           <span class="footer__sep" aria-hidden="true">·</span>
           <span>{{ 'footer.rights' | transloco }}</span>
         </span>

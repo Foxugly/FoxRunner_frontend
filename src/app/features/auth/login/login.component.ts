@@ -65,9 +65,12 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
               @if (error(); as msg) {
                 <p-message severity="error" [text]="msg" styleClass="u-full" />
               }
-              <div class="check-row">
-                <p-checkbox inputId="remember" formControlName="remember" [binary]="true" />
-                <label for="remember" class="check-label">{{ 'auth.remember_me' | transloco }}</label>
+              <div class="auth-meta">
+                <div class="check-inline">
+                  <p-checkbox inputId="remember" formControlName="remember" [binary]="true" />
+                  <label for="remember">{{ 'auth.remember_me' | transloco }}</label>
+                </div>
+                <a routerLink="/forgot-password" class="link">{{ 'auth.forgot_link' | transloco }}</a>
               </div>
               <p-button
                 type="submit"
@@ -77,9 +80,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                 [loading]="loading()"
                 [disabled]="loading() || form.invalid"
               />
-              <a routerLink="/forgot-password" class="link-center">
-                {{ 'auth.forgot_link' | transloco }}
-              </a>
+              <div class="auth-divider"><span>{{ 'auth.or' | transloco }}</span></div>
               <p-button
                 [label]="'auth.magic_request' | transloco"
                 icon="pi pi-envelope"
@@ -123,6 +124,11 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
               />
             </form>
           }
+
+          <p class="auth-alt">
+            {{ 'auth.no_account' | transloco }}
+            <a routerLink="/register" class="link">{{ 'auth.create_account' | transloco }}</a>
+          </p>
       </p-card>
     </div>
   `,

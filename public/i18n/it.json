@@ -256,6 +256,18 @@
     "toast_saved": "Configurazione salvata"
   },
   "auth": {
+    "no_account": "Non hai un account?",
+    "create_account": "Crea un account",
+    "register": {
+      "title": "Crea un account",
+      "password_label": "Password",
+      "confirm_label": "Conferma password",
+      "submit": "Crea un account",
+      "success": "Account creato. Controlla la tua email per attivarlo, poi accedi.",
+      "error": "Registrazione non riuscita. Questa email potrebbe essere già in uso oppure la password non è valida (min. 8 caratteri).",
+      "have_account": "Hai già un account?",
+      "back_to_login": "Accedi"
+    },
     "email_label": "Email",
     "password_label": "Password",
     "remember_me": "Ricordami",
@@ -282,7 +294,8 @@
     "toast_password_updated": "Password aggiornata",
     "exchange_working": "Accesso in corso…",
     "exchange_expired": "Questo link è scaduto (valido 15 minuti). Richiedine uno nuovo dalla pagina di accesso.",
-    "exchange_invalid": "Link non valido."
+    "exchange_invalid": "Link non valido.",
+    "or": "o"
   },
   "chrome": {
     "nav": {

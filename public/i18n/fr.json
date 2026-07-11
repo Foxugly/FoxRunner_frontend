@@ -256,6 +256,18 @@
     "toast_saved": "Configuration enregistrée"
   },
   "auth": {
+    "no_account": "Pas encore de compte ?",
+    "create_account": "Créer un compte",
+    "register": {
+      "title": "Créer un compte",
+      "password_label": "Mot de passe",
+      "confirm_label": "Confirmer le mot de passe",
+      "submit": "Créer un compte",
+      "success": "Compte créé. Vérifie ton email pour l'activer, puis connecte-toi.",
+      "error": "L'inscription a échoué. Cet email est peut-être déjà utilisé, ou le mot de passe est invalide (min. 8 caractères).",
+      "have_account": "Déjà un compte ?",
+      "back_to_login": "Se connecter"
+    },
     "email_label": "Email",
     "password_label": "Mot de passe",
     "remember_me": "Se souvenir de moi",
@@ -282,7 +294,8 @@
     "toast_password_updated": "Mot de passe mis à jour",
     "exchange_working": "Connexion en cours…",
     "exchange_expired": "Ce lien a expiré (valable 15 minutes). Demande-en un nouveau depuis la page de connexion.",
-    "exchange_invalid": "Lien invalide."
+    "exchange_invalid": "Lien invalide.",
+    "or": "ou"
   },
   "chrome": {
     "nav": {

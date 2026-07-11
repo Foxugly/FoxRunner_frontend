@@ -256,6 +256,18 @@
     "toast_saved": "Configuratie opgeslagen"
   },
   "auth": {
+    "no_account": "Nog geen account?",
+    "create_account": "Account aanmaken",
+    "register": {
+      "title": "Account aanmaken",
+      "password_label": "Wachtwoord",
+      "confirm_label": "Wachtwoord bevestigen",
+      "submit": "Account aanmaken",
+      "success": "Account aangemaakt. Controleer je e-mail om het te activeren en log daarna in.",
+      "error": "Registratie mislukt. Dit e-mailadres is mogelijk al in gebruik of het wachtwoord is ongeldig (min. 8 tekens).",
+      "have_account": "Al een account?",
+      "back_to_login": "Inloggen"
+    },
     "email_label": "E-mail",
     "password_label": "Wachtwoord",
     "remember_me": "Aangemeld blijven",
@@ -282,7 +294,8 @@
     "toast_password_updated": "Wachtwoord bijgewerkt",
     "exchange_working": "Bezig met inloggen…",
     "exchange_expired": "Deze link is verlopen (15 minuten geldig). Vraag een nieuwe aan via de inlogpagina.",
-    "exchange_invalid": "Ongeldige link."
+    "exchange_invalid": "Ongeldige link.",
+    "or": "of"
   },
   "chrome": {
     "nav": {

@@ -60,6 +60,17 @@
   font-weight: 600;
 }
 
+/* Confidentialité — lien normal (couleur du footer, pas de vert ni de gras). */
+.footer__privacy {
+  color: inherit;
+  font-weight: 400;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .footer__logo {
   height: 1.1rem;
   width: auto;

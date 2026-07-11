@@ -256,6 +256,18 @@
     "toast_saved": "Configuración guardada"
   },
   "auth": {
+    "no_account": "¿Aún no tienes cuenta?",
+    "create_account": "Crear una cuenta",
+    "register": {
+      "title": "Crear una cuenta",
+      "password_label": "Contraseña",
+      "confirm_label": "Confirmar contraseña",
+      "submit": "Crear una cuenta",
+      "success": "Cuenta creada. Revisa tu correo para activarla y luego inicia sesión.",
+      "error": "El registro falló. Puede que este correo ya esté en uso o que la contraseña no sea válida (mín. 8 caracteres).",
+      "have_account": "¿Ya tienes una cuenta?",
+      "back_to_login": "Iniciar sesión"
+    },
     "email_label": "Correo electrónico",
     "password_label": "Contraseña",
     "remember_me": "Recordarme",
@@ -282,7 +294,8 @@
     "toast_password_updated": "Contraseña actualizada",
     "exchange_working": "Iniciando sesión…",
     "exchange_expired": "Este enlace ha caducado (válido 15 minutos). Solicita uno nuevo desde la página de inicio de sesión.",
-    "exchange_invalid": "Enlace no válido."
+    "exchange_invalid": "Enlace no válido.",
+    "or": "o"
   },
   "chrome": {
     "nav": {
