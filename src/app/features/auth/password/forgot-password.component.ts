@@ -3,25 +3,24 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthPasswordService } from '../../../core/api/auth-password.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, InputTextModule, TranslocoPipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+    InputTextModule,
+    TranslocoPipe,
+    AuthCardComponent,
+  ],
   template: `
-    <div class="auth-card">
-      <p-card>
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <i class="pi pi-envelope auth-brand-icon"></i>
-            <span class="brand fox-brand">{{ 'auth.forgot_title' | transloco }}</span>
-          </div>
-        </ng-template>
-
+    <app-auth-card icon="pi pi-envelope" [title]="'auth.forgot_title' | transloco">
           @if (!sent()) {
             <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
               <p class="help">
@@ -55,8 +54,7 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
               <a routerLink="/login" class="link-sm">{{ 'auth.back_to_login' | transloco }}</a>
             </div>
           }
-      </p-card>
-    </div>
+    </app-auth-card>
   `,
   styleUrl: './forgot-password.component.scss',
 })

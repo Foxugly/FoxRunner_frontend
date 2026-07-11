@@ -3,7 +3,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
@@ -11,6 +10,7 @@ import { PasswordModule } from 'primeng/password';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthMagicService } from '../../../core/api/auth-magic.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 @Component({
   selector: 'app-login',
@@ -19,23 +19,15 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
-    CardModule,
     CheckboxModule,
     InputTextModule,
     MessageModule,
     PasswordModule,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   template: `
-    <div class="auth-card">
-      <p-card>
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <i class="pi pi-bolt auth-brand-icon"></i>
-            <span class="brand fox-brand">FoxRunner</span>
-          </div>
-        </ng-template>
-
+    <app-auth-card icon="pi pi-bolt" [title]="'FoxRunner'">
           @if (!magicMode()) {
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
               <div class="field">
@@ -129,8 +121,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
             {{ 'auth.no_account' | transloco }}
             <a routerLink="/register" class="link">{{ 'auth.create_account' | transloco }}</a>
           </p>
-      </p-card>
-    </div>
+    </app-auth-card>
   `,
   styleUrl: './login.component.scss',
 })

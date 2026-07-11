@@ -1,5 +1,6 @@
 @use 'primeicons/primeicons.css';
 @use 'styles/tokens'; // design tokens de la flotte (:root + .dark-mode)
+@use 'styles/shell'; // shell partagé main-layout / public-layout
 @use 'styles/forms-meta';
 
 html,

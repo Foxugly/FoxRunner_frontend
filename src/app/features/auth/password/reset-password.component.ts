@@ -3,25 +3,24 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { PasswordModule } from 'primeng/password';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthPasswordService } from '../../../core/api/auth-password.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, PasswordModule, TranslocoPipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+    PasswordModule,
+    TranslocoPipe,
+    AuthCardComponent,
+  ],
   template: `
-    <div class="auth-card">
-      <p-card>
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <i class="pi pi-key auth-brand-icon"></i>
-            <span class="brand fox-brand">{{ 'auth.reset_title' | transloco }}</span>
-          </div>
-        </ng-template>
-
+    <app-auth-card icon="pi pi-key" [title]="'auth.reset_title' | transloco">
           @if (!token()) {
             <div class="help">
               {{ 'auth.reset_missing_token' | transloco }}
@@ -56,8 +55,7 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
               <a routerLink="/login" class="link-center">{{ 'auth.back_to_login' | transloco }}</a>
             </form>
           }
-      </p-card>
-    </div>
+    </app-auth-card>
   `,
   styleUrl: './reset-password.component.scss',
 })

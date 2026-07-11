@@ -10,12 +10,12 @@ import {
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { environment } from '../../../../environments/environment';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 /** Cross-field validator: flags `confirm` when it does not match `password`. */
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
@@ -31,22 +31,14 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
-    CardModule,
     InputTextModule,
     MessageModule,
     PasswordModule,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   template: `
-    <div class="auth-card">
-      <p-card>
-        <ng-template pTemplate="header">
-          <div class="card-header">
-            <i class="pi pi-bolt auth-brand-icon"></i>
-            <span class="brand fox-brand">FoxRunner</span>
-          </div>
-        </ng-template>
-
+    <app-auth-card icon="pi pi-bolt" [title]="'FoxRunner'">
         @if (success()) {
           <div class="auth-form">
             <p-message
@@ -117,8 +109,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
             </p>
           </form>
         }
-      </p-card>
-    </div>
+    </app-auth-card>
   `,
   styleUrl: './register.component.scss',
 })
