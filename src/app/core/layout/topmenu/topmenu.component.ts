@@ -45,7 +45,7 @@ export class TopmenuComponent {
     if (this.mode() === 'public') {
       return [
         { label: 'chrome.nav.home', icon: 'pi pi-home', link: '/home', exact: true },
-        { label: 'chrome.nav.features', icon: 'pi pi-star', link: '/features' },
+        { label: 'chrome.nav.features', icon: 'pi pi-sparkles', link: '/features' },
         { label: 'chrome.nav.soutenir', icon: 'pi pi-heart', link: '/soutenir' },
         { label: 'chrome.nav.about', icon: 'pi pi-info-circle', link: '/about' },
       ];
