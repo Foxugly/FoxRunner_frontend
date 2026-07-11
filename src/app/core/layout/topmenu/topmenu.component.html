@@ -21,15 +21,15 @@
     </nav>
 
     <div class="topbar__actions">
-      <p-button
-        [icon]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
-        [rounded]="true"
-        severity="secondary"
-        [text]="true"
-        (onClick)="theme.toggle()"
+      <button
+        type="button"
+        class="topbar__icon-btn"
+        (click)="theme.toggle()"
         [pTooltip]="'chrome.theme.toggle' | transloco"
-        [ariaLabel]="'chrome.theme.toggle' | transloco"
-      />
+        [attr.aria-label]="'chrome.theme.toggle' | transloco"
+      >
+        <i [class]="theme.isDark() ? 'pi pi-sun' : 'pi pi-moon'" aria-hidden="true"></i>
+      </button>
       <app-language-switcher />
       <app-user-menu />
       <button

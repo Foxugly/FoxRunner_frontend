@@ -1,6 +1,5 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../auth/auth.service';
@@ -23,7 +22,6 @@ interface NavLink {
   imports: [
     RouterLink,
     RouterLinkActive,
-    ButtonModule,
     TooltipModule,
     TranslocoPipe,
     LanguageSwitcherComponent,
