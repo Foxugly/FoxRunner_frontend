@@ -13,15 +13,14 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, InputTextModule, TranslocoPipe],
   template: `
-    <div class="auth-shell">
-      <div class="auth-card">
-        <p-card>
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <i class="pi pi-envelope auth-brand-icon"></i>
-              <span class="brand fox-brand">{{ 'auth.forgot_title' | transloco }}</span>
-            </div>
-          </ng-template>
+    <div class="auth-card">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <i class="pi pi-envelope auth-brand-icon"></i>
+            <span class="brand fox-brand">{{ 'auth.forgot_title' | transloco }}</span>
+          </div>
+        </ng-template>
 
           @if (!sent()) {
             <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
@@ -56,8 +55,7 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
               <a routerLink="/login" class="link-sm">{{ 'auth.back_to_login' | transloco }}</a>
             </div>
           }
-        </p-card>
-      </div>
+      </p-card>
     </div>
   `,
   styleUrl: './forgot-password.component.scss',

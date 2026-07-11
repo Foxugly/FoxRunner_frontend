@@ -79,6 +79,17 @@
   }
 }
 
+/* Support CTA — emerald highlight (distinct from the neutral nav links). */
+.topbar__link--support {
+  color: #6ee7b7;
+  font-weight: 600;
+
+  &:hover {
+    background: rgba(16, 185, 129, 0.16);
+    color: #a7f3d0;
+  }
+}
+
 .topbar__actions {
   display: inline-flex;
   align-items: center;

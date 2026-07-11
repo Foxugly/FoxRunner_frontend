@@ -27,15 +27,14 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     TranslocoPipe,
   ],
   template: `
-    <div class="auth-shell">
-      <div class="auth-card">
-        <p-card>
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <i class="pi pi-bolt auth-brand-icon"></i>
-              <span class="brand fox-brand">FoxRunner</span>
-            </div>
-          </ng-template>
+    <div class="auth-card">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <i class="pi pi-bolt auth-brand-icon"></i>
+            <span class="brand fox-brand">FoxRunner</span>
+          </div>
+        </ng-template>
 
           @if (!magicMode()) {
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
@@ -84,9 +83,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
               <p-button
                 [label]="'auth.magic_request' | transloco"
                 icon="pi pi-envelope"
-                severity="secondary"
-                [text]="true"
-                styleClass="u-full"
+                styleClass="u-full magic-btn"
                 (onClick)="enterMagicMode()"
               />
             </form>
@@ -126,8 +123,7 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
               />
             </form>
           }
-        </p-card>
-      </div>
+      </p-card>
     </div>
   `,
   styleUrl: './login.component.scss',

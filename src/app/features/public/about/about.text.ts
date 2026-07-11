@@ -21,7 +21,13 @@ export interface AboutPageUiText {
   technical: {
     title: string;
     lead: string;
-    sections: readonly { slug: string; title: string; intro: string; items: readonly string[] }[];
+    cards: readonly {
+      slug: string;
+      title: string;
+      repo_label: string;
+      repo_url: string;
+      items: readonly string[];
+    }[];
   };
 }
 
@@ -52,9 +58,8 @@ interface AboutContent {
   technical: {
     title: string;
     lead: string;
-    repo: { title: string; intro: string; items: string[] };
-    backend: { title: string; intro: string; items: string[] };
-    frontend: { title: string; intro: string; items: string[] };
+    backend: { title: string };
+    frontend: { title: string };
   };
 }
 
@@ -91,22 +96,31 @@ function build(c: AboutContent): AboutPageUiText {
     technical: {
       title: c.technical.title,
       lead: c.technical.lead,
-      sections: [
-        { slug: 'repo', title: c.technical.repo.title, intro: c.technical.repo.intro, items: c.technical.repo.items },
-        { slug: 'backend', title: c.technical.backend.title, intro: c.technical.backend.intro, items: c.technical.backend.items },
-        { slug: 'frontend', title: c.technical.frontend.title, intro: c.technical.frontend.intro, items: c.technical.frontend.items },
+      cards: [
+        {
+          slug: 'backend',
+          title: c.technical.backend.title,
+          repo_label: TECH_BACKEND_REPO.label,
+          repo_url: TECH_BACKEND_REPO.url,
+          items: TECH_BACKEND_ITEMS,
+        },
+        {
+          slug: 'frontend',
+          title: c.technical.frontend.title,
+          repo_label: TECH_FRONTEND_REPO.label,
+          repo_url: TECH_FRONTEND_REPO.url,
+          items: TECH_FRONTEND_ITEMS,
+        },
       ],
     },
   };
 }
 
-const TECH_BACKEND_ITEMS = ['Django · django-ninja', 'Celery · Selenium', 'PostgreSQL', 'Simple JWT'];
-const TECH_FRONTEND_ITEMS = [
-  'Angular 21 · TypeScript (strict)',
-  'PrimeNG 21 · Transloco 8',
-  'SCSS/BEM (sans Tailwind ni PrimeFlex)',
-  'Playwright',
-];
+// Dépôts (identiques dans les 5 langues) + stack affichée dans chaque carte.
+const TECH_BACKEND_REPO = { label: 'FoxRunner_server', url: 'https://github.com/Foxugly/FoxRunner_server' } as const;
+const TECH_FRONTEND_REPO = { label: 'FoxRunner_frontend', url: 'https://github.com/Foxugly/FoxRunner_frontend' } as const;
+const TECH_BACKEND_ITEMS = ['Django', 'django-ninja', 'Celery', 'Selenium', 'PostgreSQL', 'Simple JWT'];
+const TECH_FRONTEND_ITEMS = ['Angular 21', 'TypeScript strict', 'PrimeNG 21', 'Transloco 8', 'SCSS/BEM', 'Playwright'];
 
 const FR_CONTENT: AboutContent = {
   intro: {
@@ -192,21 +206,8 @@ const FR_CONTENT: AboutContent = {
   technical: {
     title: 'Détails techniques',
     lead: "Le projet est composé d'un frontend Angular et d'un backend Django, dans des dépôts séparés.",
-    repo: {
-      title: 'Dépôt',
-      intro: 'Code source et CI sont hébergés sur GitHub.',
-      items: ['Repos séparés : FoxRunner_frontend (Angular) et FoxRunner_server (Django).', 'CI GitHub Actions des deux côtés.'],
-    },
-    backend: {
-      title: 'Backend',
-      intro: 'Planification, exécution des scénarios et API.',
-      items: TECH_BACKEND_ITEMS,
-    },
-    frontend: {
-      title: 'Frontend',
-      intro: "Single-page app d'administration et de suivi.",
-      items: TECH_FRONTEND_ITEMS,
-    },
+    backend: { title: 'Backend' },
+    frontend: { title: 'Frontend' },
   },
 };
 
@@ -294,21 +295,8 @@ const EN_CONTENT: AboutContent = {
   technical: {
     title: 'Technical details',
     lead: 'The project consists of an Angular frontend and a Django backend, in separate repositories.',
-    repo: {
-      title: 'Repository',
-      intro: 'Source code and CI are hosted on GitHub.',
-      items: ['Separate repos: FoxRunner_frontend (Angular) and FoxRunner_server (Django).', 'GitHub Actions CI on both sides.'],
-    },
-    backend: {
-      title: 'Backend',
-      intro: 'Scheduling, scenario execution and API.',
-      items: TECH_BACKEND_ITEMS,
-    },
-    frontend: {
-      title: 'Frontend',
-      intro: 'Single-page app for administration and monitoring.',
-      items: TECH_FRONTEND_ITEMS,
-    },
+    backend: { title: 'Backend' },
+    frontend: { title: 'Frontend' },
   },
 };
 
@@ -396,21 +384,8 @@ const NL_CONTENT: AboutContent = {
   technical: {
     title: 'Technische details',
     lead: 'Het project bestaat uit een Angular-frontend en een Django-backend, in gescheiden repositories.',
-    repo: {
-      title: 'Repository',
-      intro: 'Broncode en CI worden gehost op GitHub.',
-      items: ['Gescheiden repos: FoxRunner_frontend (Angular) en FoxRunner_server (Django).', 'GitHub Actions CI aan beide kanten.'],
-    },
-    backend: {
-      title: 'Backend',
-      intro: "Planning, uitvoering van scenario's en API.",
-      items: TECH_BACKEND_ITEMS,
-    },
-    frontend: {
-      title: 'Frontend',
-      intro: 'Single-page app voor beheer en opvolging.',
-      items: TECH_FRONTEND_ITEMS,
-    },
+    backend: { title: 'Backend' },
+    frontend: { title: 'Frontend' },
   },
 };
 
@@ -498,21 +473,8 @@ const IT_CONTENT: AboutContent = {
   technical: {
     title: 'Dettagli tecnici',
     lead: 'Il progetto è composto da un frontend Angular e un backend Django, in repository separati.',
-    repo: {
-      title: 'Repository',
-      intro: 'Codice sorgente e CI sono ospitati su GitHub.',
-      items: ['Repo separati: FoxRunner_frontend (Angular) e FoxRunner_server (Django).', 'CI GitHub Actions su entrambi i lati.'],
-    },
-    backend: {
-      title: 'Backend',
-      intro: 'Pianificazione, esecuzione degli scenari e API.',
-      items: TECH_BACKEND_ITEMS,
-    },
-    frontend: {
-      title: 'Frontend',
-      intro: 'Single-page app per amministrazione e monitoraggio.',
-      items: TECH_FRONTEND_ITEMS,
-    },
+    backend: { title: 'Backend' },
+    frontend: { title: 'Frontend' },
   },
 };
 
@@ -600,21 +562,8 @@ const ES_CONTENT: AboutContent = {
   technical: {
     title: 'Detalles técnicos',
     lead: 'El proyecto consta de un frontend Angular y un backend Django, en repositorios separados.',
-    repo: {
-      title: 'Repositorio',
-      intro: 'El código fuente y la CI se alojan en GitHub.',
-      items: ['Repos separados: FoxRunner_frontend (Angular) y FoxRunner_server (Django).', 'CI GitHub Actions en ambos lados.'],
-    },
-    backend: {
-      title: 'Backend',
-      intro: 'Planificación, ejecución de escenarios y API.',
-      items: TECH_BACKEND_ITEMS,
-    },
-    frontend: {
-      title: 'Frontend',
-      intro: 'Single-page app para administración y seguimiento.',
-      items: TECH_FRONTEND_ITEMS,
-    },
+    backend: { title: 'Backend' },
+    frontend: { title: 'Frontend' },
   },
 };
 

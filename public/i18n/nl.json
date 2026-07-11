@@ -260,7 +260,7 @@
     "remember_me": "Aangemeld blijven",
     "sign_in": "Inloggen",
     "forgot_link": "Wachtwoord vergeten?",
-    "magic_request": "Ontvang een magische link",
+    "magic_request": "Inloggen via magische link",
     "magic_sent": "Als er een account bestaat, is er zojuist een inloglink verzonden. Controleer je mailbox.",
     "send_link": "Link verzenden",
     "back_to_password": "Terug naar wachtwoord",
@@ -299,7 +299,8 @@
       "profile": "Profiel",
       "logout": "Afmelden",
       "menu_aria": "Gebruikersmenu",
-      "sign_in": "Inloggen"
+      "sign_in": "Inloggen",
+      "change_password": "Wachtwoord wijzigen"
     },
     "theme": {
       "toggle": "Thema wisselen"
@@ -679,6 +680,7 @@
   "footer": {
     "version_label": "Versie {{version}}",
     "author": "Foxugly",
+    "privacy": "Privacy",
     "rights": "Alle rechten voorbehouden"
   }
 }

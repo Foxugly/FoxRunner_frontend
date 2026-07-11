@@ -1,62 +1,63 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MenuItem } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../auth/auth.service';
-import { LanguageService } from '../../i18n/language.service';
 
 /**
  * Polymorphic user slot — the last of the topmenu actions (fleet standard §6).
- * Logged out → a "Sign in" button routing to /login.
- * Logged in  → a dropdown (Profile / … / Logout).
- * The topmenu never branches on `auth` itself: this component does.
+ * Logged out → a "Sign in" button (outlined emerald) routing to /login.
+ * Logged in  → a custom dropdown (Profile / Change password / Logout) anchored
+ *              to the right, modelled on QuizOnline's user-menu.
+ *
+ * The panel is a hand-rolled dropdown (no PrimeNG p-menu) so it can be styled
+ * with the fleet tokens and mirror the QuizOnline chrome exactly. Closes on
+ * outside click and on Escape, like the sibling language-switcher.
+ *
+ * Language reactivity is handled natively by TranslocoPipe (it re-renders the
+ * template on live language change), so no LanguageService wiring is needed.
  */
 @Component({
   selector: 'app-user-menu',
   standalone: true,
-  imports: [RouterLink, ButtonModule, MenuModule, TranslocoPipe],
-  template: `
-    @if (auth.isLoggedIn()) {
-      <p-menu #userMenuPopup [model]="menu()" [popup]="true" appendTo="body" />
-      <p-button
-        icon="pi pi-user"
-        [label]="auth.currentUser()?.email ?? ''"
-        severity="secondary"
-        [text]="true"
-        (onClick)="userMenuPopup.toggle($event)"
-        [ariaLabel]="'chrome.user.menu_aria' | transloco"
-        aria-haspopup="true"
-        class="user-menu__trigger"
-      />
-    } @else {
-      <p-button
-        icon="pi pi-sign-in"
-        [label]="'chrome.user.sign_in' | transloco"
-        severity="secondary"
-        [text]="true"
-        routerLink="/login"
-      />
-    }
-  `,
+  imports: [RouterLink, TranslocoPipe],
+  templateUrl: './user-menu.component.html',
   styleUrl: './user-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:click)': 'onDocumentClick($event)',
+    '(document:keydown.escape)': 'close()',
+  },
 })
 export class UserMenuComponent {
   readonly auth = inject(AuthService);
-  private readonly i18n = inject(TranslocoService);
-  private readonly lang = inject(LanguageService);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
 
-  readonly menu = computed<MenuItem[]>(() => {
-    this.lang.activeLang(); // re-translate on live language change
-    return [
-      { label: this.i18n.translate('chrome.user.profile'), icon: 'pi pi-user', routerLink: '/profile' },
-      {
-        label: this.i18n.translate('chrome.user.logout'),
-        icon: 'pi pi-sign-out',
-        command: () => void this.auth.logout(),
-      },
-    ];
-  });
+  protected readonly open = signal(false);
+
+  protected toggle(): void {
+    this.open.update((v) => !v);
+  }
+
+  protected close(): void {
+    this.open.set(false);
+  }
+
+  protected onDocumentClick(event: MouseEvent): void {
+    if (!this.open()) return;
+    const root = this.elementRef.nativeElement;
+    if (!root.contains(event.target as Node)) {
+      this.close();
+    }
+  }
+
+  protected logout(): void {
+    this.close();
+    void this.auth.logout();
+  }
 }

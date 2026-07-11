@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { environment } from '../../../../environments/environment';
 
@@ -14,7 +15,7 @@ function resolveVersion(): string {
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [TranslocoPipe],
+  imports: [RouterLink, TranslocoPipe],
   template: `
     <footer class="footer">
       <div class="footer__inner">
@@ -30,10 +31,17 @@ function resolveVersion(): string {
               href="https://www.foxugly.com"
               target="_blank"
               rel="noopener noreferrer"
-              class="footer__link"
-              >{{ 'footer.author' | transloco }}</a
+              class="footer__link footer__brand-link"
+              >
+              <img
+                src="/foxugly-logo.svg"
+                [alt]="'footer.author' | transloco"
+                class="footer__logo"
+              /></a
             >
           </span>
+          <span class="footer__sep" aria-hidden="true">·</span>
+          <a routerLink="/about" class="footer__link">{{ 'footer.privacy' | transloco }}</a>
           <span class="footer__sep" aria-hidden="true">·</span>
           <span>{{ 'footer.rights' | transloco }}</span>
         </span>

@@ -260,7 +260,7 @@
     "remember_me": "Ricordami",
     "sign_in": "Accedi",
     "forgot_link": "Password dimenticata?",
-    "magic_request": "Ricevi un link magico",
+    "magic_request": "Accedi con un link magico",
     "magic_sent": "Se esiste un account, è stato appena inviato un link di accesso. Controlla la tua casella di posta.",
     "send_link": "Invia il link",
     "back_to_password": "Torna alla password",
@@ -299,7 +299,8 @@
       "profile": "Profilo",
       "logout": "Disconnetti",
       "menu_aria": "Menu utente",
-      "sign_in": "Accedi"
+      "sign_in": "Accedi",
+      "change_password": "Cambia password"
     },
     "theme": {
       "toggle": "Cambia tema"
@@ -679,6 +680,7 @@
   "footer": {
     "version_label": "Versione {{version}}",
     "author": "Foxugly",
+    "privacy": "Privacy",
     "rights": "Tutti i diritti riservati"
   }
 }

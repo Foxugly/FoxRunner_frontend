@@ -20,8 +20,8 @@ test.describe('FoxRunner smoke', () => {
     for (const label of ['Accueil', 'Fonctionnalités', 'Soutenir', 'À propos']) {
       await expect(page.getByRole('link', { name: label })).toBeVisible();
     }
-    // The topmenu (banner) sign-in button — the home hero also has one, so scope it.
-    await expect(page.getByRole('banner').getByRole('button', { name: /Se connecter/ })).toBeVisible();
+    // The topmenu (banner) sign-in link — the home hero also has a CTA, so scope it.
+    await expect(page.getByRole('banner').getByRole('link', { name: /Se connecter/ })).toBeVisible();
   });
 
   test('login flow lands on dashboard and topbar shows feature entries', async ({ page }) => {
@@ -30,7 +30,7 @@ test.describe('FoxRunner smoke', () => {
 
     await page.getByLabel('Email').fill(ADMIN_EMAIL);
     await page.getByLabel('Mot de passe').fill(ADMIN_PASSWORD);
-    await page.getByRole('button', { name: /Se connecter/ }).click();
+    await page.locator('#main-content button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
@@ -47,11 +47,11 @@ test.describe('FoxRunner smoke', () => {
     await page.goto('/login');
     await page.getByLabel('Email').fill(ADMIN_EMAIL);
     await page.getByLabel('Mot de passe').fill(ADMIN_PASSWORD);
-    await page.getByRole('button', { name: /Se connecter/ }).click();
+    await page.locator('#main-content button[type="submit"]').click();
     await expect(page).toHaveURL(/\/$/);
 
     // Logout lives in the user dropdown: open it from the user button first.
-    await page.locator('.user-menu__trigger').click();
+    await page.locator('.user-trigger').click();
     await page.getByRole('menuitem', { name: 'Déconnexion' }).click();
     await expect(page).toHaveURL(/\/login$/);
   });

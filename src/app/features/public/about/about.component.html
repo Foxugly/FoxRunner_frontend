@@ -90,17 +90,28 @@
         <section class="about__panel">
           <h2 class="about__h2">{{ ui().technical.title }}</h2>
           <p class="about__lead">{{ ui().technical.lead }}</p>
-          @for (sec of ui().technical.sections; track sec.slug) {
-            <section class="about-sub">
-              <h3 class="about-sub__title">{{ sec.title }}</h3>
-              <p class="about-sub__intro">{{ sec.intro }}</p>
-              <ul class="about-sub__list">
-                @for (item of sec.items; track $index) {
-                  <li>{{ item }}</li>
-                }
-              </ul>
-            </section>
-          }
+          <div class="about-tech">
+            @for (card of ui().technical.cards; track card.slug) {
+              <article class="about-tech__card">
+                <h3 class="about-tech__card-title">{{ card.title }}</h3>
+                <a
+                  [href]="card.repo_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="about-tech__repo"
+                >
+                  <i class="pi pi-github" aria-hidden="true"></i>
+                  <span>{{ card.repo_label }}</span>
+                  <i class="pi pi-external-link" aria-hidden="true"></i>
+                </a>
+                <ul class="about-tech__list">
+                  @for (item of card.items; track $index) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </article>
+            }
+          </div>
         </section>
       </p-tabpanel>
     </p-tabpanels>

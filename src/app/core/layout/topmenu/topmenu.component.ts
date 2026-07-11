@@ -13,6 +13,8 @@ interface NavLink {
   icon: string;
   link: string;
   exact?: boolean;
+  /** Emerald-highlighted support CTA. */
+  support?: boolean;
 }
 
 @Component({
@@ -57,6 +59,7 @@ export class TopmenuComponent {
     if (this.auth.isSuperuser()) {
       base.push({ label: 'chrome.nav.admin', icon: 'pi pi-cog', link: '/admin' });
     }
+    base.push({ label: 'chrome.nav.soutenir', icon: 'pi pi-heart', link: '/soutenir', support: true });
     return base;
   });
 

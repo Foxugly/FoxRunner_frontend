@@ -7,32 +7,6 @@ import { PublicLayoutComponent } from './core/layout/public-layout/public-layout
 
 export const routes: Routes = [
   {
-    path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
-  },
-  {
-    path: 'forgot-password',
-    loadComponent: () =>
-      import('./features/auth/password/forgot-password.component').then(
-        (m) => m.ForgotPasswordComponent,
-      ),
-  },
-  {
-    path: 'reset-password',
-    loadComponent: () =>
-      import('./features/auth/password/reset-password.component').then(
-        (m) => m.ResetPasswordComponent,
-      ),
-  },
-  {
-    path: 'auth/magic/:token',
-    loadComponent: () =>
-      import('./features/auth/magic-link-exchange/magic-link-exchange.component').then(
-        (m) => m.MagicLinkExchangeComponent,
-      ),
-  },
-  {
     path: '',
     canActivate: [authGuard],
     component: MainLayoutComponent,
@@ -178,6 +152,32 @@ export const routes: Routes = [
         path: 'about',
         loadComponent: () =>
           import('./features/public/about/about.component').then((m) => m.AboutComponent),
+      },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./features/auth/password/reset-password.component').then(
+            (m) => m.ResetPasswordComponent,
+          ),
+      },
+      {
+        path: 'auth/magic/:token',
+        loadComponent: () =>
+          import('./features/auth/magic-link-exchange/magic-link-exchange.component').then(
+            (m) => m.MagicLinkExchangeComponent,
+          ),
       },
     ],
   },

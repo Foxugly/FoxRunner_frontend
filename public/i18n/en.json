@@ -260,7 +260,7 @@
     "remember_me": "Remember me",
     "sign_in": "Sign in",
     "forgot_link": "Forgot your password?",
-    "magic_request": "Get a magic link",
+    "magic_request": "Sign in with a magic link",
     "magic_sent": "If an account exists, a sign-in link has just been sent. Check your inbox.",
     "send_link": "Send the link",
     "back_to_password": "Back to password",
@@ -299,7 +299,8 @@
       "profile": "Profile",
       "logout": "Log out",
       "menu_aria": "User menu",
-      "sign_in": "Sign in"
+      "sign_in": "Sign in",
+      "change_password": "Change password"
     },
     "theme": {
       "toggle": "Toggle theme"
@@ -679,6 +680,7 @@
   "footer": {
     "version_label": "Version {{version}}",
     "author": "Foxugly",
+    "privacy": "Privacy",
     "rights": "All rights reserved"
   }
 }

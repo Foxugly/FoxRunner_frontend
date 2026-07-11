@@ -12,6 +12,7 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           class="topbar__link"
+          [class.topbar__link--support]="item.support"
         >
           <i [class]="item.icon"></i>
           <span>{{ item.label | transloco }}</span>
@@ -51,6 +52,7 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
           class="topbar__drawer-link"
+          [class.topbar__link--support]="item.support"
           (click)="closeMenu()"
         >
           <i [class]="item.icon"></i>

@@ -260,7 +260,7 @@
     "remember_me": "Recordarme",
     "sign_in": "Iniciar sesión",
     "forgot_link": "¿Olvidaste tu contraseña?",
-    "magic_request": "Recibir un enlace mágico",
+    "magic_request": "Iniciar sesión con enlace mágico",
     "magic_sent": "Si existe una cuenta, se acaba de enviar un enlace de acceso. Revisa tu bandeja de entrada.",
     "send_link": "Enviar el enlace",
     "back_to_password": "Volver a la contraseña",
@@ -299,7 +299,8 @@
       "profile": "Perfil",
       "logout": "Cerrar sesión",
       "menu_aria": "Menú de usuario",
-      "sign_in": "Iniciar sesión"
+      "sign_in": "Iniciar sesión",
+      "change_password": "Cambiar contraseña"
     },
     "theme": {
       "toggle": "Cambiar tema"
@@ -679,6 +680,7 @@
   "footer": {
     "version_label": "Versión {{version}}",
     "author": "Foxugly",
+    "privacy": "Privacidad",
     "rights": "Todos los derechos reservados"
   }
 }

@@ -15,29 +15,27 @@ type ExchangeState = 'working' | 'expired' | 'invalid';
   standalone: true,
   imports: [RouterLink, ButtonModule, CardModule, ProgressSpinnerModule, TranslocoPipe],
   template: `
-    <div class="auth-shell">
-      <div class="auth-card">
-        <p-card>
-          <div class="exchange">
-            @switch (state()) {
-              @case ('working') {
-                <p-progressSpinner strokeWidth="4" styleClass="u-spinner" />
-                <p class="m0">{{ 'auth.exchange_working' | transloco }}</p>
-              }
-              @case ('expired') {
-                <i class="pi pi-clock exchange-icon"></i>
-                <p class="m0">{{ 'auth.exchange_expired' | transloco }}</p>
-                <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
-              }
-              @case ('invalid') {
-                <i class="pi pi-times-circle exchange-icon"></i>
-                <p class="m0">{{ 'auth.exchange_invalid' | transloco }}</p>
-                <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
-              }
+    <div class="auth-card">
+      <p-card>
+        <div class="exchange">
+          @switch (state()) {
+            @case ('working') {
+              <p-progressSpinner strokeWidth="4" styleClass="u-spinner" />
+              <p class="m0">{{ 'auth.exchange_working' | transloco }}</p>
             }
-          </div>
-        </p-card>
-      </div>
+            @case ('expired') {
+              <i class="pi pi-clock exchange-icon"></i>
+              <p class="m0">{{ 'auth.exchange_expired' | transloco }}</p>
+              <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
+            }
+            @case ('invalid') {
+              <i class="pi pi-times-circle exchange-icon"></i>
+              <p class="m0">{{ 'auth.exchange_invalid' | transloco }}</p>
+              <p-button [label]="'auth.back_to_login' | transloco" icon="pi pi-arrow-left" routerLink="/login" />
+            }
+          }
+        </div>
+      </p-card>
     </div>
   `,
   styleUrl: './magic-link-exchange.component.scss',

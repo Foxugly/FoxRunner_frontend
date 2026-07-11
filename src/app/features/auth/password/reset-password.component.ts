@@ -13,15 +13,14 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
   standalone: true,
   imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, PasswordModule, TranslocoPipe],
   template: `
-    <div class="auth-shell">
-      <div class="auth-card">
-        <p-card>
-          <ng-template pTemplate="header">
-            <div class="card-header">
-              <i class="pi pi-key auth-brand-icon"></i>
-              <span class="brand fox-brand">{{ 'auth.reset_title' | transloco }}</span>
-            </div>
-          </ng-template>
+    <div class="auth-card">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <i class="pi pi-key auth-brand-icon"></i>
+            <span class="brand fox-brand">{{ 'auth.reset_title' | transloco }}</span>
+          </div>
+        </ng-template>
 
           @if (!token()) {
             <div class="help">
@@ -57,8 +56,7 @@ import { AuthPasswordService } from '../../../core/api/auth-password.service';
               <a routerLink="/login" class="link-center">{{ 'auth.back_to_login' | transloco }}</a>
             </form>
           }
-        </p-card>
-      </div>
+      </p-card>
     </div>
   `,
   styleUrl: './reset-password.component.scss',
