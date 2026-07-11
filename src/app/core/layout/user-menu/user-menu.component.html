@@ -3,13 +3,13 @@
     <button
       type="button"
       class="user-trigger"
-      [pTooltip]="auth.currentUser()?.email ?? ''"
       [attr.aria-haspopup]="'menu'"
       [attr.aria-expanded]="open()"
       [attr.aria-label]="'chrome.user.menu_aria' | transloco"
       (click)="toggle()"
     >
       <i class="pi pi-user" aria-hidden="true"></i>
+      <span class="user-trigger__email">{{ auth.currentUser()?.email }}</span>
     </button>
 
     @if (open()) {

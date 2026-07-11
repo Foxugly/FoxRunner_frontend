@@ -10,21 +10,20 @@
   align-items: center;
 }
 
-// ── Trigger (icon only + email tooltip) — same box as the theme toggle &
-//    language switcher: borderless, height 2.25rem. ──────────────────────────
+// ── Trigger (user icon + email) — same height/box as the theme toggle &
+//    language switcher (borderless, height 2.25rem). ──────────────────────────
 .user-trigger {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
   height: 2.25rem;
-  min-width: 2.5rem;
   padding: 0 0.6rem;
   border: 0;
   border-radius: 0.4rem;
   background: transparent;
   color: rgba(248, 250, 252, 0.82);
-  font-size: 1rem;
+  font-size: 0.92rem;
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -38,6 +37,20 @@
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+  }
+}
+
+.user-trigger__email {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* On narrow screens keep just the icon (the drawer carries the rest). */
+@media (max-width: 1024px) {
+  .user-trigger__email {
+    display: none;
   }
 }
 
