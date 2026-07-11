@@ -11,7 +11,7 @@
     linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(15, 23, 42, 0.98));
   border-bottom: 1px solid rgba(148, 163, 184, 0.22);
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
-  color: #f8fafc;
+  color: var(--chrome-ink);
 }
 
 .topbar__inner {
@@ -66,12 +66,12 @@
 
   &:hover {
     background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
+    color: var(--chrome-ink-strong);
   }
 
   &.active {
     background: rgba(16, 185, 129, 0.16);
-    color: #6ee7b7;
+    color: var(--chrome-accent);
   }
 
   i {
@@ -84,15 +84,15 @@
 .topbar__link--support {
   padding: 0.45rem 0.95rem;
   border-radius: 0.5rem;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: var(--chrome-ink-strong);
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
 
   &:hover,
   &.active {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: var(--chrome-ink-strong);
     filter: brightness(1.1);
   }
 }
@@ -124,7 +124,7 @@
     background 0.15s ease;
 
   &:hover {
-    color: #ffffff;
+    color: var(--chrome-ink-strong);
     background: rgba(255, 255, 255, 0.08);
   }
 
@@ -138,7 +138,7 @@
   display: none;
   background: transparent;
   border: 0;
-  color: #f8fafc;
+  color: var(--chrome-ink);
   font-size: 1.3rem;
   cursor: pointer;
   padding: 0.35rem 0.5rem;
@@ -166,7 +166,7 @@
 
   &.active {
     background: rgba(16, 185, 129, 0.16);
-    color: #6ee7b7;
+    color: var(--chrome-accent);
   }
 }
 
