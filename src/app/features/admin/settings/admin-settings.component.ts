@@ -62,6 +62,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         slot="right"
         icon="pi pi-plus"
         [outlined]="true"
+        severity="success"
         (onClick)="openCreate()"
         [pTooltip]="'admin.common.new' | transloco"
       />
@@ -93,6 +94,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           />
           <p-button
             icon="pi pi-trash"
+            severity="danger"
             [rounded]="true"
             [text]="true"
             size="small"

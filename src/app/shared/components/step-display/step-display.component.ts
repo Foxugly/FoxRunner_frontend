@@ -80,6 +80,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
                 />
                 <p-button
                   icon="pi pi-trash"
+                  severity="danger"
                   [rounded]="true"
                   [text]="true"
                   size="small"

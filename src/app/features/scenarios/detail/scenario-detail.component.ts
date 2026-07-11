@@ -285,6 +285,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                           [label]="'scenarios.steps.add' | transloco"
                           icon="pi pi-plus"
                           size="small"
+                          severity="success"
                           [text]="true"
                           (onClick)="openAddStep(col)"
                         />

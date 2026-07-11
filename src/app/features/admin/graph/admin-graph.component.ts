@@ -71,6 +71,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             <p-button
               [label]="'admin.graph.create_button' | transloco"
               icon="pi pi-plus"
+              severity="success"
               (onClick)="openCreate()"
             />
           </div>
@@ -119,6 +120,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
                     />
                     <p-button
                       icon="pi pi-trash"
+                      severity="danger"
                       [rounded]="true"
                       [text]="true"
                       size="small"
@@ -263,6 +265,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
         <p-button
           [label]="'admin.graph.create_submit' | transloco"
           icon="pi pi-plus"
+          severity="success"
           [loading]="saving()"
           [disabled]="createForm.invalid || saving()"
           (onClick)="create()"

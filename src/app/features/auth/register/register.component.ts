@@ -104,6 +104,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
               type="submit"
               [label]="'auth.register.submit' | transloco"
               icon="pi pi-user-plus"
+              severity="success"
               styleClass="u-full"
               [loading]="loading()"
               [disabled]="loading() || form.invalid"
