@@ -79,15 +79,18 @@
   }
 }
 
-/* Support CTA — emerald based on TrainingManager's link tone (text-emerald-700). */
+/* Support CTA — filled emerald pill like TrainingManager's topmenu .nav-cta
+ * (tm.foxugly.com), white text; reads clearly on the dark topbar. */
 .topbar__link--support {
-  color: #047857; // emerald-700, comme les liens de tm.foxugly.com/programs/:id
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
   font-weight: 600;
 
-  &:hover {
-    background: rgba(16, 185, 129, 0.16);
-    color: #059669; // emerald-600 au survol
-    text-decoration: underline;
+  &:hover,
+  &.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    filter: brightness(1.06);
   }
 }
 
@@ -103,10 +106,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.5rem;
+  min-height: 2.25rem;
   min-width: 2.5rem;
-  padding: 0 0.5rem;
-  border: 0;
+  padding: 0 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
   border-radius: 0.4rem;
   background: transparent;
   color: rgba(248, 250, 252, 0.82);
@@ -114,11 +117,13 @@
   cursor: pointer;
   transition:
     color 0.15s ease,
-    background 0.15s ease;
+    background 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
     color: #ffffff;
     background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(148, 163, 184, 0.7);
   }
 
   &:focus-visible {
