@@ -1,5 +1,6 @@
 {
   "common": {
+    "refresh": "Vernieuwen",
     "loading": "Laden…",
     "language_switcher": {
       "aria": "Taal wijzigen"

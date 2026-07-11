@@ -42,10 +42,11 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       <p-button
         slot="right"
         icon="pi pi-refresh"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
     </app-page-header>
 

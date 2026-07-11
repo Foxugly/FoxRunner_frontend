@@ -52,12 +52,19 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
       <p-button
         slot="right"
         icon="pi pi-refresh"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
-      <p-button slot="right" [label]="'admin.common.new' | transloco" icon="pi pi-plus" (onClick)="openCreate()" />
+      <p-button
+        slot="right"
+        icon="pi pi-plus"
+        [outlined]="true"
+        (onClick)="openCreate()"
+        [pTooltip]="'admin.common.new' | transloco"
+      />
     </app-page-header>
 
     <app-data-table
@@ -81,6 +88,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [rounded]="true"
             [text]="true"
             size="small"
+            severity="secondary"
             (onClick)="openEdit(s)"
           />
           <p-button

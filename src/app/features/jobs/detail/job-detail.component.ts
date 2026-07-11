@@ -7,6 +7,7 @@ import { PanelModule } from 'primeng/panel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 import { TimelineModule } from 'primeng/timeline';
+import { TooltipModule } from 'primeng/tooltip';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { JobsService } from '../../../core/api/jobs.service';
@@ -67,6 +68,7 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
     TimelineModule,
     ProgressBarModule,
     PanelModule,
+    TooltipModule,
     ApiDatePipe,
     PageHeaderComponent,
     EmptyStateComponent,
@@ -87,29 +89,32 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
       <p-button
         slot="right"
         icon="pi pi-refresh"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
       @if (job()?.status === 'queued' || job()?.status === 'running') {
         <p-button
           slot="right"
-          [label]="'jobs.cancel' | transloco"
           icon="pi pi-times"
+          [outlined]="true"
           severity="danger"
           [loading]="acting()"
           (onClick)="cancel()"
+          [pTooltip]="'jobs.cancel' | transloco"
         />
       }
       @if (job()?.status === 'failed' || job()?.status === 'cancelled') {
         <p-button
           slot="right"
-          [label]="'jobs.relaunch' | transloco"
           icon="pi pi-refresh"
+          [outlined]="true"
           severity="secondary"
           [loading]="acting()"
           (onClick)="retry()"
+          [pTooltip]="'jobs.relaunch' | transloco"
         />
       }
     </app-page-header>

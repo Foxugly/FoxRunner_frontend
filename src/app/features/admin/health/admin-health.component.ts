@@ -5,6 +5,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { AdminService } from '../../../core/api/admin.service';
 import type {
   ConfigChecks,
@@ -26,6 +27,7 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
     CardModule,
     ButtonModule,
     TagModule,
+    TooltipModule,
     ApiDatePipe,
     PageHeaderComponent,
   ],
@@ -42,10 +44,11 @@ type Severity = 'success' | 'warn' | 'danger' | 'info' | 'secondary';
       <p-button
         slot="right"
         icon="pi pi-refresh"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
     </app-page-header>
 

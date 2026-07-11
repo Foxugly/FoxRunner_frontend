@@ -44,25 +44,27 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       <p-button
         slot="right"
         icon="pi pi-refresh"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
-        [pTooltip]="'scenarios.common.refresh' | transloco"
+        [pTooltip]="'common.refresh' | transloco"
       />
       <p-button
         slot="right"
-        [label]="'scenarios.list.import' | transloco"
         icon="pi pi-upload"
+        [outlined]="true"
         severity="secondary"
         (onClick)="openImport()"
+        [pTooltip]="'scenarios.list.import' | transloco"
       />
       <p-button
         slot="right"
-        [label]="'scenarios.list.new' | transloco"
         icon="pi pi-plus"
+        [outlined]="true"
         severity="success"
         routerLink="/scenarios/new"
+        [pTooltip]="'scenarios.list.new' | transloco"
       />
     </app-page-header>
 

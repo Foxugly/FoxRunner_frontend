@@ -1,5 +1,6 @@
 {
   "common": {
+    "refresh": "Actualizar",
     "loading": "Cargando…",
     "language_switcher": {
       "aria": "Cambiar idioma"

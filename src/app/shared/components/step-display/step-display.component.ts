@@ -74,6 +74,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
                   [rounded]="true"
                   [text]="true"
                   size="small"
+                  severity="secondary"
                   [ariaLabel]="'common.step.edit_aria' | transloco"
                   (onClick)="edit.emit($index)"
                 />

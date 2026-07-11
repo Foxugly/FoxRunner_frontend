@@ -1,5 +1,6 @@
 {
   "common": {
+    "refresh": "Rafraîchir",
     "loading": "Chargement…",
     "language_switcher": {
       "aria": "Changer de langue"
