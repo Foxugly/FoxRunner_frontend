@@ -9,6 +9,7 @@
 .card-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 1.5rem;
   padding-bottom: 0;
@@ -86,9 +87,10 @@
   }
 }
 
-// "No account yet? Create an account" — last line of the card.
+// "No account yet? Create an account" — last line of the card, spaced from
+// the magic-link button above.
 .auth-alt {
-  margin: 0.25rem 0 0;
+  margin: 1.5rem 0 0;
   text-align: center;
   font-size: 0.875rem;
   color: var(--muted);
