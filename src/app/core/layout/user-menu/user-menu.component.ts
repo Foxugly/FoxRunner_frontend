@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { TooltipModule } from 'primeng/tooltip';
 import { AuthService } from '../../auth/auth.service';
 
 /**
@@ -25,7 +26,7 @@ import { AuthService } from '../../auth/auth.service';
 @Component({
   selector: 'app-user-menu',
   standalone: true,
-  imports: [RouterLink, TranslocoPipe],
+  imports: [RouterLink, TranslocoPipe, TooltipModule],
   templateUrl: './user-menu.component.html',
   styleUrl: './user-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

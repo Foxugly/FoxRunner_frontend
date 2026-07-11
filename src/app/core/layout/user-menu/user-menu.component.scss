@@ -10,45 +10,34 @@
   align-items: center;
 }
 
-// ── Trigger (icon + email), sits in the dark topbar chrome ──────────────────
+// ── Trigger (icon only + email tooltip) — same box as the theme toggle &
+//    language switcher: borderless, height 2.25rem. ──────────────────────────
 .user-trigger {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 2.5rem;
-  padding: 0.4rem 0.6rem;
+  justify-content: center;
+  height: 2.25rem;
+  min-width: 2.5rem;
+  padding: 0 0.6rem;
   border: 0;
-  border-radius: var(--radius);
+  border-radius: 0.4rem;
   background: transparent;
-  color: var(--chrome-ink);
-  font: inherit;
+  color: rgba(248, 250, 252, 0.82);
+  font-size: 1rem;
   cursor: pointer;
   transition:
     background 0.15s ease,
     color 0.15s ease;
 
-  &:hover,
-  &:focus-visible {
+  &:hover {
     background: rgba(255, 255, 255, 0.08);
-    color: var(--chrome-ink-strong);
+    color: #ffffff;
   }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
-  }
-}
-
-.user-trigger__email {
-  max-width: 14rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@media (max-width: 1024px) {
-  .user-trigger__email {
-    display: none;
   }
 }
 

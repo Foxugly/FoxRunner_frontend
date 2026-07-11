@@ -3,17 +3,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  computed,
   inject,
   signal,
   viewChildren,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { TooltipModule } from 'primeng/tooltip';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../available-languages';
 import { LanguageService } from '../language.service';
 
 @Component({
   selector: 'app-language-switcher',
-  imports: [TranslocoPipe, UpperCasePipe],
+  imports: [TranslocoPipe, TooltipModule, UpperCasePipe],
   templateUrl: './language-switcher.component.html',
   styleUrl: './language-switcher.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +35,10 @@ export class LanguageSwitcherComponent {
 
   protected readonly languages = AVAILABLE_LANGUAGES;
   protected readonly current = this.languageService.activeLang;
+  /** Native name of the active language — shown as the trigger tooltip. */
+  protected readonly currentNativeName = computed(
+    () => this.languages.find((l) => l.code === this.current())?.nativeName ?? '',
+  );
   protected readonly open = signal(false);
   protected readonly focusedIndex = signal<number | null>(null);
 

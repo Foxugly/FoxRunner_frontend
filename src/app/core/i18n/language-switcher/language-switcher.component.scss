@@ -2,30 +2,41 @@
 
 .ls-root { position: relative; display: inline-block; }
 
+/* Same box as the theme toggle & user trigger (borderless, height 2.25rem);
+ * shows the active language's 2-letter code. */
 .ls-trigger {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 32px;
-  min-width: 36px;
-  padding: 0 0.5rem;
-  border-radius: 0.4rem;
+  height: 2.25rem;
+  min-width: 2.5rem;
+  padding: 0 0.6rem;
   border: 0;
+  border-radius: 0.4rem;
   background: transparent;
-  color: #cbd5e1;
+  color: rgba(248, 250, 252, 0.82);
   font-size: 0.85rem;
   cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
 
-  &:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+  &:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
 
   &:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
 }
 
-.ls-code { font-weight: 500; letter-spacing: 0.05em; }
+.ls-code {
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
 
 .ls-menu {
   position: absolute;
