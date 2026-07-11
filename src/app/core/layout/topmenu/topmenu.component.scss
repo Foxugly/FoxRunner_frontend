@@ -79,14 +79,15 @@
   }
 }
 
-/* Support CTA — emerald highlight (distinct from the neutral nav links). */
+/* Support CTA — emerald based on TrainingManager's link tone (text-emerald-700). */
 .topbar__link--support {
-  color: #6ee7b7;
+  color: #047857; // emerald-700, comme les liens de tm.foxugly.com/programs/:id
   font-weight: 600;
 
   &:hover {
     background: rgba(16, 185, 129, 0.16);
-    color: #a7f3d0;
+    color: #059669; // emerald-600 au survol
+    text-decoration: underline;
   }
 }
 
