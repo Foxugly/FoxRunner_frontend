@@ -79,18 +79,21 @@
   }
 }
 
-/* Support CTA — filled emerald pill like TrainingManager's topmenu .nav-cta
- * (tm.foxugly.com), white text; reads clearly on the dark topbar. */
+/* Support CTA — filled emerald PILL, identical to TrainingManager's topmenu
+ * .nav-cta (tm.foxugly.com): gradient, white text, fully-rounded, subtle shadow. */
 .topbar__link--support {
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
   background: linear-gradient(135deg, #10b981, #059669);
   color: #ffffff;
   font-weight: 600;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.18);
 
   &:hover,
   &.active {
     background: linear-gradient(135deg, #10b981, #059669);
     color: #ffffff;
-    filter: brightness(1.06);
+    filter: brightness(1.1);
   }
 }
 
