@@ -154,6 +154,11 @@ export const routes: Routes = [
           import('./features/public/about/about.component').then((m) => m.AboutComponent),
       },
       {
+        path: 'privacy',
+        loadComponent: () =>
+          import('./features/public/privacy/privacy.component').then((m) => m.PrivacyComponent),
+      },
+      {
         path: 'login',
         loadComponent: () =>
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),

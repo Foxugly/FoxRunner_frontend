@@ -1,0 +1,44 @@
+.privacy {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.privacy__intro {
+  margin-bottom: 2rem;
+}
+
+.privacy__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.privacy__lead {
+  margin: 0;
+  color: var(--muted);
+}
+
+.privacy__section {
+  margin-bottom: 1.75rem;
+}
+
+.privacy__h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.privacy__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: var(--ink-soft);
+
+  li {
+    line-height: 1.5;
+  }
+}
