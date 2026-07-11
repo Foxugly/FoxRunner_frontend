@@ -47,11 +47,17 @@
 .footer__brand-link {
   display: inline-flex;
   align-items: center;
+  gap: 0.35rem;
 
   &:hover {
     text-decoration: none;
     opacity: 0.85;
   }
+}
+
+.footer__brand-name {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .footer__logo {
