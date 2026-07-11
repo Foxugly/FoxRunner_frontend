@@ -3,13 +3,14 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthMagicService } from '../../../core/api/auth-magic.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 @Component({
   selector: 'app-login',
@@ -18,27 +19,19 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
-    CardModule,
     CheckboxModule,
     InputTextModule,
     MessageModule,
     PasswordModule,
+    TranslocoPipe,
+    AuthCardComponent,
   ],
   template: `
-    <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
-      <div style="width: 100%; max-width: 420px;">
-        <p-card>
-          <ng-template pTemplate="header">
-            <div class="flex align-items-center gap-2 p-4 pb-0">
-              <i class="pi pi-bolt" style="font-size: 2rem; color: var(--fox-primary)"></i>
-              <span class="text-2xl fox-brand">FoxRunner</span>
-            </div>
-          </ng-template>
-
+    <app-auth-card icon="pi pi-bolt" [title]="'FoxRunner'">
           @if (!magicMode()) {
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
-              <div class="flex flex-column gap-2">
-                <label for="email">Email</label>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+              <div class="field">
+                <label for="email">{{ 'auth.email_label' | transloco }}</label>
                 <input
                   id="email"
                   pInputText
@@ -48,50 +41,49 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                   required
                 />
               </div>
-              <div class="flex flex-column gap-2">
-                <label for="password">Mot de passe</label>
+              <div class="field">
+                <label for="password">{{ 'auth.password_label' | transloco }}</label>
                 <p-password
                   inputId="password"
                   formControlName="password"
                   [toggleMask]="true"
                   [feedback]="false"
                   autocomplete="current-password"
-                  styleClass="w-full"
+                  styleClass="u-full"
                   [inputStyle]="{ width: '100%' }"
                   required
                 />
               </div>
               @if (error(); as msg) {
-                <p-message severity="error" [text]="msg" styleClass="w-full" />
+                <p-message severity="error" [text]="msg" styleClass="u-full" />
               }
-              <div class="flex align-items-center gap-2">
-                <p-checkbox inputId="remember" formControlName="remember" [binary]="true" />
-                <label for="remember" class="text-sm">Se souvenir de moi</label>
+              <div class="auth-meta">
+                <div class="check-inline">
+                  <p-checkbox inputId="remember" formControlName="remember" [binary]="true" />
+                  <label for="remember">{{ 'auth.remember_me' | transloco }}</label>
+                </div>
+                <a routerLink="/forgot-password" class="link">{{ 'auth.forgot_link' | transloco }}</a>
               </div>
               <p-button
                 type="submit"
-                label="Se connecter"
+                [label]="'auth.sign_in' | transloco"
                 icon="pi pi-sign-in"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="loading()"
                 [disabled]="loading() || form.invalid"
               />
-              <a routerLink="/forgot-password" class="text-sm text-center">
-                Mot de passe oublié ?
-              </a>
+              <div class="auth-divider"><span>{{ 'auth.or' | transloco }}</span></div>
               <p-button
-                label="Recevoir un lien magique"
+                [label]="'auth.magic_request' | transloco"
                 icon="pi pi-envelope"
-                severity="secondary"
-                [text]="true"
-                styleClass="w-full"
+                styleClass="u-full magic-btn"
                 (onClick)="enterMagicMode()"
               />
             </form>
           } @else {
-            <form [formGroup]="magicForm" (ngSubmit)="onSendMagic()" class="flex flex-column gap-3">
-              <div class="flex flex-column gap-2">
-                <label for="magicEmail">Email</label>
+            <form [formGroup]="magicForm" (ngSubmit)="onSendMagic()" class="auth-form">
+              <div class="field">
+                <label for="magicEmail">{{ 'auth.email_label' | transloco }}</label>
                 <input
                   id="magicEmail"
                   pInputText
@@ -102,38 +94,43 @@ import { AuthMagicService } from '../../../core/api/auth-magic.service';
                 />
               </div>
               @if (magicSent()) {
-                <p class="text-sm text-center text-color-secondary m-0">
-                  Si un compte existe, un lien de connexion vient d'être envoyé. Vérifie ta boîte mail.
+                <p class="note">
+                  {{ 'auth.magic_sent' | transloco }}
                 </p>
               }
               <p-button
                 type="submit"
-                label="Envoyer le lien"
+                [label]="'auth.send_link' | transloco"
                 icon="pi pi-send"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="magicLoading()"
                 [disabled]="magicLoading() || magicForm.invalid"
               />
               <p-button
-                label="Retour au mot de passe"
+                [label]="'auth.back_to_password' | transloco"
                 icon="pi pi-arrow-left"
                 severity="secondary"
                 [text]="true"
-                styleClass="w-full"
+                styleClass="u-full"
                 (onClick)="exitMagicMode()"
               />
             </form>
           }
-        </p-card>
-      </div>
-    </div>
+
+          <p class="auth-alt">
+            {{ 'auth.no_account' | transloco }}
+            <a routerLink="/register" class="link">{{ 'auth.create_account' | transloco }}</a>
+          </p>
+    </app-auth-card>
   `,
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly authMagic = inject(AuthMagicService);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -161,11 +158,13 @@ export class LoginComponent {
     } catch (err) {
       const status = (err as HttpErrorResponse)?.status ?? 0;
       this.error.set(
-        status === 401
-          ? 'E-mail ou mot de passe incorrect.'
-          : status === 0
-            ? 'Connexion au serveur impossible. Vérifie ta connexion internet.'
-            : 'La connexion a échoué. Réessaie dans un instant.',
+        this.transloco.translate(
+          status === 401
+            ? 'auth.error_invalid_credentials'
+            : status === 0
+              ? 'auth.error_server_unreachable'
+              : 'auth.error_login_failed',
+        ),
       );
     } finally {
       this.loading.set(false);

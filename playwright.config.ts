@@ -12,6 +12,9 @@ export default defineConfig({
   reporter: process.env['CI'] ? [['line'], ['html', { open: 'never' }]] : [['list']],
   use: {
     baseURL: BASE_URL,
+    // FoxRunner is French-first; pin the locale so the browser-language auto-detect
+    // in LanguageService resolves to 'fr' and the FR assertions below stay valid.
+    locale: 'fr-FR',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

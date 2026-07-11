@@ -7,6 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { HistoryService } from '../../../core/api/history.service';
 import { JobsService } from '../../../core/api/jobs.service';
@@ -28,22 +29,22 @@ interface ExecRow {
 }
 
 interface Opt {
-  label: string;
+  labelKey: string;
   value: string;
 }
 
 const SOURCE_OPTIONS: Opt[] = [
-  { label: 'Toutes les sources', value: 'all' },
-  { label: 'À la demande', value: 'job' },
-  { label: 'Planifié', value: 'scheduled' },
+  { labelKey: 'scenarios.executions.source_all', value: 'all' },
+  { labelKey: 'scenarios.executions.source_job', value: 'job' },
+  { labelKey: 'scenarios.executions.source_scheduled', value: 'scheduled' },
 ];
 
 const STATUS_OPTIONS: Opt[] = [
-  { label: 'Tous les statuts', value: '' },
-  { label: 'Réussis', value: 'success' },
-  { label: 'Échecs', value: 'failed' },
-  { label: 'En cours', value: 'running' },
-  { label: 'Annulés', value: 'cancelled' },
+  { labelKey: 'scenarios.executions.status_all', value: '' },
+  { labelKey: 'scenarios.executions.status_success', value: 'success' },
+  { labelKey: 'scenarios.executions.status_failed', value: 'failed' },
+  { labelKey: 'scenarios.executions.status_running', value: 'running' },
+  { labelKey: 'scenarios.executions.status_cancelled', value: 'cancelled' },
 ];
 
 /**
@@ -66,24 +67,25 @@ const STATUS_OPTIONS: Opt[] = [
     ApiDatePipe,
     EmptyStateComponent,
     StatusTagComponent,
+    TranslocoPipe,
   ],
   template: `
-    <div class="flex align-items-end gap-3 mb-3 flex-wrap">
-      <div class="flex flex-column gap-1">
-        <label for="f-source" class="text-sm text-color-secondary">Source</label>
-        <p-select inputId="f-source" [options]="sourceOptions" [(ngModel)]="source" optionLabel="label" optionValue="value" [style]="{ width: '14rem' }" (onChange)="reload()" />
+    <div class="exec-filters">
+      <div class="exec-field">
+        <label for="f-source" class="exec-label">{{ 'scenarios.executions.source_label' | transloco }}</label>
+        <p-select inputId="f-source" [options]="sourceOptions()" [(ngModel)]="source" optionLabel="label" optionValue="value" [style]="{ width: '14rem' }" (onChange)="reload()" />
       </div>
-      <div class="flex flex-column gap-1">
-        <label for="f-status" class="text-sm text-color-secondary">Statut</label>
-        <p-select inputId="f-status" [options]="statusOptions" [(ngModel)]="status" optionLabel="label" optionValue="value" [style]="{ width: '12rem' }" (onChange)="reload()" />
+      <div class="exec-field">
+        <label for="f-status" class="exec-label">{{ 'scenarios.executions.status_label' | transloco }}</label>
+        <p-select inputId="f-status" [options]="statusOptions()" [(ngModel)]="status" optionLabel="label" optionValue="value" [style]="{ width: '12rem' }" (onChange)="reload()" />
       </div>
-      <p-button icon="pi pi-refresh" severity="secondary" [text]="true" [loading]="loading()" (onClick)="reload()" pTooltip="Rafraîchir" />
+      <p-button icon="pi pi-refresh" severity="secondary" [text]="true" [loading]="loading()" (onClick)="reload()" [pTooltip]="'scenarios.common.refresh' | transloco" />
     </div>
 
     @if (truncatedCount(); as n) {
-      <div class="mb-3 text-sm text-color-secondary flex align-items-center gap-2">
+      <div class="exec-trunc">
         <i class="pi pi-info-circle"></i>
-        <span>Résultats tronqués (affiche les {{ n }} plus récents).</span>
+        <span>{{ 'scenarios.executions.truncated' | transloco: { n: n } }}</span>
       </div>
     }
 
@@ -98,35 +100,35 @@ const STATUS_OPTIONS: Opt[] = [
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 8rem">Statut</th>
-          <th style="width: 10rem">Source</th>
-          <th style="width: 13rem">Quand</th>
-          <th style="width: 9rem"></th>
+          <th class="col--status">{{ 'scenarios.executions.col_status' | transloco }}</th>
+          <th class="col--source">{{ 'scenarios.executions.col_source' | transloco }}</th>
+          <th class="col--when">{{ 'scenarios.executions.col_when' | transloco }}</th>
+          <th class="col--actions"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-r>
-        <tr class="cursor-pointer" (click)="openRow(r)">
+        <tr class="row-clickable" (click)="openRow(r)">
           <td>
             <app-status-tag [status]="r.status" />
             @if (r.dryRun) {
-              <p-tag class="ml-2" severity="secondary" value="dry-run" />
+              <p-tag class="tag-dry" severity="secondary" value="dry-run" />
             }
           </td>
           <td>
             @if (r.source === 'job') {
-              <p-tag severity="secondary" value="à la demande" />
+              <p-tag severity="secondary" [value]="'scenarios.executions.source_job_tag' | transloco" />
             } @else {
-              <p-tag severity="secondary" value="planifié" />
+              <p-tag severity="secondary" [value]="'scenarios.executions.source_scheduled_tag' | transloco" />
             }
           </td>
           <td>{{ r.when | apiDate: 'medium' }}</td>
-          <td class="text-right">
+          <td class="cell-right">
             @if (r.source === 'job' && r.status === 'failed') {
-              <span class="text-red-500 text-sm">voir l'échec →</span>
+              <span class="exec-hint exec-hint--danger">{{ 'scenarios.executions.see_failure' | transloco }}</span>
             } @else if (r.source === 'job') {
-              <span class="text-primary text-sm">détail →</span>
+              <span class="exec-hint exec-hint--primary">{{ 'scenarios.executions.detail_arrow' | transloco }}</span>
             } @else {
-              <span class="text-color-secondary text-sm">détail</span>
+              <span class="exec-hint exec-hint--muted">{{ 'scenarios.executions.detail' | transloco }}</span>
             }
           </td>
         </tr>
@@ -134,26 +136,27 @@ const STATUS_OPTIONS: Opt[] = [
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="4">
-            <app-empty-state icon="pi-play" title="Aucune exécution" message="Lance ce scénario ou attends un créneau planifié." />
+            <app-empty-state icon="pi-play" [title]="'scenarios.executions.empty_title' | transloco" [message]="'scenarios.executions.empty_message' | transloco" />
           </td>
         </tr>
       </ng-template>
     </p-table>
 
     <!-- Scheduled-run detail (no live timeline exists for scheduler runs) -->
-    <p-dialog [modal]="true" [(visible)]="detailOpen" [style]="{ width: '34rem' }" header="Exécution planifiée">
+    <p-dialog [modal]="true" [(visible)]="detailOpen" [style]="{ width: '34rem' }" [header]="'scenarios.executions.scheduled_detail_header' | transloco">
       @if (detail(); as h) {
-        <div class="flex flex-column gap-2 text-sm">
-          <div><strong>Slot :</strong> {{ h.slot_id }}</div>
-          <div><strong>Statut :</strong> <app-status-tag [status]="h.status" /></div>
-          <div><strong>Exécuté le :</strong> {{ h.executed_at | apiDate: 'medium' }}</div>
-          <div><strong>Étape :</strong> {{ h.step || '—' }}</div>
-          <div><strong>Message :</strong></div>
-          <div class="p-2 border-1 surface-border border-round" [style.white-space]="'pre-wrap'">{{ h.message || '—' }}</div>
+        <div class="exec-detail">
+          <div><strong>{{ 'scenarios.executions.field_slot' | transloco }}</strong> {{ h.slot_id }}</div>
+          <div><strong>{{ 'scenarios.executions.field_status' | transloco }}</strong> <app-status-tag [status]="h.status" /></div>
+          <div><strong>{{ 'scenarios.executions.field_executed_at' | transloco }}</strong> {{ h.executed_at | apiDate: 'medium' }}</div>
+          <div><strong>{{ 'scenarios.executions.field_step' | transloco }}</strong> {{ h.step || '—' }}</div>
+          <div><strong>{{ 'scenarios.executions.field_message' | transloco }}</strong></div>
+          <div class="exec-msg">{{ h.message || '—' }}</div>
         </div>
       }
     </p-dialog>
   `,
+  styleUrl: './scenario-executions.component.scss',
 })
 export class ScenarioExecutionsComponent implements OnInit {
   /** Scope executions to this scenario. */
@@ -163,9 +166,15 @@ export class ScenarioExecutionsComponent implements OnInit {
   private readonly history = inject(HistoryService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
-  readonly sourceOptions = SOURCE_OPTIONS;
-  readonly statusOptions = STATUS_OPTIONS;
+  /** Filter options with labels translated in the active language. */
+  sourceOptions(): { label: string; value: string }[] {
+    return SOURCE_OPTIONS.map((o) => ({ label: this.transloco.translate(o.labelKey), value: o.value }));
+  }
+  statusOptions(): { label: string; value: string }[] {
+    return STATUS_OPTIONS.map((o) => ({ label: this.transloco.translate(o.labelKey), value: o.value }));
+  }
   source: Source = 'all';
   status = '';
 

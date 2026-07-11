@@ -10,6 +10,7 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Menu, MenuModule } from 'primeng/menu';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import type { ScenarioSummary, ScenarioCreate } from '../../../core/api/types';
@@ -33,42 +34,48 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     MenuModule,
     PageHeaderComponent,
     EmptyStateComponent,
+    TranslocoPipe,
   ],
   template: `
     <app-page-header
       icon="pi-sitemap"
-      title="Scénarios"
+      [title]="'scenarios.list.title' | transloco"
     >
       <p-button
+        slot="right"
         icon="pi pi-refresh"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
         [loading]="loading()"
         (onClick)="reload()"
-        pTooltip="Rafraîchir"
+        [pTooltip]="'common.refresh' | transloco"
       />
       <p-button
-        label="Importer"
+        slot="right"
         icon="pi pi-upload"
+        [outlined]="true"
         severity="secondary"
         (onClick)="openImport()"
+        [pTooltip]="'scenarios.list.import' | transloco"
       />
       <p-button
-        label="Nouveau"
+        slot="right"
         icon="pi pi-plus"
+        [outlined]="true"
         severity="success"
         routerLink="/scenarios/new"
+        [pTooltip]="'scenarios.list.new' | transloco"
       />
     </app-page-header>
 
     @if (loading()) {
-      <div class="grid">
+      <div class="scn-grid">
         @for (i of skeletons; track i) {
-          <div class="col-12 md:col-6 lg:col-4">
-            <div class="scn-card scn-card--static border-1 surface-border border-round p-3 flex flex-column gap-3 h-full">
-              <div class="flex align-items-start gap-3">
+          <div>
+            <div class="scn-card scn-card--static">
+              <div class="scn-card__row">
                 <p-skeleton shape="circle" size="2.5rem" />
-                <div class="flex-1 flex flex-column gap-2">
+                <div class="scn-skel-lines">
                   <p-skeleton width="60%" height="1.1rem" />
                   <p-skeleton width="40%" height="0.75rem" />
                 </div>
@@ -83,36 +90,36 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     } @else if (items().length === 0) {
       <app-empty-state
         icon="pi-sitemap"
-        title="Aucun scénario"
-        subtitle="Crée un premier scénario pour démarrer."
+        [title]="'scenarios.list.empty_title' | transloco"
+        [subtitle]="'scenarios.list.empty_subtitle' | transloco"
         [tone]="'emerald'"
       >
         <p-button
-          label="Créer un scénario"
+          [label]="'scenarios.list.create' | transloco"
           icon="pi pi-plus"
           severity="success"
           routerLink="/scenarios/new"
         />
       </app-empty-state>
     } @else {
-      <div class="grid">
+      <div class="scn-grid">
         @for (s of items(); track s.scenario_id) {
-          <div class="col-12 md:col-6 lg:col-4">
+          <div>
             <div
-              class="scn-card border-1 surface-border border-round p-3 flex flex-column gap-3 h-full"
+              class="scn-card"
               role="button"
               tabindex="0"
               (click)="openScenario(s)"
               (keydown.enter)="onCardKey($event, s)"
             >
-              <div class="flex align-items-start gap-3">
+              <div class="scn-card__row">
                 <span class="scn-card__icon">
                   <i class="pi pi-sitemap"></i>
                 </span>
-                <div class="flex-1 min-w-0">
-                  <h3 class="scn-card__title m-0">{{ s.scenario_id }}</h3>
-                  <p class="scn-card__subtitle m-0 mt-1">
-                    {{ s.role === 'owner' ? 'Vous êtes propriétaire' : 'Partagé avec vous' }}
+                <div class="scn-card__meta">
+                  <h3 class="scn-card__title">{{ s.scenario_id }}</h3>
+                  <p class="scn-card__subtitle">
+                    {{ s.role === 'owner' ? ('scenarios.list.card_owner' | transloco) : ('scenarios.list.card_shared' | transloco) }}
                   </p>
                 </div>
                 <p-button
@@ -120,15 +127,15 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
                   severity="secondary"
                   [text]="true"
                   [rounded]="true"
-                  ariaLabel="Actions du scénario"
+                  [ariaLabel]="'scenarios.list.card_actions_aria' | transloco"
                   (onClick)="onCardMenu($event, s, cardMenu)"
                 />
               </div>
               <div class="scn-card__footer">
                 @if (s.role === 'owner') {
-                  <p-tag severity="success" value="Propriétaire" />
+                  <p-tag severity="success" [value]="'scenarios.tag.owner' | transloco" />
                 } @else {
-                  <p-tag severity="secondary" value="Partagé" />
+                  <p-tag severity="secondary" [value]="'scenarios.tag.shared' | transloco" />
                 }
                 <i class="pi pi-arrow-right scn-card__arrow"></i>
               </div>
@@ -138,27 +145,34 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
       </div>
     }
 
-    <p-menu #cardMenu [popup]="true" [model]="cardMenuItems" appendTo="body" />
+    <p-menu #cardMenu [popup]="true" [model]="cardMenuItems" appendTo="body">
+      <ng-template #item let-menuItem>
+        <div class="scn-menuitem" [class.scn-menuitem--danger]="menuItem.styleClass === 'danger'">
+          <i [class]="menuItem.icon"></i>
+          <span>{{ menuItem.label }}</span>
+        </div>
+      </ng-template>
+    </p-menu>
 
     <p-dialog
-      header="Dupliquer le scénario"
+      [header]="'scenarios.duplicate.header' | transloco"
       [modal]="true"
       [(visible)]="duplicateOpen"
       [style]="{ width: '420px' }"
     >
-      <div class="flex flex-column gap-3">
-        <label for="newId">Nouvel identifiant</label>
+      <div class="dlg-stack">
+        <label for="newId">{{ 'scenarios.duplicate.new_id_label' | transloco }}</label>
         <input
           id="newId"
           pInputText
           [(ngModel)]="duplicateNewId"
-          placeholder="mon_scenario_v2"
+          [placeholder]="'scenarios.duplicate.new_id_placeholder' | transloco"
         />
       </div>
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="closeDuplicate()" />
+        <p-button [label]="'scenarios.common.cancel' | transloco" severity="secondary" [text]="true" (onClick)="closeDuplicate()" />
         <p-button
-          label="Dupliquer"
+          [label]="'scenarios.duplicate.confirm' | transloco"
           icon="pi pi-copy"
           [loading]="duplicating()"
           [disabled]="!duplicateNewId || duplicating()"
@@ -168,97 +182,36 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     </p-dialog>
 
     <p-dialog
-      header="Importer un scénario (JSON)"
+      [header]="'scenarios.import.header' | transloco"
       [modal]="true"
       [(visible)]="importOpen"
       [style]="{ width: '40rem' }"
     >
-      <div class="flex flex-column gap-3">
-        <div class="flex flex-column gap-2">
-          <label for="importId">Identifiant du scénario</label>
-          <input id="importId" pInputText [(ngModel)]="importId" placeholder="mon_scenario" />
-          <small class="text-color-secondary">Pré-rempli depuis le JSON ; modifie-le pour importer sous un autre nom.</small>
+      <div class="dlg-stack">
+        <div class="dlg-field">
+          <label for="importId">{{ 'scenarios.import.id_label' | transloco }}</label>
+          <input id="importId" pInputText [(ngModel)]="importId" [placeholder]="'scenarios.import.id_placeholder' | transloco" />
+          <small class="dlg-hint">{{ 'scenarios.import.id_hint' | transloco }}</small>
         </div>
-        <div class="flex flex-column gap-2">
-          <label for="importFile">Fichier .json (optionnel)</label>
+        <div class="dlg-field">
+          <label for="importFile">{{ 'scenarios.import.file_label' | transloco }}</label>
           <input id="importFile" type="file" accept="application/json,.json" (change)="onImportFile($event)" />
         </div>
-        <div class="flex flex-column gap-2">
-          <label for="importText">…ou colle le JSON</label>
-          <textarea id="importText" pInputText [(ngModel)]="importText" rows="10" class="font-mono text-sm"
+        <div class="dlg-field">
+          <label for="importText">{{ 'scenarios.import.text_label' | transloco }}</label>
+          <textarea id="importText" pInputText [(ngModel)]="importText" rows="10" class="dlg-mono"
             placeholder='{ "scenario_id": "...", "description": "...", "definition": { "steps": [] } }'></textarea>
         </div>
       </div>
       <ng-template pTemplate="footer">
-        <p-button label="Annuler" severity="secondary" [text]="true" (onClick)="importOpen = false" />
-        <p-button label="Importer" icon="pi pi-upload" [loading]="importing()" [disabled]="!importText.trim() || importing()" (onClick)="runImport()" />
+        <p-button [label]="'scenarios.common.cancel' | transloco" severity="secondary" [text]="true" (onClick)="importOpen = false" />
+        <p-button [label]="'scenarios.import.confirm' | transloco" icon="pi pi-upload" [loading]="importing()" [disabled]="!importText.trim() || importing()" (onClick)="runImport()" />
       </ng-template>
     </p-dialog>
 
     <p-confirmDialog />
   `,
-  styles: [
-    `
-      .scn-card {
-        background: #ffffff;
-        color: inherit;
-        text-decoration: none;
-        cursor: pointer;
-        transition:
-          transform 0.15s ease,
-          box-shadow 0.15s ease,
-          border-color 0.15s ease;
-      }
-      .scn-card:not(.scn-card--static):hover {
-        transform: translateY(-2px);
-        border-color: var(--fox-primary);
-        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
-      }
-      .scn-card__icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 auto;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 9999px;
-        background: rgba(16, 185, 129, 0.12);
-        color: var(--fox-primary);
-      }
-      .scn-card__icon i {
-        font-size: 1.15rem;
-      }
-      .scn-card__title {
-        font-size: 1rem;
-        font-weight: 600;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      .scn-card__subtitle {
-        font-size: 0.8rem;
-        color: var(--text-color-secondary);
-      }
-      .scn-card__footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: auto;
-      }
-      .scn-card__arrow {
-        color: var(--fox-primary);
-        opacity: 0;
-        transform: translateX(-4px);
-        transition:
-          opacity 0.15s ease,
-          transform 0.15s ease;
-      }
-      .scn-card:hover .scn-card__arrow {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    `,
-  ],
+  styleUrl: './scenarios-list.component.scss',
 })
 export class ScenariosListComponent implements OnInit {
   private readonly service = inject(ScenariosService);
@@ -266,6 +219,7 @@ export class ScenariosListComponent implements OnInit {
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
   importOpen = false;
   importText = '';
@@ -308,8 +262,8 @@ export class ScenariosListComponent implements OnInit {
   onCardMenu(event: MouseEvent, s: ScenarioSummary, menu: Menu): void {
     event.stopPropagation();
     this.cardMenuItems = [
-      { label: 'Dupliquer', icon: 'pi pi-copy', command: () => this.askDuplicate(s) },
-      { label: 'Supprimer', icon: 'pi pi-trash', styleClass: 'text-red-500', command: () => this.askDelete(s) },
+      { label: this.transloco.translate('scenarios.list.duplicate'), icon: 'pi pi-copy', command: () => this.askDuplicate(s) },
+      { label: this.transloco.translate('scenarios.common.delete'), icon: 'pi pi-trash', styleClass: 'danger', command: () => this.askDelete(s) },
     ];
     menu.toggle(event);
   }
@@ -354,7 +308,7 @@ export class ScenariosListComponent implements OnInit {
       );
       this.messages.add({
         severity: 'success',
-        summary: 'Scénario dupliqué',
+        summary: this.transloco.translate('scenarios.toast.duplicated'),
         detail: dup.scenario_id,
         life: 3000,
       });
@@ -369,18 +323,18 @@ export class ScenariosListComponent implements OnInit {
 
   askDelete(s: ScenarioSummary): void {
     this.confirm.confirm({
-      header: `Supprimer « ${s.scenario_id} » ?`,
-      message: 'Cette action est irréversible. Les slots associés deviendront invalides.',
+      header: this.transloco.translate('scenarios.confirm.delete_header', { id: s.scenario_id }),
+      message: this.transloco.translate('scenarios.confirm.delete_message'),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.transloco.translate('scenarios.common.delete'),
+      rejectLabel: this.transloco.translate('scenarios.common.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: async () => {
         try {
           await this.service.remove(s.scenario_id);
           this.messages.add({
             severity: 'success',
-            summary: 'Scénario supprimé',
+            summary: this.transloco.translate('scenarios.toast.deleted'),
             detail: s.scenario_id,
             life: 3000,
           });
@@ -426,23 +380,23 @@ export class ScenariosListComponent implements OnInit {
     try {
       const raw = JSON.parse(this.importText) as unknown;
       if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
-        this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'Le contenu doit être un objet JSON.', life: 4000 });
+        this.messages.add({ severity: 'error', summary: this.transloco.translate('scenarios.import.invalid_summary'), detail: this.transloco.translate('scenarios.import.invalid_not_object'), life: 4000 });
         return;
       }
       parsed = raw as Record<string, unknown>;
     } catch {
-      this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'Contenu illisible.', life: 4000 });
+      this.messages.add({ severity: 'error', summary: this.transloco.translate('scenarios.import.invalid_summary'), detail: this.transloco.translate('scenarios.import.invalid_unreadable'), life: 4000 });
       return;
     }
     // Tolerate either { scenario_id, description, definition } or a raw definition.
     const definition = (parsed['definition'] ?? parsed) as Record<string, unknown>;
     if (typeof definition !== 'object' || definition === null || Array.isArray(definition)) {
-      this.messages.add({ severity: 'error', summary: 'JSON invalide', detail: 'La définition doit être un objet JSON.', life: 4000 });
+      this.messages.add({ severity: 'error', summary: this.transloco.translate('scenarios.import.invalid_summary'), detail: this.transloco.translate('scenarios.import.invalid_definition'), life: 4000 });
       return;
     }
     const scenarioId = (this.importId || (parsed['scenario_id'] as string) || '').trim();
     if (!scenarioId) {
-      this.messages.add({ severity: 'error', summary: 'Identifiant requis', detail: 'Indique un identifiant de scénario.', life: 4000 });
+      this.messages.add({ severity: 'error', summary: this.transloco.translate('scenarios.import.id_required_summary'), detail: this.transloco.translate('scenarios.import.id_required_detail'), life: 4000 });
       return;
     }
     const dto: ScenarioCreate = {
@@ -454,7 +408,7 @@ export class ScenariosListComponent implements OnInit {
     this.importing.set(true);
     try {
       await this.service.create(dto, newIdempotencyKey());
-      this.messages.add({ severity: 'success', summary: 'Scénario importé', detail: scenarioId, life: 3000 });
+      this.messages.add({ severity: 'success', summary: this.transloco.translate('scenarios.toast.imported'), detail: scenarioId, life: 3000 });
       this.importOpen = false;
       this.router.navigate(['/scenarios', scenarioId]);
     } catch {

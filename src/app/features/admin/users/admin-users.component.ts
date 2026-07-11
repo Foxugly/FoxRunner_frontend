@@ -1,7 +1,10 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { AdminService } from '../../../core/api/admin.service';
@@ -16,7 +19,10 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
+    TranslocoPipe,
     ButtonModule,
+    CheckboxModule,
     TooltipModule,
     ToggleSwitchModule,
     PageHeaderComponent,
@@ -24,63 +30,91 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
     CellTemplateDirective,
   ],
   template: `
-    <app-page-header icon="pi-users" title="Utilisateurs" [backLink]="'/admin'">
+    <app-page-header icon="pi-users" [title]="'admin.users.title' | transloco">
       <p-button
-        icon="pi pi-refresh"
+        slot="left"
+        icon="pi pi-arrow-left"
+        [label]="'admin.common.back' | transloco"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
+        routerLink="/admin"
+      />
+      <p-button
+        slot="right"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        severity="secondary"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
     </app-page-header>
 
+    <div class="table-toolbar">
+      <p-checkbox
+        inputId="incInactive"
+        [binary]="true"
+        [ngModel]="includeInactive()"
+        (ngModelChange)="includeInactive.set($event)"
+      />
+      <label for="incInactive">{{ 'admin.users.include_inactive' | transloco }}</label>
+    </div>
+
     <app-data-table
-      [value]="items()"
+      [value]="visibleItems()"
       [columns]="columns"
       [loading]="loading()"
       dataKey="id"
       emptyIcon="pi-users"
-      emptyTitle="Aucun utilisateur"
+      [emptyTitle]="'admin.users.empty_title' | transloco"
     >
-      <ng-template appCell="id" let-u><code class="text-xs">{{ u.id }}</code></ng-template>
+      <ng-template appCell="id" let-u><code class="id-code">{{ u.id }}</code></ng-template>
       <ng-template appCell="is_active" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_active"
           (onChange)="updateFlag(u, 'is_active', u.is_active)"
-          [ariaLabel]="'Actif — ' + u.email"
+          [ariaLabel]="'admin.users.aria_active' | transloco: { email: u.email }"
         />
       </ng-template>
       <ng-template appCell="is_superuser" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_superuser"
           (onChange)="updateFlag(u, 'is_superuser', u.is_superuser)"
-          [ariaLabel]="'Superuser — ' + u.email"
+          [ariaLabel]="'admin.users.aria_superuser' | transloco: { email: u.email }"
         />
       </ng-template>
       <ng-template appCell="is_verified" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_verified"
           (onChange)="updateFlag(u, 'is_verified', u.is_verified)"
-          [ariaLabel]="'Vérifié — ' + u.email"
+          [ariaLabel]="'admin.users.aria_verified' | transloco: { email: u.email }"
         />
       </ng-template>
     </app-data-table>
   `,
+  styleUrl: './admin-users.component.scss',
 })
 export class AdminUsersComponent implements OnInit {
   private readonly service = inject(AdminService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly items = signal<UserSummary[]>([]);
   readonly loading = signal(false);
 
+  /** §218: inactive (deactivated) users are hidden until this is checked. */
+  readonly includeInactive = signal(false);
+  readonly visibleItems = computed(() =>
+    this.includeInactive() ? this.items() : this.items().filter((u) => u.is_active),
+  );
+
   readonly columns: DataTableColumn[] = [
-    { field: 'email', header: 'Email', sortable: true },
-    { field: 'id', header: 'UUID', width: '18rem', searchable: false },
-    { field: 'timezone_name', header: 'Fuseau', sortable: true },
-    { field: 'is_active', header: 'Actif', width: '6rem', searchable: false },
-    { field: 'is_superuser', header: 'Superuser', width: '8rem', searchable: false },
-    { field: 'is_verified', header: 'Vérifié', width: '7rem', searchable: false },
+    { field: 'email', header: this.i18n.translate('admin.users.col_email'), sortable: true },
+    { field: 'id', header: this.i18n.translate('admin.users.col_uuid'), width: '18rem', searchable: false },
+    { field: 'timezone_name', header: this.i18n.translate('admin.users.col_timezone'), sortable: true },
+    { field: 'is_active', header: this.i18n.translate('admin.users.col_active'), width: '6rem', searchable: false },
+    { field: 'is_superuser', header: this.i18n.translate('admin.users.col_superuser'), width: '8rem', searchable: false },
+    { field: 'is_verified', header: this.i18n.translate('admin.users.col_verified'), width: '7rem', searchable: false },
   ];
 
   ngOnInit(): void {
@@ -116,7 +150,7 @@ export class AdminUsersComponent implements OnInit {
       await this.service.updateUser(user.id, { [field]: value });
       this.messages.add({
         severity: 'success',
-        summary: 'Utilisateur mis à jour',
+        summary: this.i18n.translate('admin.users.toast_updated'),
         detail: `${user.email} · ${field}=${value}`,
         life: 2500,
       });

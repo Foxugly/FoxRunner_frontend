@@ -16,19 +16,19 @@ import { ButtonModule } from 'primeng/button';
   standalone: true,
   imports: [FormsModule, ButtonModule],
   template: `
-    <div class="flex flex-column gap-2">
-      <div class="flex align-items-center gap-2">
+    <div class="json-editor">
+      <div class="json-editor__header">
         @if (label) {
-          <span class="font-semibold">{{ label }}</span>
+          <span class="json-editor__label">{{ label }}</span>
         }
-        <span class="flex-1"></span>
+        <span class="json-editor__spacer"></span>
         @if (!valid()) {
-          <span class="text-red-500 text-sm">
-            <i class="pi pi-times-circle mr-1"></i>JSON invalide : {{ errorMessage() }}
+          <span class="json-editor__status json-editor__status--error">
+            <i class="pi pi-times-circle"></i>JSON invalide : {{ errorMessage() }}
           </span>
         } @else {
-          <span class="text-color-secondary text-sm">
-            <i class="pi pi-check mr-1"></i>JSON valide
+          <span class="json-editor__status json-editor__status--ok">
+            <i class="pi pi-check"></i>JSON valide
           </span>
         }
         <p-button
@@ -42,7 +42,6 @@ import { ButtonModule } from 'primeng/button';
         />
       </div>
       <textarea
-        class="w-full font-mono text-sm"
         [rows]="rows"
         [ngModel]="text()"
         (ngModelChange)="onChange($event)"
@@ -52,23 +51,7 @@ import { ButtonModule } from 'primeng/button';
       ></textarea>
     </div>
   `,
-  styles: [
-    `
-      textarea {
-        padding: 0.5rem;
-        border: 1px solid var(--p-inputtext-border-color, #d4d4d8);
-        border-radius: 0.375rem;
-        background: var(--p-inputtext-background, #fff);
-        color: var(--p-inputtext-color, inherit);
-        resize: vertical;
-        min-height: 8rem;
-      }
-      textarea:focus {
-        outline: 2px solid var(--p-primary-color, #d97706);
-        outline-offset: -2px;
-      }
-    `,
-  ],
+  styleUrl: './json-editor.component.scss',
 })
 export class JsonEditorComponent implements OnChanges {
   @Input() label?: string;

@@ -1,5 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { TranslocoService } from '@jsverse/transloco';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 /**
  * Shared save/cancel bar for edit forms (fleet OPERATIONS.md §3.15): Cancel
@@ -12,10 +14,10 @@ import { ButtonModule } from 'primeng/button';
   standalone: true,
   imports: [ButtonModule],
   template: `
-    <div class="flex justify-content-end gap-2 mt-2 footer-actions">
+    <div class="footer-actions">
       <p-button
         type="button"
-        [label]="cancelLabel()"
+        [label]="cancelText()"
         icon="pi pi-times"
         severity="secondary"
         [outlined]="true"
@@ -24,7 +26,7 @@ import { ButtonModule } from 'primeng/button';
       />
       <p-button
         type="button"
-        [label]="saveLabel()"
+        [label]="saveText()"
         icon="pi pi-save"
         [loading]="loading()"
         [disabled]="disabled()"
@@ -32,12 +34,24 @@ import { ButtonModule } from 'primeng/button';
       />
     </div>
   `,
+  styleUrl: './form-footer.component.scss',
 })
 export class FormFooterComponent {
-  readonly saveLabel = input<string>('Enregistrer');
-  readonly cancelLabel = input<string>('Annuler');
+  private readonly i18n = inject(TranslocoService);
+  private readonly lang = inject(LanguageService);
+  readonly saveLabel = input<string>();
+  readonly cancelLabel = input<string>();
   readonly loading = input<boolean>(false);
   readonly disabled = input<boolean>(false);
   readonly save = output<void>();
   readonly cancelled = output<void>();
+
+  readonly saveText = computed(() => {
+    this.lang.activeLang();
+    return this.saveLabel() ?? this.i18n.translate('common.save');
+  });
+  readonly cancelText = computed(() => {
+    this.lang.activeLang();
+    return this.cancelLabel() ?? this.i18n.translate('common.cancel');
+  });
 }

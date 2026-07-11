@@ -5,6 +5,7 @@ import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { newIdempotencyKey } from '../../../core/utils/idempotency';
@@ -38,15 +39,16 @@ const EMPTY_DEFINITION = {
     TextareaModule,
     FormFooterComponent,
     PageHeaderComponent,
+    TranslocoPipe,
   ],
   template: `
-    <app-page-header icon="pi-plus" title="Nouveau scénario" />
+    <app-page-header icon="pi-plus" [title]="'scenarios.edit.title' | transloco" />
 
     <p-card>
-      <h3 class="builder-section-title">Informations</h3>
+      <h3 class="builder-section-title">{{ 'scenarios.edit.section_info' | transloco }}</h3>
       <form [formGroup]="form" class="meta-grid cols-2">
         <div class="meta-item">
-          <label class="meta-label" for="scenario_id">Identifiant</label>
+          <label class="meta-label" for="scenario_id">{{ 'scenarios.edit.id_label' | transloco }}</label>
           <div class="meta-value">
             <input
               id="scenario_id"
@@ -57,42 +59,43 @@ const EMPTY_DEFINITION = {
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="owner">Propriétaire</label>
+          <label class="meta-label" for="owner">{{ 'scenarios.edit.owner_label' | transloco }}</label>
           <div class="meta-value">
             <input
               id="owner"
               pInputText
               formControlName="owner_user_id"
-              placeholder="email ou UUID"
+              [placeholder]="'scenarios.common.owner_placeholder' | transloco"
             />
           </div>
         </div>
         <div class="meta-item meta-item--full">
-          <label class="meta-label" for="description">Description</label>
+          <label class="meta-label" for="description">{{ 'scenarios.edit.description_label' | transloco }}</label>
           <div class="meta-value">
             <textarea
               id="description"
               pTextarea
               rows="3"
               formControlName="description"
-              placeholder="Que fait ce scénario ?"
+              [placeholder]="'scenarios.common.description_placeholder' | transloco"
             ></textarea>
           </div>
         </div>
       </form>
-      <p class="text-color-secondary text-sm mt-2 mb-0">
-        Les étapes s'ajoutent ensuite dans l'onglet « Étapes » du scénario.
+      <p class="edit-hint">
+        {{ 'scenarios.edit.steps_hint' | transloco }}
       </p>
     </p-card>
 
     <app-form-footer
-      saveLabel="Créer"
+      [saveLabel]="'scenarios.edit.create' | transloco"
       [loading]="saving()"
       [disabled]="form.invalid || saving()"
       (save)="save()"
       (cancelled)="onCancel()"
     />
   `,
+  styleUrl: './scenario-edit.component.scss',
 })
 export class ScenarioEditComponent implements OnInit, HasUnsavedChanges {
   private readonly fb = inject(FormBuilder);
@@ -100,6 +103,7 @@ export class ScenarioEditComponent implements OnInit, HasUnsavedChanges {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly messages = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly saving = signal(false);
   private idempotencyKey = '';
@@ -143,7 +147,7 @@ export class ScenarioEditComponent implements OnInit, HasUnsavedChanges {
       );
       this.messages.add({
         severity: 'success',
-        summary: 'Scénario créé',
+        summary: this.transloco.translate('scenarios.toast.created'),
         detail: created.scenario_id,
         life: 3000,
       });

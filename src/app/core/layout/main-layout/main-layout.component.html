@@ -1,0 +1,50 @@
+@if (network.offline()) {
+  <div
+    class="fox-offline-banner"
+    role="alert"
+    aria-live="assertive"
+  >
+    <i class="pi pi-exclamation-triangle banner-icon"></i>
+    {{ 'chrome.offline.message' | transloco: { count: network.consecutiveErrors() } }}
+    <code>http://127.0.0.1:8000</code>.
+  </div>
+}
+
+@if (systemStatus.alarm()) {
+  <div
+    class="fox-system-banner"
+    [class.fox-system-banner--down]="systemStatus.severity() === 'down'"
+    role="alert"
+    aria-live="assertive"
+  >
+    <i class="pi pi-exclamation-triangle banner-icon"></i>
+    <span class="fox-system-banner__title">
+      {{
+        systemStatus.severity() === 'down'
+          ? ('chrome.system.incident' | transloco)
+          : ('chrome.system.degraded' | transloco)
+      }}
+    </span>
+    <ul class="fox-system-banner__list">
+      @for (item of systemStatus.items(); track item.label) {
+        <li>
+          {{ item.label }}
+          @if (item.command) {
+            <span class="fox-system-banner__fix">
+              — {{ 'chrome.system.restart' | transloco }} <code>{{ item.command }}</code>
+            </span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+}
+
+<div class="fox-shell">
+  <a href="#main-content" class="fox-skip-link">{{ 'common.skip_to_content' | transloco }}</a>
+  <app-topmenu [mode]="'authenticated'" />
+  <main id="main-content" tabindex="-1" class="main-container">
+    <router-outlet />
+  </main>
+  <app-footer />
+</div>

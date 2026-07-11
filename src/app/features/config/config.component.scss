@@ -1,0 +1,73 @@
+.skeleton-gap {
+  margin-bottom: 0.5rem;
+}
+
+.card-spaced {
+  margin-top: 1rem;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  padding-bottom: 0;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.icon-gap {
+  margin-right: 0.5rem;
+}
+
+.icon-gap-sm {
+  margin-right: 0.25rem;
+}
+
+.empty-note {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.entry-main {
+  min-width: 0;
+}
+
+.entry-name {
+  font-weight: 500;
+}
+
+.entry-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.entry-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.section-desc {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}

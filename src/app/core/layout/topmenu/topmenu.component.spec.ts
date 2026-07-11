@@ -6,7 +6,8 @@ import { AuthService } from '../../auth/auth.service';
 
 function makeAuthStub(superuser: boolean) {
   return {
-    currentUser: signal<{ email: string } | null>({ email: 'admin@local' }),
+    currentUser: signal<{ email: string } | null>({ email: 'user@local' }),
+    isLoggedIn: signal(true),
     isSuperuser: signal(superuser),
     logout: () => Promise.resolve(),
   };

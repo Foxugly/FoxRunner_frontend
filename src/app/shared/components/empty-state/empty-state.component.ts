@@ -11,44 +11,18 @@ type EmptyTone = 'emerald' | 'rose' | 'gray';
   selector: 'app-empty-state',
   standalone: true,
   template: `
-    <div class="flex flex-column align-items-center justify-content-center py-8 px-4 text-center">
+    <div class="empty-state">
       <span class="empty-pill" [class]="'empty-pill--' + tone">
         <i [class]="'pi ' + (icon ?? 'pi-inbox')"></i>
       </span>
-      <h3 class="mt-3 mb-1 text-lg font-medium">{{ title }}</h3>
+      <h3 class="empty-state__title">{{ title }}</h3>
       @if (subtitle ?? message; as sub) {
-        <p class="text-color-secondary m-0 mb-3">{{ sub }}</p>
+        <p class="empty-state__subtitle">{{ sub }}</p>
       }
       <ng-content />
     </div>
   `,
-  styles: [
-    `
-      .empty-pill {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 4rem;
-        height: 4rem;
-        border-radius: 9999px;
-      }
-      .empty-pill i {
-        font-size: 1.75rem;
-      }
-      .empty-pill--emerald {
-        background: rgba(16, 185, 129, 0.12);
-        color: #059669;
-      }
-      .empty-pill--rose {
-        background: rgba(244, 63, 94, 0.12);
-        color: #e11d48;
-      }
-      .empty-pill--gray {
-        background: rgba(107, 114, 128, 0.12);
-        color: #6b7280;
-      }
-    `,
-  ],
+  styleUrl: './empty-state.component.scss',
 })
 export class EmptyStateComponent {
   @Input({ required: true }) title = '';

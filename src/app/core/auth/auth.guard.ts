@@ -6,6 +6,7 @@ export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
   if (auth.isLoggedIn()) return true;
-  router.navigate(['/login']);
+  // Guests land on the public home (marketing front); login is reached from there.
+  router.navigate(['/home']);
   return false;
 };

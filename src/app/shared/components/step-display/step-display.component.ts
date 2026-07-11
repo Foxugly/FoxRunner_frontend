@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { stepLabel, type StepLike } from '../../../core/api/step-label';
 
 /** PrimeIcon per step type, so a step reads at a glance. */
@@ -43,15 +44,15 @@ const asStepList = (value: unknown): StepLike[] | null =>
 @Component({
   selector: 'app-step-display',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [ButtonModule, TranslocoPipe],
   template: `
-    <div class="flex flex-column gap-2">
+    <div class="step-list">
       @for (step of steps(); track $index) {
         <div class="step-row">
-          <div class="flex align-items-start gap-2">
+          <div class="step-row__main">
             <span class="step-index">{{ prefix() }}{{ $index + 1 }}</span>
             <i [class]="'pi ' + iconFor(step) + ' step-icon'" aria-hidden="true"></i>
-            <div class="flex-1 min-w-0">
+            <div class="step-row__body">
               <div class="step-label">{{ label(step) }}</div>
 
               @if (childrenOf(step); as kids) {
@@ -61,28 +62,30 @@ const asStepList = (value: unknown): StepLike[] | null =>
               }
               @if (catchOf(step); as kids) {
                 <div class="step-children">
-                  <div class="step-caption">En cas d'erreur :</div>
+                  <div class="step-caption">{{ 'common.step.on_error' | transloco }}</div>
                   <app-step-display [steps]="kids" [prefix]="prefix() + ($index + 1) + '.e'" />
                 </div>
               }
             </div>
             @if (editable() && prefix() === '') {
-              <div class="flex gap-1 flex-shrink-0">
+              <div class="step-row__actions">
                 <p-button
                   icon="pi pi-pencil"
                   [rounded]="true"
                   [text]="true"
                   size="small"
-                  ariaLabel="Éditer l'étape"
+                  severity="info"
+                  [ariaLabel]="'common.step.edit_aria' | transloco"
                   (onClick)="edit.emit($index)"
                 />
                 <p-button
                   icon="pi pi-trash"
+                  severity="danger"
                   [rounded]="true"
                   [text]="true"
                   size="small"
                   severity="danger"
-                  ariaLabel="Supprimer l'étape"
+                  [ariaLabel]="'common.step.delete_aria' | transloco"
                   (onClick)="remove.emit($index)"
                 />
               </div>
@@ -92,41 +95,7 @@ const asStepList = (value: unknown): StepLike[] | null =>
       }
     </div>
   `,
-  styles: [
-    `
-      .step-row {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--surface-border, #e5e7eb);
-        border-radius: 6px;
-        background: var(--surface-card, #fff);
-      }
-      .step-index {
-        min-width: 2rem;
-        font-variant-numeric: tabular-nums;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--fox-primary);
-      }
-      .step-icon {
-        margin-top: 0.15rem;
-        font-size: 0.85rem;
-        color: var(--text-color-secondary, #6b7280);
-      }
-      .step-label {
-        line-height: 1.35;
-      }
-      .step-children {
-        margin-top: 0.5rem;
-        padding-left: 0.75rem;
-        border-left: 2px solid var(--surface-border, #e5e7eb);
-      }
-      .step-caption {
-        font-size: 0.75rem;
-        color: var(--text-color-secondary, #6b7280);
-        margin-bottom: 0.35rem;
-      }
-    `,
-  ],
+  styleUrl: './step-display.component.scss',
 })
 export class StepDisplayComponent {
   readonly steps = input.required<StepLike[]>();

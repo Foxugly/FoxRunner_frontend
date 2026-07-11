@@ -2,37 +2,14 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { superuserGuard } from './core/auth/superuser.guard';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
+import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { PublicLayoutComponent } from './core/layout/public-layout/public-layout.component';
 
 export const routes: Routes = [
   {
-    path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
-  },
-  {
-    path: 'forgot-password',
-    loadComponent: () =>
-      import('./features/auth/password/forgot-password.component').then(
-        (m) => m.ForgotPasswordComponent,
-      ),
-  },
-  {
-    path: 'reset-password',
-    loadComponent: () =>
-      import('./features/auth/password/reset-password.component').then(
-        (m) => m.ResetPasswordComponent,
-      ),
-  },
-  {
-    path: 'auth/magic/:token',
-    loadComponent: () =>
-      import('./features/auth/magic-link-exchange/magic-link-exchange.component').then(
-        (m) => m.MagicLinkExchangeComponent,
-      ),
-  },
-  {
     path: '',
     canActivate: [authGuard],
+    component: MainLayoutComponent,
     children: [
       {
         path: '',
@@ -149,6 +126,68 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+    ],
+  },
+  {
+    path: '',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: 'home',
+        loadComponent: () =>
+          import('./features/public/home/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'features',
+        loadComponent: () =>
+          import('./features/public/features/features.component').then((m) => m.FeaturesComponent),
+      },
+      {
+        path: 'soutenir',
+        loadComponent: () =>
+          import('./features/public/soutenir/soutenir.component').then((m) => m.SoutenirComponent),
+      },
+      {
+        path: 'about',
+        loadComponent: () =>
+          import('./features/public/about/about.component').then((m) => m.AboutComponent),
+      },
+      {
+        path: 'privacy',
+        loadComponent: () =>
+          import('./features/public/privacy/privacy.component').then((m) => m.PrivacyComponent),
+      },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./features/auth/password/reset-password.component').then(
+            (m) => m.ResetPasswordComponent,
+          ),
+      },
+      {
+        path: 'auth/magic/:token',
+        loadComponent: () =>
+          import('./features/auth/magic-link-exchange/magic-link-exchange.component').then(
+            (m) => m.MagicLinkExchangeComponent,
+          ),
       },
     ],
   },

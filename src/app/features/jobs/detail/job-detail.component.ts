@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -7,13 +7,14 @@ import { PanelModule } from 'primeng/panel';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 import { TimelineModule } from 'primeng/timeline';
+import { TooltipModule } from 'primeng/tooltip';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthService } from '../../../core/auth/auth.service';
 import { JobsService } from '../../../core/api/jobs.service';
 import { ScenariosService } from '../../../core/api/scenarios.service';
 import { stepId, stepLabel, type StepLike } from '../../../core/api/step-label';
 import {
   STEP_COLLECTIONS,
-  STEP_COLLECTION_LABELS_FR,
   type Job,
   type JobEvent,
   type ScenarioDetail,
@@ -49,58 +50,71 @@ const ICON_BY_STATUS: Record<StepStatus, string> = {
 };
 
 const COLOR_BY_STATUS: Record<StepStatus, string> = {
-  pending: 'text-color-secondary',
-  running: 'text-primary',
-  ok: 'text-green-500',
-  failed: 'text-red-500',
-  skipped: 'text-color-secondary',
+  pending: 'jd-c-muted',
+  running: 'jd-c-primary',
+  ok: 'jd-c-success',
+  failed: 'jd-c-danger',
+  skipped: 'jd-c-muted',
 };
 
 @Component({
   selector: 'app-job-detail',
   standalone: true,
   imports: [
+    RouterLink,
     CardModule,
     ButtonModule,
     TagModule,
     TimelineModule,
     ProgressBarModule,
     PanelModule,
+    TooltipModule,
     ApiDatePipe,
     PageHeaderComponent,
     EmptyStateComponent,
     StatusTagComponent,
+    TranslocoPipe,
   ],
   template: `
-    <app-page-header
-      icon="pi-play"
-      [title]="'Job ' + (jobIdShort() || '…')"
-      [backLink]="job()?.target_id ? ['/scenarios', job()!.target_id] : '/scenarios'"
-      [backQueryParams]="{ tab: 'executions' }"
-    >
+    <app-page-header icon="pi-play" [title]="'jobs.title' | transloco: { id: jobIdShort() || '…' }">
       <p-button
-        icon="pi pi-refresh"
+        slot="left"
+        icon="pi pi-arrow-left"
+        [label]="'jobs.back' | transloco"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
+        [routerLink]="job()?.target_id ? ['/scenarios', job()!.target_id] : '/scenarios'"
+        [queryParams]="{ tab: 'executions' }"
+      />
+      <p-button
+        slot="right"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        severity="secondary"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
       @if (job()?.status === 'queued' || job()?.status === 'running') {
         <p-button
-          label="Annuler"
+          slot="right"
           icon="pi pi-times"
+          [outlined]="true"
           severity="danger"
           [loading]="acting()"
           (onClick)="cancel()"
+          [pTooltip]="'jobs.cancel' | transloco"
         />
       }
       @if (job()?.status === 'failed' || job()?.status === 'cancelled') {
         <p-button
-          label="Relancer"
+          slot="right"
           icon="pi pi-refresh"
+          [outlined]="true"
           severity="secondary"
           [loading]="acting()"
           (onClick)="retry()"
+          [pTooltip]="'jobs.relaunch' | transloco"
         />
       }
     </app-page-header>
@@ -108,22 +122,22 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
     @if (job(); as j) {
       <!-- Status header -->
       <p-card>
-        <div class="flex flex-column gap-3">
-          <div class="flex flex-wrap align-items-center gap-3">
-            <span class="text-lg font-medium"><code>{{ j.target_id }}</code></span>
+        <div class="jd-stack">
+          <div class="jd-status-row">
+            <span class="jd-target"><code>{{ j.target_id }}</code></span>
             <p-tag
-              [value]="j.dry_run ? 'dry-run' : 'réel'"
+              [value]="(j.dry_run ? 'jobs.dry_run' : 'jobs.real') | transloco"
               [severity]="j.dry_run ? 'info' : 'warn'"
             />
             <app-status-tag [status]="j.status" />
-            <span class="text-color-secondary">
-              <i class="pi pi-clock mr-1"></i>{{ elapsedLabel() }}
+            <span class="jd-muted">
+              <i class="pi pi-clock ico-gap-sm"></i>{{ elapsedLabel() }}
             </span>
           </div>
-          <div class="flex flex-column gap-1">
-            <div class="flex justify-content-between text-sm">
-              <span>{{ progress().done }}/{{ progress().total }} étapes</span>
-              <span class="text-color-secondary">{{ progress().percent }} %</span>
+          <div class="jd-progress">
+            <div class="jd-progress-row">
+              <span>{{ 'jobs.steps_progress' | transloco: { done: progress().done, total: progress().total } }}</span>
+              <span class="jd-muted">{{ progress().percent }} %</span>
             </div>
             <p-progressbar [value]="progress().percent" [showValue]="false" />
           </div>
@@ -132,18 +146,18 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
 
       <!-- Checklist -->
       @if (groups().length > 0) {
-        <p-card header="Étapes" styleClass="mt-3">
-          <div class="flex flex-column gap-3">
+        <p-card [header]="'jobs.steps_header' | transloco" class="jd-mt">
+          <div class="jd-stack">
             @for (g of groups(); track g.collection) {
-              <div [class.opacity-70]="!g.emphasised">
-                <div class="font-medium text-color-secondary mb-2">{{ g.heading }}</div>
-                <ul class="list-none p-0 m-0 flex flex-column gap-2">
+              <div [class.jd-dim]="!g.emphasised">
+                <div class="jd-group-title">{{ 'jobs.collection.' + g.collection | transloco }}</div>
+                <ul class="jd-steplist">
                   @for (row of g.rows; track row.stepId) {
-                    <li class="flex align-items-center gap-2">
+                    <li class="jd-step">
                       <i [class]="'pi ' + iconFor(row.stepId) + ' ' + colorFor(row.stepId)"></i>
-                      <span [class.font-medium]="g.emphasised">{{ row.label }}</span>
+                      <span [class.jd-strong]="g.emphasised">{{ row.label }}</span>
                       @if (durationFor(row.stepId); as d) {
-                        <small class="text-color-secondary">({{ d }})</small>
+                        <small class="jd-muted">({{ d }})</small>
                       }
                     </li>
                   }
@@ -153,75 +167,75 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
           </div>
         </p-card>
       } @else if (!scenarioMissing()) {
-        <p-card header="Étapes" styleClass="mt-3">
+        <p-card [header]="'jobs.steps_header' | transloco" class="jd-mt">
           <app-empty-state
             icon="pi-list"
-            title="Aucune étape"
-            message="Ce scénario ne définit aucune étape."
+            [title]="'jobs.steps_empty_title' | transloco"
+            [message]="'jobs.steps_empty_message' | transloco"
           />
         </p-card>
       } @else {
-        <p-card header="Étapes" styleClass="mt-3">
+        <p-card [header]="'jobs.steps_header' | transloco" class="jd-mt">
           <app-empty-state
             icon="pi-exclamation-triangle"
-            title="Scénario indisponible"
-            message="Impossible de charger la définition du scénario. Consulte le journal détaillé ci-dessous."
+            [title]="'jobs.scenario_unavailable_title' | transloco"
+            [message]="'jobs.scenario_unavailable_message' | transloco"
           />
         </p-card>
       }
 
       <!-- Failure card -->
       @if (j.status === 'failed') {
-        <p-card styleClass="mt-3">
+        <p-card class="jd-mt">
           <ng-template pTemplate="header">
-            <div class="p-3 text-red-500 font-medium">
-              <i class="pi pi-times-circle mr-2"></i>Échec
+            <div class="jd-fail-head">
+              <i class="pi pi-times-circle ico-gap"></i>{{ 'jobs.failure_header' | transloco }}
             </div>
           </ng-template>
-          <div class="flex flex-column gap-3">
+          <div class="jd-stack">
             @if (failingLabel(); as label) {
               <div>
-                <div class="text-color-secondary text-sm">Étape en échec</div>
-                <div class="font-medium">{{ label }}</div>
+                <div class="jd-note">{{ 'jobs.failing_step' | transloco }}</div>
+                <div class="jd-strong">{{ label }}</div>
               </div>
             }
             @if (failureMessage(); as msg) {
               <div>
-                <div class="text-color-secondary text-sm">Message</div>
-                <div class="text-red-500">{{ msg }}</div>
+                <div class="jd-note">{{ 'jobs.message' | transloco }}</div>
+                <div class="jd-danger">{{ msg }}</div>
               </div>
             }
 
             @if (failureTraceback(); as tb) {
-              <p-panel header="Traceback technique" [toggleable]="true" [collapsed]="true">
-                <pre class="text-sm white-space-pre-wrap m-0">{{ tb }}</pre>
+              <p-panel [header]="'jobs.traceback' | transloco" [toggleable]="true" [collapsed]="true">
+                <pre class="jd-pre">{{ tb }}</pre>
               </p-panel>
             }
 
-            <p-panel header="HTML de la page" [toggleable]="true" [collapsed]="true">
+            <p-panel [header]="'jobs.page_html' | transloco" [toggleable]="true" [collapsed]="true">
               @if (!j.dry_run) {
                 <a
-                  class="text-primary"
+                  class="jd-link"
                   [href]="pageSourceUrl()"
                   target="_blank"
                   rel="noopener"
                 >
-                  Ouvrir le HTML de la page (nouvel onglet)
+                  {{ 'jobs.open_page_html' | transloco }}
                 </a>
               } @else {
-                <span class="text-color-secondary text-sm">
-                  Non disponible en dry-run.
+                <span class="jd-note">
+                  {{ 'jobs.not_available_dry_run' | transloco }}
                 </span>
               }
             </p-panel>
 
             @if (screenshotUrl(); as src) {
               <div>
-                <div class="text-color-secondary text-sm mb-2">Capture d’écran</div>
+                <div class="jd-note jd-note--mb">{{ 'jobs.screenshot' | transloco }}</div>
                 <img
                   [src]="src"
-                  alt="Capture d’écran de l’échec"
-                  class="max-w-full border-round border-1 surface-border"
+                  [alt]="'jobs.screenshot_alt' | transloco"
+                  class="jd-shot"
                 />
               </div>
             }
@@ -231,15 +245,15 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
 
       <!-- Relaunch buttons -->
       @if (j.status === 'success' || j.status === 'failed' || j.status === 'cancelled') {
-        <div class="flex flex-wrap gap-2 mt-3">
+        <div class="jd-actions">
           <p-button
-            label="Relancer"
+            [label]="'jobs.relaunch' | transloco"
             icon="pi pi-play"
             [loading]="acting()"
             (onClick)="relaunch(false)"
           />
           <p-button
-            label="Relancer en dry-run"
+            [label]="'jobs.relaunch_dry' | transloco"
             icon="pi pi-eye"
             severity="secondary"
             [loading]="acting()"
@@ -249,33 +263,30 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
       }
 
       <!-- Raw event journal -->
-      <p-panel header="Journal détaillé" [toggleable]="true" [collapsed]="true" styleClass="mt-3">
+      <p-panel [header]="'jobs.event_log' | transloco" [toggleable]="true" [collapsed]="true" class="jd-mt">
         @if (events().length === 0) {
           <app-empty-state
             icon="pi-clock"
-            title="Aucun événement"
-            message="Les événements apparaîtront ici pendant et après l'exécution."
+            [title]="'jobs.no_events_title' | transloco"
+            [message]="'jobs.no_events_message' | transloco"
           />
         } @else {
           <p-timeline [value]="events()" align="left">
             <ng-template pTemplate="marker" let-e>
-              <span
-                class="flex w-2rem h-2rem align-items-center justify-content-center border-circle"
-                [class]="markerClass(e)"
-              >
+              <span class="jd-marker" [class]="markerClass(e)">
                 <i [class]="'pi ' + markerIcon(e)"></i>
               </span>
             </ng-template>
             <ng-template pTemplate="content" let-e>
-              <div class="ml-2">
-                <div class="flex align-items-center gap-2">
+              <div class="jd-event">
+                <div class="jd-event-head">
                   <strong>{{ e.event_type }}</strong>
-                  <small class="text-color-secondary">{{ e.created_at | apiDate: 'medium' }}</small>
+                  <small class="jd-muted">{{ e.created_at | apiDate: 'medium' }}</small>
                 </div>
                 @if (e.step) {
-                  <div class="text-sm"><em>Étape : {{ e.step }}</em></div>
+                  <div class="jd-event-text"><em>{{ 'jobs.event_step' | transloco: { step: e.step } }}</em></div>
                 }
-                <div class="text-sm">{{ e.message }}</div>
+                <div class="jd-event-text">{{ e.message }}</div>
               </div>
             </ng-template>
           </p-timeline>
@@ -284,11 +295,12 @@ const COLOR_BY_STATUS: Record<StepStatus, string> = {
     } @else if (!loading()) {
       <app-empty-state
         icon="pi-exclamation-triangle"
-        title="Job introuvable"
-        message="Vérifie l'identifiant dans l'URL."
+        [title]="'jobs.not_found_title' | transloco"
+        [message]="'jobs.not_found_message' | transloco"
       />
     }
   `,
+  styleUrl: './job-detail.component.scss',
 })
 export class JobDetailComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -297,6 +309,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
   private readonly scenarios = inject(ScenariosService);
   private readonly auth = inject(AuthService);
   private readonly messages = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly job = signal<Job | null>(null);
   readonly events = signal<JobEvent[]>([]);
@@ -331,7 +344,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
       });
       out.push({
         collection,
-        heading: STEP_COLLECTION_LABELS_FR[collection],
+        heading: this.transloco.translate('jobs.collection.' + collection),
         emphasised: collection === 'steps',
         rows,
       });
@@ -438,10 +451,10 @@ export class JobDetailComponent implements OnInit, OnDestroy {
 
   markerClass(e: JobEvent): string {
     const level = (e.level || 'info').toLowerCase();
-    if (level === 'error' || level === 'critical') return 'bg-red-500 text-white';
-    if (level === 'warn' || level === 'warning') return 'bg-orange-500 text-white';
-    if (level === 'debug') return 'bg-gray-400 text-white';
-    return 'bg-primary text-white';
+    if (level === 'error' || level === 'critical') return 'jd-marker--error';
+    if (level === 'warn' || level === 'warning') return 'jd-marker--warn';
+    if (level === 'debug') return 'jd-marker--debug';
+    return 'jd-marker--info';
   }
 
   markerIcon(e: JobEvent): string {
@@ -532,7 +545,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
       await this.service.cancel(this.jobId, me.id);
       this.messages.add({
         severity: 'success',
-        summary: 'Job annulé',
+        summary: this.transloco.translate('jobs.toast_cancelled'),
         detail: this.jobId,
         life: 3000,
       });
@@ -552,7 +565,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
       await this.service.retry(this.jobId, me.id);
       this.messages.add({
         severity: 'success',
-        summary: 'Job relancé',
+        summary: this.transloco.translate('jobs.toast_retried'),
         detail: this.jobId,
         life: 3000,
       });
@@ -573,7 +586,7 @@ export class JobDetailComponent implements OnInit, OnDestroy {
       const newJob = await this.service.trigger(me.id, j.target_id, dryRun);
       this.messages.add({
         severity: 'success',
-        summary: dryRun ? 'Relancé en dry-run' : 'Relancé',
+        summary: this.transloco.translate(dryRun ? 'jobs.toast_relaunched_dry' : 'jobs.toast_relaunched'),
         detail: newJob.job_id,
         life: 3000,
       });

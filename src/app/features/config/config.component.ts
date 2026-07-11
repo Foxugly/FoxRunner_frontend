@@ -1,5 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -27,6 +29,8 @@ type PushoverEntry = Record<string, unknown>;
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
+    TranslocoPipe,
     ButtonModule,
     CardModule,
     ConfirmDialogModule,
@@ -40,18 +44,27 @@ type PushoverEntry = Record<string, unknown>;
     JsonEditorComponent,
   ],
   template: `
-    <app-page-header icon="pi-server" title="Configuration du catalogue" [backLink]="'/admin'" />
+    <app-page-header icon="pi-server" [title]="'config.title' | transloco">
+      <p-button
+        slot="left"
+        icon="pi pi-arrow-left"
+        [label]="'config.back' | transloco"
+        [outlined]="true"
+        severity="secondary"
+        routerLink="/admin"
+      />
+    </app-page-header>
 
     @if (loading()) {
       <p-card>
-        <p-skeleton height="2rem" styleClass="mb-2" />
+        <p-skeleton height="2rem" styleClass="skeleton-gap" />
         <p-skeleton height="2rem" width="60%" />
       </p-card>
     } @else {
-      <p-card header="Valeurs par défaut">
+      <p-card [header]="'config.defaults_title' | transloco">
         <div class="meta-grid cols-2">
           <div class="meta-item">
-            <label class="meta-label" for="def-pushover">Pushover par défaut</label>
+            <label class="meta-label" for="def-pushover">{{ 'config.default_pushover' | transloco }}</label>
             <div class="meta-value">
               <p-select
                 inputId="def-pushover"
@@ -64,7 +77,7 @@ type PushoverEntry = Record<string, unknown>;
             </div>
           </div>
           <div class="meta-item">
-            <label class="meta-label" for="def-network">Réseau par défaut</label>
+            <label class="meta-label" for="def-network">{{ 'config.default_network' | transloco }}</label>
             <div class="meta-value">
               <p-select
                 inputId="def-network"
@@ -79,12 +92,12 @@ type PushoverEntry = Record<string, unknown>;
         </div>
       </p-card>
 
-      <p-card styleClass="mt-3">
+      <p-card styleClass="card-spaced">
         <ng-template pTemplate="header">
-          <div class="flex align-items-center justify-content-between p-3 pb-0">
-            <span class="font-semibold"><i class="pi pi-bell mr-2"></i>Pushovers</span>
+          <div class="card-head">
+            <span class="card-title"><i class="pi pi-bell icon-gap"></i>{{ 'config.pushovers_title' | transloco }}</span>
             <p-button
-              label="Ajouter"
+              [label]="'config.add' | transloco"
               icon="pi pi-plus"
               severity="success"
               size="small"
@@ -93,28 +106,31 @@ type PushoverEntry = Record<string, unknown>;
           </div>
         </ng-template>
         @if (pushoverKeys().length === 0) {
-          <p class="text-color-secondary text-sm m-0">Aucun pushover configuré.</p>
+          <p class="empty-note">{{ 'config.none_configured' | transloco }}</p>
         } @else {
-          <div class="flex flex-column gap-2">
+          <div class="entry-list">
             @for (key of pushoverKeys(); track key) {
-              <div
-                class="flex align-items-center justify-content-between gap-2 p-2 border-1 surface-border border-round"
-              >
-                <div class="min-w-0">
-                  <div class="font-medium">{{ key }}</div>
-                  <div class="text-xs text-color-secondary">
-                    <i class="pi pi-lock mr-1"></i>token &amp; clé masqués · son
-                    {{ pushovers()[key]['sound'] || '—' }} · timeout
-                    {{ pushovers()[key]['timeout_seconds'] ?? '—' }} s
+              <div class="entry">
+                <div class="entry-main">
+                  <div class="entry-name">{{ key }}</div>
+                  <div class="entry-meta">
+                    <i class="pi pi-lock icon-gap-sm"></i>{{
+                      'config.pushover_masked'
+                        | transloco
+                          : {
+                              sound: pushovers()[key]['sound'] || '—',
+                              timeout: pushovers()[key]['timeout_seconds'] ?? '—'
+                            }
+                    }}
                   </div>
                 </div>
-                <div class="flex gap-1">
+                <div class="entry-actions">
                   <p-button
                     icon="pi pi-pencil"
                     [text]="true"
                     [rounded]="true"
-                    severity="secondary"
-                    ariaLabel="Éditer le pushover"
+                    severity="info"
+                    [ariaLabel]="'config.aria_edit' | transloco"
                     (onClick)="openPushover(key)"
                   />
                   <p-button
@@ -122,7 +138,7 @@ type PushoverEntry = Record<string, unknown>;
                     [text]="true"
                     [rounded]="true"
                     severity="danger"
-                    ariaLabel="Supprimer le pushover"
+                    [ariaLabel]="'config.aria_delete' | transloco"
                     (onClick)="confirmRemovePushover(key)"
                   />
                 </div>
@@ -132,12 +148,12 @@ type PushoverEntry = Record<string, unknown>;
         }
       </p-card>
 
-      <p-card styleClass="mt-3" header="Réseaux (JSON)">
-        <p class="text-color-secondary text-sm mb-2">
-          Bloc « networks » complet (profils de détection réseau). Édition JSON directe.
+      <p-card styleClass="card-spaced" [header]="'config.networks_title' | transloco">
+        <p class="section-desc">
+          {{ 'config.networks_desc' | transloco }}
         </p>
         <app-json-editor
-          label="Networks"
+          [label]="'config.networks_label' | transloco"
           [value]="networks()"
           (valueChange)="onNetworksChange($event)"
           (validChange)="networksValid.set($event)"
@@ -156,53 +172,53 @@ type PushoverEntry = Record<string, unknown>;
     <p-dialog
       [modal]="true"
       [(visible)]="pushoverDialogOpen"
-      [header]="editingKey() ? 'Éditer le pushover' : 'Nouveau pushover'"
+      [header]="(editingKey() ? 'config.dialog_edit' : 'config.dialog_new') | transloco"
       [style]="{ width: '480px' }"
     >
       <div class="meta-grid">
         <div class="meta-item">
-          <label class="meta-label" for="pk">Nom (clé)</label>
+          <label class="meta-label" for="pk">{{ 'config.label_name' | transloco }}</label>
           <div class="meta-value">
             <input
               id="pk"
               pInputText
               [(ngModel)]="draftKey"
               [disabled]="editingKey() !== null"
-              placeholder="ex. main"
+              [placeholder]="'config.ph_name' | transloco"
             />
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="ptok">Token</label>
+          <label class="meta-label" for="ptok">{{ 'config.label_token' | transloco }}</label>
           <div class="meta-value">
-            <input id="ptok" pInputText [(ngModel)]="draftToken" placeholder="token Pushover" />
+            <input id="ptok" pInputText [(ngModel)]="draftToken" [placeholder]="'config.ph_token' | transloco" />
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="pusr">Clé utilisateur</label>
+          <label class="meta-label" for="pusr">{{ 'config.label_user_key' | transloco }}</label>
           <div class="meta-value">
-            <input id="pusr" pInputText [(ngModel)]="draftUserKey" placeholder="user key" />
+            <input id="pusr" pInputText [(ngModel)]="draftUserKey" [placeholder]="'config.ph_user_key' | transloco" />
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="psnd">Son</label>
+          <label class="meta-label" for="psnd">{{ 'config.label_sound' | transloco }}</label>
           <div class="meta-value">
-            <input id="psnd" pInputText [(ngModel)]="draftSound" placeholder="ex. vibrate" />
+            <input id="psnd" pInputText [(ngModel)]="draftSound" [placeholder]="'config.ph_sound' | transloco" />
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="pto">Timeout (s)</label>
+          <label class="meta-label" for="pto">{{ 'config.label_timeout' | transloco }}</label>
           <div class="meta-value">
             <p-inputnumber inputId="pto" [(ngModel)]="draftTimeout" [min]="0" />
           </div>
         </div>
         <p class="meta-hint meta-item--full">
-          Laisse le token / la clé sur « •••••••• » pour conserver la valeur enregistrée.
+          {{ 'config.masked_hint' | transloco }}
         </p>
       </div>
       <ng-template pTemplate="footer">
         <app-form-footer
-          saveLabel="Valider"
+          [saveLabel]="'config.validate' | transloco"
           [disabled]="!draftKey.trim()"
           (save)="savePushover()"
           (cancelled)="pushoverDialogOpen = false"
@@ -212,11 +228,13 @@ type PushoverEntry = Record<string, unknown>;
 
     <p-confirmDialog />
   `,
+  styleUrl: './config.component.scss',
 })
 export class ConfigComponent implements OnInit, HasUnsavedChanges {
   private readonly service = inject(CatalogConfigService);
   private readonly messages = inject(MessageService);
   private readonly confirm = inject(ConfirmationService);
+  private readonly i18n = inject(TranslocoService);
 
   readonly loading = signal(true);
   readonly saving = signal(false);
@@ -319,11 +337,11 @@ export class ConfigComponent implements OnInit, HasUnsavedChanges {
 
   confirmRemovePushover(key: string): void {
     this.confirm.confirm({
-      header: 'Supprimer le pushover ?',
-      message: `« ${key} » sera retiré de la configuration à l'enregistrement.`,
+      header: this.i18n.translate('config.remove_header'),
+      message: this.i18n.translate('config.remove_message', { key }),
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Supprimer',
-      rejectLabel: 'Annuler',
+      acceptLabel: this.i18n.translate('config.delete'),
+      rejectLabel: this.i18n.translate('config.cancel'),
       acceptButtonProps: { severity: 'danger' },
       accept: () => this.removePushover(key),
     });
@@ -350,7 +368,7 @@ export class ConfigComponent implements OnInit, HasUnsavedChanges {
       this.applyConfig(updated);
       this.messages.add({
         severity: 'success',
-        summary: 'Configuration enregistrée',
+        summary: this.i18n.translate('config.toast_saved'),
         life: 2500,
       });
     } catch {

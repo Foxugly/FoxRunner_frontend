@@ -13,25 +13,31 @@ function collectConsoleErrors(page: Page): string[] {
 }
 
 test.describe('FoxRunner smoke', () => {
-  test('unauth visit redirects to /login', async ({ page }) => {
+  test('unauth visit lands on the public home with public nav', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByText('FoxRunner')).toBeVisible();
+    await expect(page).toHaveURL(/\/home$/);
+    await expect(page.getByRole('link', { name: /FoxRunner/ })).toBeVisible();
+    for (const label of ['Accueil', 'Fonctionnalités', 'Soutenir', 'À propos']) {
+      await expect(page.getByRole('link', { name: label })).toBeVisible();
+    }
+    // The topmenu (banner) sign-in link — the home hero also has a CTA, so scope it.
+    await expect(page.getByRole('banner').getByRole('link', { name: /Se connecter/ })).toBeVisible();
   });
 
-  test('login flow lands on dashboard and menubar shows feature entries', async ({ page }) => {
+  test('login flow lands on dashboard and topbar shows feature entries', async ({ page }) => {
     const errors = collectConsoleErrors(page);
     await page.goto('/login');
 
     await page.getByLabel('Email').fill(ADMIN_EMAIL);
     await page.getByLabel('Mot de passe').fill(ADMIN_PASSWORD);
-    await page.getByRole('button', { name: /Se connecter/ }).click();
+    await page.locator('#main-content button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('heading', { name: 'Tableau de bord' })).toBeVisible();
 
-    for (const label of ['Scénarios', 'Exécutions', 'Plan']) {
-      await expect(page.getByRole('menuitem', { name: label })).toBeVisible();
+    // Topbar nav (custom links, not a PrimeNG menubar): dashboard, scenarios, admin.
+    for (const label of ['Tableau de bord', 'Scénarios', 'Admin']) {
+      await expect(page.getByRole('link', { name: label })).toBeVisible();
     }
 
     expect(errors).toEqual([]);
@@ -41,10 +47,25 @@ test.describe('FoxRunner smoke', () => {
     await page.goto('/login');
     await page.getByLabel('Email').fill(ADMIN_EMAIL);
     await page.getByLabel('Mot de passe').fill(ADMIN_PASSWORD);
-    await page.getByRole('button', { name: /Se connecter/ }).click();
+    await page.locator('#main-content button[type="submit"]').click();
     await expect(page).toHaveURL(/\/$/);
 
-    await page.getByRole('button', { name: 'Déconnexion' }).click();
+    // Logout lives in the user dropdown: open it from the user button first.
+    await page.locator('.user-trigger').click();
+    await page.getByRole('menuitem', { name: 'Déconnexion' }).click();
     await expect(page).toHaveURL(/\/login$/);
+  });
+
+  test('public /features renders without auth', async ({ page }) => {
+    await page.goto('/features');
+    await expect(page).toHaveURL(/\/features$/);
+    await expect(page.getByRole('heading', { name: 'Fonctionnalités', level: 1 })).toBeVisible();
+    await expect(page.getByText('Scénarios planifiés')).toBeVisible();
+  });
+
+  test('public /about renders without auth', async ({ page }) => {
+    await page.goto('/about');
+    await expect(page).toHaveURL(/\/about$/);
+    await expect(page.getByText('Foxugly SRL')).toBeVisible();
   });
 });

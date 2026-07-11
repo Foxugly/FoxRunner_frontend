@@ -1,6 +1,6 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
 
-const STORAGE_KEY = 'fox-theme';
+const STORAGE_KEY = 'theme';
 
 type Mode = 'light' | 'dark';
 
@@ -24,7 +24,7 @@ export class ThemeService {
     effect(() => {
       const dark = this._mode() === 'dark';
       const root = document.documentElement;
-      root.classList.toggle('fox-dark', dark);
+      root.classList.toggle('dark-mode', dark);
       try {
         localStorage.setItem(STORAGE_KEY, this._mode());
       } catch {

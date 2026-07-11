@@ -3,63 +3,61 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { PasswordModule } from 'primeng/password';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AuthPasswordService } from '../../../core/api/auth-password.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, ButtonModule, CardModule, PasswordModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonModule,
+    PasswordModule,
+    TranslocoPipe,
+    AuthCardComponent,
+  ],
   template: `
-    <div class="flex align-items-center justify-content-center" style="min-height: 100vh;">
-      <div style="width: 100%; max-width: 420px;">
-        <p-card>
-          <ng-template pTemplate="header">
-            <div class="flex align-items-center gap-2 p-4 pb-0">
-              <i class="pi pi-key" style="font-size: 1.75rem; color: var(--fox-primary)"></i>
-              <span class="text-xl fox-brand">Réinitialisation</span>
-            </div>
-          </ng-template>
-
+    <app-auth-card icon="pi pi-key" [title]="'auth.reset_title' | transloco">
           @if (!token()) {
-            <div class="text-color-secondary text-sm">
-              Jeton manquant. Utilise le lien fourni par email.
+            <div class="help">
+              {{ 'auth.reset_missing_token' | transloco }}
             </div>
           } @else if (done()) {
-            <div class="flex flex-column gap-3 align-items-center text-center">
-              <i class="pi pi-check-circle text-green-500" style="font-size: 3rem"></i>
-              <p>Mot de passe mis à jour. Tu peux te reconnecter.</p>
-              <a routerLink="/login">Aller à la connexion</a>
+            <div class="success">
+              <i class="pi pi-check-circle icon-success"></i>
+              <p>{{ 'auth.reset_done' | transloco }}</p>
+              <a routerLink="/login">{{ 'auth.go_to_login' | transloco }}</a>
             </div>
           } @else {
-            <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3">
-              <div class="flex flex-column gap-2">
-                <label for="password">Nouveau mot de passe</label>
+            <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+              <div class="field">
+                <label for="password">{{ 'auth.new_password_label' | transloco }}</label>
                 <p-password
                   inputId="password"
                   formControlName="password"
                   [toggleMask]="true"
-                  styleClass="w-full"
+                  styleClass="u-full"
                   [inputStyle]="{ width: '100%' }"
                   required
                 />
               </div>
               <p-button
                 type="submit"
-                label="Mettre à jour"
+                [label]="'auth.update_button' | transloco"
                 icon="pi pi-check"
-                styleClass="w-full"
+                styleClass="u-full"
                 [loading]="loading()"
                 [disabled]="form.invalid || loading()"
               />
-              <a routerLink="/login" class="text-sm text-center">Retour à la connexion</a>
+              <a routerLink="/login" class="link-center">{{ 'auth.back_to_login' | transloco }}</a>
             </form>
           }
-        </p-card>
-      </div>
-    </div>
+    </app-auth-card>
   `,
+  styleUrl: './reset-password.component.scss',
 })
 export class ResetPasswordComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -67,6 +65,7 @@ export class ResetPasswordComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly messages = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly token = signal<string>('');
   readonly loading = signal(false);
@@ -87,7 +86,7 @@ export class ResetPasswordComponent implements OnInit {
       this.done.set(true);
       this.messages.add({
         severity: 'success',
-        summary: 'Mot de passe mis à jour',
+        summary: this.transloco.translate('auth.toast_password_updated'),
         life: 3000,
       });
       setTimeout(() => this.router.navigate(['/login']), 2000);

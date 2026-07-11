@@ -1,5 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -17,17 +19,13 @@ interface KindOption {
   value: 'screenshots' | 'pages' | null;
 }
 
-const KIND_OPTIONS: KindOption[] = [
-  { label: 'Tous les kinds', value: null },
-  { label: 'Screenshots', value: 'screenshots' },
-  { label: 'Pages', value: 'pages' },
-];
-
 @Component({
   selector: 'app-admin-artifacts',
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
+    TranslocoPipe,
     TableModule,
     ButtonModule,
     SelectModule,
@@ -38,23 +36,29 @@ const KIND_OPTIONS: KindOption[] = [
     PageHeaderComponent,
   ],
   template: `
-    <app-page-header
-      icon="pi-image"
-      title="Artefacts"
-      [backLink]="'/admin'"
-    >
+    <app-page-header icon="pi-image" [title]="'admin.artifacts.title' | transloco">
       <p-button
-        icon="pi pi-refresh"
+        slot="left"
+        icon="pi pi-arrow-left"
+        [label]="'admin.common.back' | transloco"
+        [outlined]="true"
         severity="secondary"
-        [text]="true"
+        routerLink="/admin"
+      />
+      <p-button
+        slot="right"
+        icon="pi pi-refresh"
+        [outlined]="true"
+        severity="secondary"
         [loading]="loading()"
         (onClick)="reload()"
+        [pTooltip]="'common.refresh' | transloco"
       />
     </app-page-header>
 
-    <div class="flex gap-3 mb-3 flex-wrap align-items-end">
-      <div class="flex flex-column gap-1">
-        <label for="kind" class="text-sm text-color-secondary">Kind</label>
+    <div class="filter-bar">
+      <div class="filter-field">
+        <label for="kind" class="filter-label">{{ 'admin.artifacts.filter_kind' | transloco }}</label>
         <p-select
           inputId="kind"
           [options]="kindOptions"
@@ -65,18 +69,18 @@ const KIND_OPTIONS: KindOption[] = [
           (onChange)="reload()"
         />
       </div>
-      <div class="flex flex-column gap-1">
-        <label for="prune" class="text-sm text-color-secondary">Purger au-delà de (j)</label>
+      <div class="filter-field">
+        <label for="prune" class="filter-label">{{ 'admin.artifacts.filter_prune' | transloco }}</label>
         <p-inputnumber
           inputId="prune"
           [(ngModel)]="pruneDays"
           [min]="1"
           [max]="3650"
-          suffix=" j"
+          [suffix]="'admin.common.day_suffix' | transloco"
         />
       </div>
       <p-button
-        label="Purger"
+        [label]="'admin.artifacts.prune_button' | transloco"
         icon="pi pi-trash"
         severity="danger"
         [loading]="pruning()"
@@ -99,17 +103,17 @@ const KIND_OPTIONS: KindOption[] = [
     >
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 7rem">Kind</th>
-          <th>Nom</th>
-          <th style="width: 8rem">Taille</th>
-          <th style="width: 14rem">Modifié</th>
-          <th style="width: 8rem">Actions</th>
+          <th class="col--kind">{{ 'admin.artifacts.col_kind' | transloco }}</th>
+          <th>{{ 'admin.artifacts.col_name' | transloco }}</th>
+          <th class="col--size">{{ 'admin.artifacts.col_size' | transloco }}</th>
+          <th class="col--modified">{{ 'admin.artifacts.col_modified' | transloco }}</th>
+          <th class="col--actions">{{ 'admin.artifacts.col_actions' | transloco }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-a>
         <tr>
           <td><p-tag [value]="a.kind" severity="secondary" /></td>
-          <td><code class="text-xs">{{ a.name }}</code></td>
+          <td><code class="id-code">{{ a.name }}</code></td>
           <td>{{ formatSize(a.size) }}</td>
           <td>{{ formatDate(a.updated_at) }}</td>
           <td>
@@ -120,7 +124,7 @@ const KIND_OPTIONS: KindOption[] = [
               [rounded]="true"
               size="small"
               [loading]="downloading() === a.name"
-              pTooltip="Télécharger"
+              [pTooltip]="'admin.artifacts.tooltip_download' | transloco"
               (onClick)="download(a)"
             />
           </td>
@@ -129,18 +133,24 @@ const KIND_OPTIONS: KindOption[] = [
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="5">
-            <app-empty-state icon="pi-image" title="Aucun artefact" />
+            <app-empty-state icon="pi-image" [title]="'admin.artifacts.empty_title' | transloco" />
           </td>
         </tr>
       </ng-template>
     </p-table>
   `,
+  styleUrl: './admin-artifacts.component.scss',
 })
 export class AdminArtifactsComponent implements OnInit {
   private readonly service = inject(ArtifactsService);
   private readonly messages = inject(MessageService);
+  private readonly i18n = inject(TranslocoService);
 
-  readonly kindOptions = KIND_OPTIONS;
+  readonly kindOptions: KindOption[] = [
+    { label: this.i18n.translate('admin.artifacts.kind_all'), value: null },
+    { label: this.i18n.translate('admin.artifacts.kind_screenshots'), value: 'screenshots' },
+    { label: this.i18n.translate('admin.artifacts.kind_pages'), value: 'pages' },
+  ];
   readonly items = signal<Artifact[]>([]);
   readonly total = signal(0);
   readonly rows = signal(50);
@@ -220,8 +230,8 @@ export class AdminArtifactsComponent implements OnInit {
       await this.service.prune(this.pruneDays);
       this.messages.add({
         severity: 'success',
-        summary: 'Purge effectuée',
-        detail: `> ${this.pruneDays} jours`,
+        summary: this.i18n.translate('admin.artifacts.toast_pruned'),
+        detail: this.i18n.translate('admin.artifacts.toast_pruned_detail', { days: this.pruneDays }),
         life: 3000,
       });
       this.reload();

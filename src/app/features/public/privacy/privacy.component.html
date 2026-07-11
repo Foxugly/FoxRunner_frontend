@@ -1,0 +1,17 @@
+<article class="privacy">
+  <header class="privacy__intro">
+    <h1 class="privacy__title">{{ legal().title }}</h1>
+    <p class="privacy__lead">{{ legal().lead }}</p>
+  </header>
+
+  @for (section of legal().sections; track section.slug) {
+    <section class="privacy__section">
+      <h2 class="privacy__h2">{{ section.title }}</h2>
+      <ul class="privacy__list">
+        @for (item of section.items; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </section>
+  }
+</article>

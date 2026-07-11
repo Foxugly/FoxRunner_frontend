@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
@@ -7,87 +8,88 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 @Component({
   selector: 'app-admin-home',
   standalone: true,
-  imports: [RouterLink, ButtonModule, CardModule, PageHeaderComponent],
+  imports: [RouterLink, TranslocoPipe, ButtonModule, CardModule, PageHeaderComponent],
   template: `
     <app-page-header
       icon="pi-cog"
-      title="Administration"
+      [title]="'admin.home.title' | transloco"
     />
 
-    <div class="grid">
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Utilisateurs" subheader="Gestion des comptes">
-          <p>Activer/désactiver, accorder le rôle superuser, vérifier les emails.</p>
+    <div class="cards-grid">
+      <div>
+        <p-card [header]="'admin.home.users_title' | transloco" [subheader]="'admin.home.users_subtitle' | transloco">
+          <p>{{ 'admin.home.users_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-users" routerLink="/admin/users" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-users" routerLink="/admin/users" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Paramètres applicatifs" subheader="Réglages clé → valeur (JSON)">
-          <p>Lecture/écriture des réglages applicatifs persistés (ex. heartbeat).</p>
+      <div>
+        <p-card [header]="'admin.home.settings_title' | transloco" [subheader]="'admin.home.settings_subtitle' | transloco">
+          <p>{{ 'admin.home.settings_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-sliders-h" routerLink="/admin/settings" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-sliders-h" routerLink="/admin/settings" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Configuration du catalogue" subheader="Pushovers, réseaux, défauts">
-          <p>Le bloc « data » global du catalogue : identifiants Pushover, profils réseaux et clés par défaut.</p>
+      <div>
+        <p-card [header]="'admin.home.config_title' | transloco" [subheader]="'admin.home.config_subtitle' | transloco">
+          <p>{{ 'admin.home.config_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-server" routerLink="/admin/config" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-server" routerLink="/admin/config" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Audit" subheader="Journal d'événements">
-          <p>Traces horodatées des actions, filtrables par acteur et cible.</p>
+      <div>
+        <p-card [header]="'admin.home.audit_title' | transloco" [subheader]="'admin.home.audit_subtitle' | transloco">
+          <p>{{ 'admin.home.audit_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-list" routerLink="/admin/audit" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-list" routerLink="/admin/audit" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Santé" subheader="Config, DB, monitoring">
-          <p>Indicateurs de santé, stats de base, compteurs Celery & Graph.</p>
+      <div>
+        <p-card [header]="'admin.home.health_title' | transloco" [subheader]="'admin.home.health_subtitle' | transloco">
+          <p>{{ 'admin.home.health_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-heart" routerLink="/admin/health" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-heart" routerLink="/admin/health" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Rétention" subheader="Purge DB">
-          <p>Supprimer jobs / audit / notifications Graph au-delà d'une durée.</p>
+      <div>
+        <p-card [header]="'admin.home.retention_title' | transloco" [subheader]="'admin.home.retention_subtitle' | transloco">
+          <p>{{ 'admin.home.retention_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-trash" routerLink="/admin/retention" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-trash" routerLink="/admin/retention" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Catalogue" subheader="Export / Import">
-          <p>Sauvegarder ou restaurer scénarios et slots (dry-run disponible).</p>
+      <div>
+        <p-card [header]="'admin.home.catalog_title' | transloco" [subheader]="'admin.home.catalog_subtitle' | transloco">
+          <p>{{ 'admin.home.catalog_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-file-export" routerLink="/admin/catalog" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-file-export" routerLink="/admin/catalog" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Artefacts" subheader="Screenshots & pages">
-          <p>Parcours et suppression des captures Selenium.</p>
+      <div>
+        <p-card [header]="'admin.home.artifacts_title' | transloco" [subheader]="'admin.home.artifacts_subtitle' | transloco">
+          <p>{{ 'admin.home.artifacts_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-image" routerLink="/admin/artifacts" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-image" routerLink="/admin/artifacts" />
           </ng-template>
         </p-card>
       </div>
-      <div class="col-12 md:col-6 lg:col-4">
-        <p-card header="Microsoft Graph" subheader="Abonnements & notifications">
-          <p>Créer et renouveler les webhooks Microsoft Graph.</p>
+      <div>
+        <p-card [header]="'admin.home.graph_title' | transloco" [subheader]="'admin.home.graph_subtitle' | transloco">
+          <p>{{ 'admin.home.graph_desc' | transloco }}</p>
           <ng-template pTemplate="footer">
-            <p-button label="Ouvrir" icon="pi pi-cloud" routerLink="/admin/graph" />
+            <p-button [label]="'admin.common.open' | transloco" icon="pi pi-cloud" routerLink="/admin/graph" />
           </ng-template>
         </p-card>
       </div>
     </div>
   `,
+  styleUrl: './admin-home.component.scss',
 })
 export class AdminHomeComponent {}
