@@ -98,7 +98,7 @@ const DAYS: readonly DayOption[] = [
                 [ariaLabel]="'scenarios.slots.enabled_aria' | transloco: { id: s.slot_id }"
               />
               @if (canEdit()) {
-                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" size="small" severity="secondary" (onClick)="openEdit(s)" [pTooltip]="'scenarios.common.edit' | transloco" />
+                <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" size="small" severity="info" (onClick)="openEdit(s)" [pTooltip]="'scenarios.common.edit' | transloco" />
                 <p-button icon="pi pi-trash" [rounded]="true" [text]="true" size="small" severity="danger" (onClick)="askDelete(s)" [pTooltip]="'scenarios.common.delete' | transloco" />
               }
             </div>

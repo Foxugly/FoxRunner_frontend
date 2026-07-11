@@ -88,7 +88,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
             [rounded]="true"
             [text]="true"
             size="small"
-            severity="secondary"
+            severity="info"
             (onClick)="openEdit(s)"
           />
           <p-button

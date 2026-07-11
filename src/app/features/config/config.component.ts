@@ -129,7 +129,7 @@ type PushoverEntry = Record<string, unknown>;
                     icon="pi pi-pencil"
                     [text]="true"
                     [rounded]="true"
-                    severity="secondary"
+                    severity="info"
                     [ariaLabel]="'config.aria_edit' | transloco"
                     (onClick)="openPushover(key)"
                   />

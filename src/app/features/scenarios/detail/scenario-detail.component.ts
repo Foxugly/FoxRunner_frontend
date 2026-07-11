@@ -75,7 +75,6 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       />
       <p-button
         slot="right"
-        [rounded]="true"
         [outlined]="true"
         severity="secondary"
         icon="pi pi-play"
@@ -88,7 +87,6 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       />
       <p-button
         slot="right"
-        [rounded]="true"
         [outlined]="true"
         severity="warn"
         icon="pi pi-bolt"
@@ -101,7 +99,6 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       />
       <p-button
         slot="right"
-        [rounded]="true"
         [outlined]="true"
         severity="secondary"
         icon="pi pi-download"
@@ -114,7 +111,6 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       @if (isOwner()) {
         <p-button
           slot="right"
-          [rounded]="true"
           [outlined]="true"
           severity="secondary"
           icon="pi pi-share-alt"
@@ -127,7 +123,6 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       @if (isOwner()) {
         <p-button
           slot="right"
-          [rounded]="true"
           [outlined]="true"
           severity="danger"
           icon="pi pi-trash"
@@ -169,7 +164,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                           [text]="true"
                           [rounded]="true"
                           size="small"
-                          severity="secondary"
+                          severity="info"
                           [pTooltip]="'scenarios.detail.edit' | transloco"
                           [ariaLabel]="'scenarios.detail.edit_info_aria' | transloco"
                           (onClick)="startEditInfo()"

@@ -91,7 +91,7 @@ import { FormFooterComponent } from '../../shared/components/form-footer/form-fo
               />
               <p-button
                 icon="pi pi-pencil"
-                severity="secondary"
+                severity="info"
                 [text]="true"
                 size="small"
                 (onClick)="openEdit(t)"
