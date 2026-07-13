@@ -138,7 +138,7 @@ export class RegisterComponent {
     try {
       const { email, password } = this.form.getRawValue();
       await firstValueFrom(
-        this.http.post(`${environment.apiBaseUrl}/auth/users/`, { email, password }),
+        this.http.post(`${environment.apiBaseUrl}/auth/register`, { email, password }),
       );
       this.success.set(true);
     } catch (err) {

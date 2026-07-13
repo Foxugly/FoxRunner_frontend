@@ -268,6 +268,13 @@
       "have_account": "¿Ya tienes una cuenta?",
       "back_to_login": "Iniciar sesión"
     },
+    "activate": {
+      "working": "Activando tu cuenta…",
+      "success": "Tu cuenta ya está activa. Puedes iniciar sesión.",
+      "expired": "Este enlace de activación ha caducado. Regístrate de nuevo.",
+      "invalid": "Este enlace de activación no es válido. Regístrate de nuevo.",
+      "register_again": "Registrarse de nuevo"
+    },
     "email_label": "Correo electrónico",
     "password_label": "Contraseña",
     "remember_me": "Recordarme",

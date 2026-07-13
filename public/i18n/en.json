@@ -268,6 +268,13 @@
       "have_account": "Already have an account?",
       "back_to_login": "Sign in"
     },
+    "activate": {
+      "working": "Activating your account…",
+      "success": "Your account is now active. You can sign in.",
+      "expired": "This activation link has expired. Please register again.",
+      "invalid": "This activation link is invalid. Please register again.",
+      "register_again": "Register again"
+    },
     "email_label": "Email",
     "password_label": "Password",
     "remember_me": "Remember me",
