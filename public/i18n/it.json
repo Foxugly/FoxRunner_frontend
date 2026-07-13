@@ -268,6 +268,13 @@
       "have_account": "Hai già un account?",
       "back_to_login": "Accedi"
     },
+    "activate": {
+      "working": "Attivazione del tuo account…",
+      "success": "Il tuo account è ora attivo. Puoi accedere.",
+      "expired": "Questo link di attivazione è scaduto. Registrati di nuovo.",
+      "invalid": "Questo link di attivazione non è valido. Registrati di nuovo.",
+      "register_again": "Registrati di nuovo"
+    },
     "email_label": "Email",
     "password_label": "Password",
     "remember_me": "Ricordami",

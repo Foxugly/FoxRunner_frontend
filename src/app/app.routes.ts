@@ -189,6 +189,11 @@ export const routes: Routes = [
             (m) => m.MagicLinkExchangeComponent,
           ),
       },
+      {
+        path: 'activate/:token',
+        loadComponent: () =>
+          import('./features/auth/activate/activate.component').then((m) => m.ActivateComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -268,6 +268,13 @@
       "have_account": "Al een account?",
       "back_to_login": "Inloggen"
     },
+    "activate": {
+      "working": "Je account wordt geactiveerd…",
+      "success": "Je account is nu actief. Je kunt inloggen.",
+      "expired": "Deze activatielink is verlopen. Registreer je opnieuw.",
+      "invalid": "Deze activatielink is ongeldig. Registreer je opnieuw.",
+      "register_again": "Opnieuw registreren"
+    },
     "email_label": "E-mail",
     "password_label": "Wachtwoord",
     "remember_me": "Aangemeld blijven",
