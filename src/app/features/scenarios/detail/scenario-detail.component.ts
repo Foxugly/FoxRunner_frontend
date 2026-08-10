@@ -33,6 +33,7 @@ import type { HasUnsavedChanges } from '../../../core/guards/unsaved-changes.gua
 import { SharesDialogComponent } from '../shares/shares-dialog.component';
 import { ScenarioSlotsComponent } from './scenario-slots.component';
 import { ScenarioExecutionsComponent } from './scenario-executions.component';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-scenario-detail',
@@ -136,18 +137,27 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
       }
     </app-page-header>
 
-    <app-shares-dialog
-      [scenarioId]="scenario()?.scenario_id ?? ''"
-      [(visible)]="sharesOpen"
-    />
+    <app-shares-dialog [scenarioId]="scenario()?.scenario_id ?? ''" [(visible)]="sharesOpen" />
 
     @if (scenario(); as s) {
       <p-tabs [(value)]="activeTab">
         <p-tablist>
-          <p-tab value="general"><i class="pi pi-info-circle ico-gap"></i>{{ 'scenarios.detail.tab_general' | transloco }}</p-tab>
-          <p-tab value="planning"><i class="pi pi-calendar ico-gap"></i>{{ 'scenarios.detail.tab_planning' | transloco }}</p-tab>
-          <p-tab value="steps"><i class="pi pi-code ico-gap"></i>{{ 'scenarios.detail.tab_steps' | transloco: { count: totalSteps() } }}</p-tab>
-          <p-tab value="executions"><i class="pi pi-play ico-gap"></i>{{ 'scenarios.detail.tab_executions' | transloco }}</p-tab>
+          <p-tab value="general"
+            ><i class="pi pi-info-circle ico-gap"></i
+            >{{ 'scenarios.detail.tab_general' | transloco }}</p-tab
+          >
+          <p-tab value="planning"
+            ><i class="pi pi-calendar ico-gap"></i
+            >{{ 'scenarios.detail.tab_planning' | transloco }}</p-tab
+          >
+          <p-tab value="steps"
+            ><i class="pi pi-code ico-gap"></i
+            >{{ 'scenarios.detail.tab_steps' | transloco: { count: totalSteps() } }}</p-tab
+          >
+          <p-tab value="executions"
+            ><i class="pi pi-play ico-gap"></i
+            >{{ 'scenarios.detail.tab_executions' | transloco }}</p-tab
+          >
         </p-tablist>
         <p-tabpanels>
           <!-- Onglet 1 : informations générales -->
@@ -175,8 +185,14 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
 
                   @if (!editingInfo()) {
                     <div class="meta-list">
-                      <div><strong>{{ 'scenarios.detail.field_id' | transloco }}</strong> {{ s.scenario_id }}</div>
-                      <div><strong>{{ 'scenarios.detail.field_owner' | transloco }}</strong> {{ s.owner_user_id }}</div>
+                      <div>
+                        <strong>{{ 'scenarios.detail.field_id' | transloco }}</strong>
+                        {{ s.scenario_id }}
+                      </div>
+                      <div>
+                        <strong>{{ 'scenarios.detail.field_owner' | transloco }}</strong>
+                        {{ s.owner_user_id }}
+                      </div>
                       <div>
                         <strong>{{ 'scenarios.detail.field_role' | transloco }}</strong>
                         @if (s.role === 'owner') {
@@ -186,19 +202,34 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                         }
                       </div>
                       <div>
-                        <strong>{{ 'scenarios.detail.field_enterprise_network' | transloco }}</strong>
-                        {{ (s.requires_enterprise_network ? 'scenarios.common.yes' : 'scenarios.common.no') | transloco }}
+                        <strong>{{
+                          'scenarios.detail.field_enterprise_network' | transloco
+                        }}</strong>
+                        {{
+                          (s.requires_enterprise_network
+                            ? 'scenarios.common.yes'
+                            : 'scenarios.common.no'
+                          ) | transloco
+                        }}
                       </div>
                       <div>
                         <strong>{{ 'scenarios.detail.field_writable' | transloco }}</strong>
-                        {{ (s.writable ? 'scenarios.common.yes' : 'scenarios.detail.writable_no') | transloco }}
+                        {{
+                          (s.writable ? 'scenarios.common.yes' : 'scenarios.detail.writable_no')
+                            | transloco
+                        }}
                       </div>
-                      <div><strong>{{ 'scenarios.detail.field_description' | transloco }}</strong> {{ s.description || '—' }}</div>
+                      <div>
+                        <strong>{{ 'scenarios.detail.field_description' | transloco }}</strong>
+                        {{ s.description || '—' }}
+                      </div>
                     </div>
                   } @else {
                     <div class="meta-grid">
                       <div class="meta-item">
-                        <label class="meta-label" for="edit-owner">{{ 'scenarios.detail.owner_label' | transloco }}</label>
+                        <label class="meta-label" for="edit-owner">{{
+                          'scenarios.detail.owner_label' | transloco
+                        }}</label>
                         <div class="meta-value">
                           <input
                             id="edit-owner"
@@ -209,7 +240,9 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                         </div>
                       </div>
                       <div class="meta-item">
-                        <label class="meta-label" for="edit-desc">{{ 'scenarios.detail.description_label' | transloco }}</label>
+                        <label class="meta-label" for="edit-desc">{{
+                          'scenarios.detail.description_label' | transloco
+                        }}</label>
                         <div class="meta-value">
                           <textarea
                             id="edit-desc"
@@ -243,15 +276,21 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                     </div>
                     <div>
                       <div class="count-num">{{ s.on_success }}</div>
-                      <div class="count-label">{{ 'scenarios.step_count.on_success' | transloco }}</div>
+                      <div class="count-label">
+                        {{ 'scenarios.step_count.on_success' | transloco }}
+                      </div>
                     </div>
                     <div>
                       <div class="count-num">{{ s.on_failure }}</div>
-                      <div class="count-label">{{ 'scenarios.step_count.on_failure' | transloco }}</div>
+                      <div class="count-label">
+                        {{ 'scenarios.step_count.on_failure' | transloco }}
+                      </div>
                     </div>
                     <div>
                       <div class="count-num">{{ s.finally_steps }}</div>
-                      <div class="count-label">{{ 'scenarios.step_count.finally' | transloco }}</div>
+                      <div class="count-label">
+                        {{ 'scenarios.step_count.finally' | transloco }}
+                      </div>
                     </div>
                   </div>
                 </p-card>
@@ -277,9 +316,7 @@ import { ScenarioExecutionsComponent } from './scenario-executions.component';
                 @if (stepsFor(col).length > 0 || isWritable()) {
                   <section class="step-section">
                     <div class="step-head">
-                      <h3 class="step-title">
-                        {{ labelFor(col) }} ({{ stepsFor(col).length }})
-                      </h3>
+                      <h3 class="step-title">{{ labelFor(col) }} ({{ stepsFor(col).length }})</h3>
                       @if (isWritable()) {
                         <p-button
                           [label]="'scenarios.steps.add' | transloco"
@@ -358,6 +395,7 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly lang = inject(LanguageService);
 
   readonly collections = STEP_COLLECTIONS;
   readonly scenario = signal<ScenarioDetail | null>(null);
@@ -436,11 +474,12 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
   readonly draftStep = signal<Record<string, unknown>>({});
   readonly draftStepValid = signal(true);
   readonly savingStep = signal(false);
-  readonly stepDialogHeader = computed(() =>
-    this.editIndex() !== null
+  readonly stepDialogHeader = computed(() => {
+    this.lang.revision();
+    return this.editIndex() !== null
       ? this.transloco.translate('scenarios.steps.edit_header', { index: this.editIndex() })
-      : this.transloco.translate('scenarios.steps.add_header'),
-  );
+      : this.transloco.translate('scenarios.steps.add_header');
+  });
   private latestDraftStep: Record<string, unknown> = {};
 
   openAddStep(col: StepCollectionName): void {
@@ -488,7 +527,9 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
       }
       this.messages.add({
         severity: 'success',
-        summary: this.transloco.translate(idx === null ? 'scenarios.toast.step_added' : 'scenarios.toast.step_updated'),
+        summary: this.transloco.translate(
+          idx === null ? 'scenarios.toast.step_added' : 'scenarios.toast.step_updated',
+        ),
         detail: this.labelFor(col),
         life: 2500,
       });
@@ -503,7 +544,10 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
 
   askDeleteStep(col: StepCollectionName, index: number): void {
     this.confirm.confirm({
-      header: this.transloco.translate('scenarios.confirm.delete_step_header', { label: this.labelFor(col), index }),
+      header: this.transloco.translate('scenarios.confirm.delete_step_header', {
+        label: this.labelFor(col),
+        index,
+      }),
       message: this.transloco.translate('scenarios.confirm.delete_step_message'),
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: this.transloco.translate('scenarios.common.delete'),
@@ -594,7 +638,9 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
     if (!s) return;
     this.confirm.confirm({
       header: this.transloco.translate('scenarios.confirm.real_run_header'),
-      message: this.transloco.translate('scenarios.confirm.real_run_message', { id: s.scenario_id }),
+      message: this.transloco.translate('scenarios.confirm.real_run_message', {
+        id: s.scenario_id,
+      }),
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: this.transloco.translate('scenarios.confirm.run_accept'),
       rejectLabel: this.transloco.translate('scenarios.common.cancel'),
@@ -612,7 +658,9 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
       const job = await this.jobs.trigger(me.id, s.scenario_id, dryRun, newIdempotencyKey());
       this.messages.add({
         severity: 'success',
-        summary: this.transloco.translate(dryRun ? 'scenarios.toast.dry_run_started' : 'scenarios.toast.run_started'),
+        summary: this.transloco.translate(
+          dryRun ? 'scenarios.toast.dry_run_started' : 'scenarios.toast.run_started',
+        ),
         detail: this.transloco.translate('scenarios.toast.job_detail', { id: job.job_id }),
         life: 4000,
       });
@@ -629,7 +677,9 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
     if (!s) return;
     this.confirm.confirm({
       header: this.transloco.translate('scenarios.confirm.delete_scenario_header'),
-      message: this.transloco.translate('scenarios.confirm.delete_scenario_message', { id: s.scenario_id }),
+      message: this.transloco.translate('scenarios.confirm.delete_scenario_message', {
+        id: s.scenario_id,
+      }),
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: this.transloco.translate('scenarios.common.delete'),
       rejectLabel: this.transloco.translate('scenarios.common.cancel'),
@@ -676,6 +726,11 @@ export class ScenarioDetailComponent implements OnInit, HasUnsavedChanges {
     a.download = `${s.scenario_id}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 0);
-    this.messages.add({ severity: 'success', summary: this.transloco.translate('scenarios.toast.exported'), detail: `${s.scenario_id}.json`, life: 3000 });
+    this.messages.add({
+      severity: 'success',
+      summary: this.transloco.translate('scenarios.toast.exported'),
+      detail: `${s.scenario_id}.json`,
+      life: 3000,
+    });
   }
 }

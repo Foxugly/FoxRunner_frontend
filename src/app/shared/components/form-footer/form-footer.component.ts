@@ -47,11 +47,11 @@ export class FormFooterComponent {
   readonly cancelled = output<void>();
 
   readonly saveText = computed(() => {
-    this.lang.activeLang();
+    this.lang.revision();
     return this.saveLabel() ?? this.i18n.translate('common.save');
   });
   readonly cancelText = computed(() => {
-    this.lang.activeLang();
+    this.lang.revision();
     return this.cancelLabel() ?? this.i18n.translate('common.cancel');
   });
 }

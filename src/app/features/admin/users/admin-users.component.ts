@@ -13,6 +13,7 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 import { DataTableComponent } from '../../../shared/components/data-table/data-table.component';
 import { CellTemplateDirective } from '../../../shared/components/data-table/cell-template.directive';
 import type { DataTableColumn } from '../../../shared/components/data-table/data-table.types';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -62,13 +63,15 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
 
     <app-data-table
       [value]="visibleItems()"
-      [columns]="columns"
+      [columns]="columns()"
       [loading]="loading()"
       dataKey="id"
       emptyIcon="pi-users"
       [emptyTitle]="'admin.users.empty_title' | transloco"
     >
-      <ng-template appCell="id" let-u><code class="id-code">{{ u.id }}</code></ng-template>
+      <ng-template appCell="id" let-u
+        ><code class="id-code">{{ u.id }}</code></ng-template
+      >
       <ng-template appCell="is_active" let-u>
         <p-toggleswitch
           [(ngModel)]="u.is_active"
@@ -98,6 +101,7 @@ export class AdminUsersComponent implements OnInit {
   private readonly service = inject(AdminService);
   private readonly messages = inject(MessageService);
   private readonly i18n = inject(TranslocoService);
+  private readonly lang = inject(LanguageService);
 
   readonly items = signal<UserSummary[]>([]);
   readonly loading = signal(false);
@@ -108,14 +112,45 @@ export class AdminUsersComponent implements OnInit {
     this.includeInactive() ? this.items() : this.items().filter((u) => u.is_active),
   );
 
-  readonly columns: DataTableColumn[] = [
-    { field: 'email', header: this.i18n.translate('admin.users.col_email'), sortable: true },
-    { field: 'id', header: this.i18n.translate('admin.users.col_uuid'), width: '18rem', searchable: false },
-    { field: 'timezone_name', header: this.i18n.translate('admin.users.col_timezone'), sortable: true },
-    { field: 'is_active', header: this.i18n.translate('admin.users.col_active'), width: '6rem', searchable: false },
-    { field: 'is_superuser', header: this.i18n.translate('admin.users.col_superuser'), width: '8rem', searchable: false },
-    { field: 'is_verified', header: this.i18n.translate('admin.users.col_verified'), width: '7rem', searchable: false },
-  ];
+  // computed, pas un initialiseur de champ : translate() appele a la construction
+  // rendait la clef brute quand le catalogue n'etait pas encore charge, et ces
+  // en-tetes restaient alors figes pour toute la vie du composant — y compris
+  // apres un changement de langue.
+  readonly columns = computed<DataTableColumn[]>(() => {
+    this.lang.revision();
+    return [
+      { field: 'email', header: this.i18n.translate('admin.users.col_email'), sortable: true },
+      {
+        field: 'id',
+        header: this.i18n.translate('admin.users.col_uuid'),
+        width: '18rem',
+        searchable: false,
+      },
+      {
+        field: 'timezone_name',
+        header: this.i18n.translate('admin.users.col_timezone'),
+        sortable: true,
+      },
+      {
+        field: 'is_active',
+        header: this.i18n.translate('admin.users.col_active'),
+        width: '6rem',
+        searchable: false,
+      },
+      {
+        field: 'is_superuser',
+        header: this.i18n.translate('admin.users.col_superuser'),
+        width: '8rem',
+        searchable: false,
+      },
+      {
+        field: 'is_verified',
+        header: this.i18n.translate('admin.users.col_verified'),
+        width: '7rem',
+        searchable: false,
+      },
+    ];
+  });
 
   ngOnInit(): void {
     void this.load();

@@ -19,9 +19,7 @@ const SEVERITIES: Record<string, Severity> = {
   selector: 'app-status-tag',
   standalone: true,
   imports: [TagModule],
-  template: `
-    <p-tag [severity]="severity()" [value]="label()" />
-  `,
+  template: ` <p-tag [severity]="severity()" [value]="label()" /> `,
 })
 export class StatusTagComponent {
   private readonly i18n = inject(TranslocoService);
@@ -32,7 +30,7 @@ export class StatusTagComponent {
   }
   readonly severity = computed<Severity>(() => SEVERITIES[this._status()] ?? 'secondary');
   readonly label = computed(() => {
-    this.lang.activeLang();
+    this.lang.revision();
     const status = this._status();
     if (!status) return '';
     const key = `common.status.${status}`;
