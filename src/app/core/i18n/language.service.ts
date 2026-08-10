@@ -1,5 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
+import { filter } from 'rxjs';
 import { AVAILABLE_LANGUAGES, LanguageCode } from './available-languages';
 
 const STORAGE_KEY = 'lang';
@@ -21,7 +23,27 @@ export class LanguageService {
   private readonly _activeLang = signal<LanguageCode>(DEFAULT_LANG);
   readonly activeLang = this._activeLang.asReadonly();
 
+  // Transloco charge ses catalogues apres le premier rendu. Le pipe | transloco
+  // s'abonne a cette arrivee, translate() non : un computed qui l'appelle trop tot
+  // rend la clef brute, la met en cache, et — la langue n'ayant pas change — ne se
+  // recalcule jamais. Ce compteur lui donne la dependance manquante.
+  private readonly _loads = signal(0);
+
+  /** A lire dans tout computed qui appelle translate(), en plus ou a la place de
+   *  activeLang() : change a la bascule de langue *et* a chaque catalogue charge. */
+  readonly revision = computed(() => `${this._activeLang()}#${this._loads()}`);
+
   constructor() {
+    this.transloco.events$
+      .pipe(
+        filter((e) => e.type === 'translationLoadSuccess'),
+        takeUntilDestroyed(),
+      )
+      // queueMicrotask, pas un set direct : le catalogue est demande *pendant* le
+      // rendu (par le pipe | transloco), et l'evenement revient donc souvent dans
+      // ce meme rendu — ecrire un signal la leve NG0600.
+      .subscribe(() => queueMicrotask(() => this._loads.update((n) => n + 1)));
+
     const initial = this.resolveInitialLang();
     this.applyLanguage(initial);
   }

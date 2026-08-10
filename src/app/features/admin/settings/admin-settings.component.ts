@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -18,6 +18,7 @@ import type { DataTableColumn } from '../../../shared/components/data-table/data
 import { FormFooterComponent } from '../../../shared/components/form-footer/form-footer.component';
 import { JsonEditorComponent } from '../../../shared/components/json-editor/json-editor.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-admin-settings',
@@ -70,14 +71,16 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
 
     <app-data-table
       [value]="items()"
-      [columns]="columns"
+      [columns]="columns()"
       [loading]="loading()"
       dataKey="key"
       emptyIcon="pi-sliders-h"
       [emptyTitle]="'admin.settings.empty_title' | transloco"
       [emptyMessage]="'admin.settings.empty_message' | transloco"
     >
-      <ng-template appCell="key" let-s><code>{{ s.key }}</code></ng-template>
+      <ng-template appCell="key" let-s
+        ><code>{{ s.key }}</code></ng-template
+      >
       <ng-template appCell="description" let-s>
         <span class="muted">{{ s.description || '—' }}</span>
       </ng-template>
@@ -108,7 +111,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
     <p-dialog
       [modal]="true"
       [(visible)]="dialogOpen"
-      [header]="(editing() ? 'admin.settings.dialog_edit' : 'admin.settings.dialog_new') | transloco"
+      [header]="
+        (editing() ? 'admin.settings.dialog_edit' : 'admin.settings.dialog_new') | transloco
+      "
       [style]="{ width: '640px' }"
       [closable]="!saving()"
     >
@@ -120,7 +125,9 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
           </div>
         </div>
         <div class="meta-item">
-          <label class="meta-label" for="desc">{{ 'admin.settings.label_description' | transloco }}</label>
+          <label class="meta-label" for="desc">{{
+            'admin.settings.label_description' | transloco
+          }}</label>
           <div class="meta-value">
             <textarea id="desc" pTextarea rows="2" [(ngModel)]="draftDesc"></textarea>
           </div>
@@ -154,17 +161,38 @@ export class AdminSettingsComponent implements OnInit {
   private readonly confirm = inject(ConfirmationService);
   private readonly messages = inject(MessageService);
   private readonly i18n = inject(TranslocoService);
+  private readonly lang = inject(LanguageService);
 
   readonly items = signal<AppSetting[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
 
-  readonly columns: DataTableColumn[] = [
-    { field: 'key', header: this.i18n.translate('admin.settings.col_key'), sortable: true },
-    { field: 'description', header: this.i18n.translate('admin.settings.col_description'), sortable: true },
-    { field: 'updated_at', header: this.i18n.translate('admin.settings.col_updated'), sortable: true, width: '12rem' },
-    { field: 'actions', header: this.i18n.translate('admin.settings.col_actions'), width: '9rem', searchable: false },
-  ];
+  // computed, pas un initialiseur de champ : translate() appele a la
+  // construction figeait la clef brute quand le catalogue n'etait pas encore
+  // charge, et pour toute la vie du composant.
+  readonly columns = computed<DataTableColumn[]>(() => {
+    this.lang.revision();
+    return [
+      { field: 'key', header: this.i18n.translate('admin.settings.col_key'), sortable: true },
+      {
+        field: 'description',
+        header: this.i18n.translate('admin.settings.col_description'),
+        sortable: true,
+      },
+      {
+        field: 'updated_at',
+        header: this.i18n.translate('admin.settings.col_updated'),
+        sortable: true,
+        width: '12rem',
+      },
+      {
+        field: 'actions',
+        header: this.i18n.translate('admin.settings.col_actions'),
+        width: '9rem',
+        searchable: false,
+      },
+    ];
+  });
 
   dialogOpen = false;
   readonly editing = signal(false);

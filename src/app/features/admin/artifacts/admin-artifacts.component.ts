@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -13,6 +13,7 @@ import { ArtifactsService } from '../../../core/api/artifacts.service';
 import type { Artifact } from '../../../core/api/types';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 interface KindOption {
   label: string;
@@ -58,10 +59,12 @@ interface KindOption {
 
     <div class="filter-bar">
       <div class="filter-field">
-        <label for="kind" class="filter-label">{{ 'admin.artifacts.filter_kind' | transloco }}</label>
+        <label for="kind" class="filter-label">{{
+          'admin.artifacts.filter_kind' | transloco
+        }}</label>
         <p-select
           inputId="kind"
-          [options]="kindOptions"
+          [options]="kindOptions()"
           [(ngModel)]="filterKind"
           optionLabel="label"
           optionValue="value"
@@ -70,7 +73,9 @@ interface KindOption {
         />
       </div>
       <div class="filter-field">
-        <label for="prune" class="filter-label">{{ 'admin.artifacts.filter_prune' | transloco }}</label>
+        <label for="prune" class="filter-label">{{
+          'admin.artifacts.filter_prune' | transloco
+        }}</label>
         <p-inputnumber
           inputId="prune"
           [(ngModel)]="pruneDays"
@@ -113,7 +118,9 @@ interface KindOption {
       <ng-template pTemplate="body" let-a>
         <tr>
           <td><p-tag [value]="a.kind" severity="secondary" /></td>
-          <td><code class="id-code">{{ a.name }}</code></td>
+          <td>
+            <code class="id-code">{{ a.name }}</code>
+          </td>
           <td>{{ formatSize(a.size) }}</td>
           <td>{{ formatDate(a.updated_at) }}</td>
           <td>
@@ -145,12 +152,19 @@ export class AdminArtifactsComponent implements OnInit {
   private readonly service = inject(ArtifactsService);
   private readonly messages = inject(MessageService);
   private readonly i18n = inject(TranslocoService);
+  private readonly lang = inject(LanguageService);
 
-  readonly kindOptions: KindOption[] = [
-    { label: this.i18n.translate('admin.artifacts.kind_all'), value: null },
-    { label: this.i18n.translate('admin.artifacts.kind_screenshots'), value: 'screenshots' },
-    { label: this.i18n.translate('admin.artifacts.kind_pages'), value: 'pages' },
-  ];
+  // computed, pas un initialiseur de champ : translate() appele a la
+  // construction figeait la clef brute quand le catalogue n'etait pas encore
+  // charge, et pour toute la vie du composant.
+  readonly kindOptions = computed<KindOption[]>(() => {
+    this.lang.revision();
+    return [
+      { label: this.i18n.translate('admin.artifacts.kind_all'), value: null },
+      { label: this.i18n.translate('admin.artifacts.kind_screenshots'), value: 'screenshots' },
+      { label: this.i18n.translate('admin.artifacts.kind_pages'), value: 'pages' },
+    ];
+  });
   readonly items = signal<Artifact[]>([]);
   readonly total = signal(0);
   readonly rows = signal(50);
@@ -231,7 +245,9 @@ export class AdminArtifactsComponent implements OnInit {
       this.messages.add({
         severity: 'success',
         summary: this.i18n.translate('admin.artifacts.toast_pruned'),
-        detail: this.i18n.translate('admin.artifacts.toast_pruned_detail', { days: this.pruneDays }),
+        detail: this.i18n.translate('admin.artifacts.toast_pruned_detail', {
+          days: this.pruneDays,
+        }),
         life: 3000,
       });
       this.reload();
