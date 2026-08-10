@@ -37,11 +37,11 @@
     "zone.js": "^0.16.1"
   },
   "devDependencies": {
-    "@angular/build": "^21.2.7",
-    "@angular/cli": "^21.2.7",
+    "@angular/build": "^21.2.20",
+    "@angular/cli": "^21.2.20",
     "@angular/compiler-cli": "^21.2.0",
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.59.1",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^25.6.0",
     "@types/uuid": "^10.0.0",
     "angular-eslint": "21.4.0",
@@ -51,7 +51,7 @@
     "openapi-typescript": "^7.13.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
-    "typescript-eslint": "8.65.0",
+    "typescript-eslint": "8.66.0",
     "vitest": "^4.0.8"
   },
   "overrides": {
