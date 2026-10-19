@@ -7,7 +7,7 @@ import { AboutTab, getAboutPageUiText } from './about.text';
 const EMAIL_USER = 'info';
 const EMAIL_HOST = 'foxugly';
 const EMAIL_TLD = 'com';
-const PHONE_DISPLAY = '+32 478 811988';
+const PHONE_DISPLAY = '+32 470 672 572';
 const WEBSITE_URL = 'https://www.foxugly.com';
 const WEBSITE_DISPLAY = 'www.foxugly.com';
 const REPO_URL = 'https://github.com/Foxugly';
